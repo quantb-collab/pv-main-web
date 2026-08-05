@@ -564,6 +564,7 @@ export const PAGES: PageEntry[] = [
     proofNeeded: ["Bài viết có quan điểm, không phải tổng hợp chung chung"],
     gaps: ["Lịch xuất bản", "Người viết chịu trách nhiệm nội dung"],
     inNav: true,
+    footerGroup: "company",
   },
 
   {

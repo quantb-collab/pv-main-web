@@ -38,16 +38,25 @@
     "address": "Địa chỉ",
     "email": "Email",
     "phone": "Điện thoại",
+    "office": {
+      "label": "Trụ sở",
+      "entity": "Công ty TNHH Pebble Vina",
+      "address": "Văn phòng O1912, Tầng 19, Landmark 72 Tower\nKhu E6, Khu đô thị mới Cầu Giấy\nPhường Yên Hòa, Hà Nội, Việt Nam",
+      "phoneLabel": "0345 913 369",
+      "phoneHref": "tel:+84345913369",
+      "emailLabel": "contact@pebblevina.com",
+      "taxId": "Mã số thuế 0111545175"
+    },
     "rights": "Pebble Vina. Bảo lưu mọi quyền.",
     "links": {
-      "case-studies": "Case study",
-      "ai-assessment": "Đánh giá cơ hội AI",
       "contact": "Liên hệ",
+      "ai-assessment": "Đánh giá cơ hội AI",
+      "about": "Về chúng tôi",
+      "case-studies": "Case study",
+      "insights": "Góc nhìn",
       "privacy-policy": "Chính sách bảo mật",
       "terms": "Điều khoản sử dụng"
-    },
-    "gapContact": "Địa chỉ, email và số điện thoại chính thức của pháp nhân Pebble Vina.",
-    "closing": "Bắt đầu từ một bài toán đủ rõ để đo được kết quả."
+    }
   },
 
   "home": {

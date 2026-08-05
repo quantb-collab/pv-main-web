@@ -1,5 +1,4 @@
 import { getTranslations } from "next-intl/server";
-import { Gap } from "@/components/pv/gap";
 import { Link } from "@/i18n/navigation";
 import { footerPages } from "@/content/registry";
 
@@ -7,32 +6,72 @@ import { footerPages } from "@/content/registry";
  * Footer nền tối — cùng cặp với hero, khép nhịp sáng/tối của trang.
  * Danh sách link lấy từ registry, không viết tay, để không lệch khi thêm trang.
  */
+
+/**
+ * Thứ tự cột "Công ty". Footer là điểm dừng cuối của người quét trang, nên hai
+ * link chuyển đổi đứng trước phần giới thiệu — không xếp theo thứ tự sitemap.
+ * Trang mới chưa có tên ở đây thì rơi xuống cuối cột.
+ */
+const COMPANY_ORDER = ["contact", "ai-assessment", "about", "case-studies"];
+const rank = (key: string) => {
+  const i = COMPANY_ORDER.indexOf(key);
+  return i === -1 ? COMPANY_ORDER.length : i;
+};
+
 export async function SiteFooter() {
   const t = await getTranslations("footer");
-  const tn = await getTranslations("nav");
   const ts = await getTranslations("solutions");
   const tu = await getTranslations("useCases");
 
   const solutions = footerPages("solutions");
   const useCases = footerPages("usecases");
-  const company = footerPages("company");
+  const company = footerPages("company").sort(
+    (a, b) => rank(a.key) - rank(b.key),
+  );
   const legal = footerPages("legal");
 
   return (
     <footer className="tone-dark border-t">
       <div className="pv-container py-16 lg:py-20">
-        <p className="max-w-xl font-display text-2xl leading-snug font-medium text-balance lg:text-3xl">
-          {t("closing")}
-        </p>
-
-        <div className="mt-14 grid gap-10 border-t pt-10 sm:grid-cols-2 lg:grid-cols-5">
+        {/* Không mở footer bằng một câu tuyên ngôn: CtaBand ngay phía trên đã
+            nói xong bước tiếp theo. Footer làm việc khác — danh tính pháp nhân,
+            đường đi, và điều kiện pháp lý. */}
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <span className="font-display text-sm font-semibold tracking-[0.16em] uppercase">
               Pebble Vina
             </span>
-            <div className="mt-4 max-w-xs">
-              <Gap kind="confirm">{t("gapContact")}</Gap>
-            </div>
+
+            <h2 className="mt-6 font-mono text-[11px] tracking-[0.18em] text-subtle-foreground uppercase">
+              {t("office.label")}
+            </h2>
+            <address className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground not-italic">
+              <span className="block text-foreground">{t("office.entity")}</span>
+              <span className="mt-1 block whitespace-pre-line">
+                {t("office.address")}
+              </span>
+
+              <span className="mt-4 flex flex-col gap-1.5">
+                <a
+                  href={t("office.phoneHref")}
+                  className="text-foreground transition-colors hover:text-brand"
+                >
+                  <span className="sr-only">{t("phone")}: </span>
+                  {t("office.phoneLabel")}
+                </a>
+                <a
+                  href={`mailto:${t("office.emailLabel")}`}
+                  className="text-foreground transition-colors hover:text-brand"
+                >
+                  <span className="sr-only">{t("email")}: </span>
+                  {t("office.emailLabel")}
+                </a>
+              </span>
+
+              <span className="mt-4 block font-mono text-[11px] text-subtle-foreground">
+                {t("office.taxId")}
+              </span>
+            </address>
           </div>
 
           <FooterColumn title={t("solutions")}>
@@ -52,15 +91,11 @@ export async function SiteFooter() {
           </FooterColumn>
 
           <FooterColumn title={t("company")}>
-            <FooterLink href="/about">{tn("about")}</FooterLink>
-            {company
-              .filter((p) => p.key !== "about")
-              .map((p) => (
-                <FooterLink key={p.key} href={p.path}>
-                  {t(`links.${p.key}`)}
-                </FooterLink>
-              ))}
-            <FooterLink href="/insights">{tn("insights")}</FooterLink>
+            {company.map((p) => (
+              <FooterLink key={p.key} href={p.path}>
+                {t(`links.${p.key}`)}
+              </FooterLink>
+            ))}
           </FooterColumn>
         </div>
 
