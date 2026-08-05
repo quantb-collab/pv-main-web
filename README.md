@@ -62,3 +62,4 @@ màu và thời lượng hardcode thì hoàn toàn hợp lệ với TypeScript.
 `.claude/skills/` có 8 skill và `.claude/agents/` có 5 agent riêng cho dự án:
 viết content, dựng UI, đa ngôn ngữ, dựng trang, soát bằng chứng, nghiệm thu,
 bàn giao giữa các phiên, và commit. Chúng chỉ nạp khi làm việc trong repo này.
+# pv-main-web
