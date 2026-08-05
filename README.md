@@ -63,3 +63,4 @@ màu và thời lượng hardcode thì hoàn toàn hợp lệ với TypeScript.
 viết content, dựng UI, đa ngôn ngữ, dựng trang, soát bằng chứng, nghiệm thu,
 bàn giao giữa các phiên, và commit. Chúng chỉ nạp khi làm việc trong repo này.
 # pv-main-web
+# pv-main-web
