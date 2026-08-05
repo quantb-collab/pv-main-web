@@ -1,0 +1,113 @@
+import type { Metadata } from "next";
+import { Be_Vietnam_Pro, Geist_Mono } from "next/font/google";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { SmoothScroll } from "@/components/motion/smooth-scroll";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { SiteHeader } from "@/components/layout/site-header";
+import { routing } from "@/i18n/routing";
+import "../globals.css";
+
+/**
+ * FONT TẠM — chờ brand chốt.
+ *
+ * Yêu cầu ban đầu là Poppins. Poppins KHÔNG có bộ ký tự tiếng Việt: Google
+ * Fonts chỉ cấp subset "latin" và "latin-ext", trong khi phần lớn chữ Việt có
+ * dấu nằm ở dải U+1EA0–U+1EF1 (subset "vietnamese"). Dùng Poppins thì các chữ
+ * như ế, ộ, ữ rơi sang font hệ thống — chữ trong cùng một dòng lệch nét.
+ *
+ * Be Vietnam Pro cùng họ geometric sans, hỗ trợ tiếng Việt đầy đủ.
+ * Muốn đổi font: sửa DUY NHẤT khối này. Tên biến --font-brand giữ nguyên nên
+ * globals.css và component không phải đụng tới.
+ */
+const brandFont = Be_Vietnam_Pro({
+  variable: "--font-brand",
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const mono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "site" });
+
+  return {
+    title: {
+      default: `${t("name")} — ${t("tagline")}`,
+      template: `%s — ${t("name")}`,
+    },
+    description: t("descriptionMeta"),
+    robots: {
+      // Site chưa phát hành. Mở index khi nội dung đã qua QA (§27 blueprint).
+      index: false,
+      follow: false,
+    },
+  };
+}
+
+export default async function LocaleLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+  setRequestLocale(locale);
+
+  const t = await getTranslations("site");
+
+  return (
+    <html
+      lang={locale}
+      className={`${brandFont.variable} ${mono.variable} h-full`}
+      suppressHydrationWarning
+    >
+      <head>
+        {/*
+          Lưới an toàn. Motion xuất `opacity:0` ngay trong HTML server-side để
+          tránh nháy khi hydrate. Nếu JS không chạy, phần lớn trang sẽ vô hình.
+          Khối này ép mọi phần tử đang chờ animation hiện lại.
+          Không xoá khi thêm hiệu ứng mới.
+        */}
+        <noscript>
+          <style>{`[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+      </head>
+      <body className="flex min-h-full flex-col">
+        <NextIntlClientProvider>
+          <SmoothScroll />
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+          >
+            {t("skipToContent")}
+          </a>
+          <SiteHeader />
+          <main id="main" className="flex-1">
+            {children}
+          </main>
+          <SiteFooter />
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}

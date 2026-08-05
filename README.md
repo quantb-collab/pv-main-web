@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pebble Vina — Website
 
-## Getting Started
+Website doanh nghiệp của Pebble Vina, công ty Full-stack AI cho doanh nghiệp.
 
-First, run the development server:
+Next 16 (App Router) · React 19 · Tailwind v4 · shadcn/ui · next-intl (vi/en/ko)
+· motion + Lenis · pnpm.
+
+> **Trạng thái: đang xây dựng.** Chưa phát hành. `robots.ts` đang chặn toàn bộ
+> và metadata đặt `index: false`. Màu brand, logo và phần lớn bằng chứng còn là
+> ô chờ.
+
+---
+
+## Chạy
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev            # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Kiểm tra trước khi commit:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm verify         # build + check:i18n + check:tokens + lint
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Hai check riêng tồn tại vì `next build` không bắt được chúng: next-intl chỉ log
+khoá messages thiếu ra console rồi in nguyên đường dẫn khoá lên mặt trang, còn
+màu và thời lượng hardcode thì hoàn toàn hợp lệ với TypeScript.
 
-## Learn More
+## Đường dẫn đáng biết
 
-To learn more about Next.js, take a look at the following resources:
+| URL | Nội dung |
+|---|---|
+| `/` | Tiếng Việt (mặc định) |
+| `/en`, `/ko` | Tiếng Anh, tiếng Hàn — chưa dịch, tự rơi về tiếng Việt |
+| `/track` | Bảng theo dõi nội bộ: trạng thái từng trang và khoảng trống nội dung |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tài liệu
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| File | Nội dung |
+|---|---|
+| [CLAUDE.md](CLAUDE.md) | Luật của repo, bản đồ thư mục, quy trình |
+| [docs/HANDOFF.md](docs/HANDOFF.md) | Đang ở đâu, làm gì tiếp, đang chờ quyết định nào |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | Vì sao mọi thứ như hiện tại, kèm phương án đã bỏ |
+| [docs/BLUEPRINT-RULES.md](docs/BLUEPRINT-RULES.md) | Luật rút từ blueprint chiến lược |
+| [docs/DESIGN-TOKENS.md](docs/DESIGN-TOKENS.md) | Hệ token màu, nhịp, chuyển động |
+| [docs/I18N.md](docs/I18N.md) | Quy trình đa ngôn ngữ vi-first |
 
-## Deploy on Vercel
+**Bắt đầu một phiên làm việc: đọc `docs/HANDOFF.md` trước.**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Bốn luật
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Registry trước, route sau.** `src/content/registry.ts` là nguồn sự thật về
+   cấu trúc site — nó sinh ra footer, sitemap và `/track`.
+2. **Chỉ dùng token.** Không hardcode màu, easing, thời lượng trong component.
+3. **Ghép từ block có sẵn.** Cần biến thể thì thêm prop, đừng dựng lưới riêng.
+4. **Thiếu dữ liệu thì để ô chờ.** Không bịa số liệu, case study, đối tác.
+
+## Skill và agent
+
+`.claude/skills/` có 8 skill và `.claude/agents/` có 5 agent riêng cho dự án:
+viết content, dựng UI, đa ngôn ngữ, dựng trang, soát bằng chứng, nghiệm thu,
+bàn giao giữa các phiên, và commit. Chúng chỉ nạp khi làm việc trong repo này.

@@ -1,0 +1,124 @@
+"use client";
+
+import { Menu } from "lucide-react";
+import { motion, useMotionValueEvent, useScroll } from "motion/react";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { LocaleSwitcher } from "@/components/layout/locale-switcher";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Link } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
+
+/**
+ * Thanh điều hướng.
+ * Trong suốt khi ở đỉnh trang (đè lên hero nền tối), chuyển sang nền đặc
+ * khi bắt đầu cuộn. Một CTA duy nhất — §23 cấm nhiều CTA ngang hàng.
+ */
+
+const NAV = [
+  { href: "/solutions", key: "solutions" },
+  { href: "/use-cases", key: "useCases" },
+  { href: "/how-we-deliver", key: "howWeDeliver" },
+  { href: "/technology", key: "technology" },
+  { href: "/insights", key: "insights" },
+  { href: "/about", key: "about" },
+] as const;
+
+export function SiteHeader() {
+  const t = useTranslations("nav");
+  const tc = useTranslations("cta");
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (v) => {
+    setScrolled(v > 24);
+  });
+
+  return (
+    <motion.header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
+        scrolled
+          ? "border-b bg-background/85 backdrop-blur-md"
+          : "tone-dark border-b border-transparent bg-transparent",
+      )}
+    >
+      <div className="pv-container flex h-16 items-center justify-between gap-6 lg:h-20">
+        <Link
+          href="/"
+          className="font-display text-sm font-semibold tracking-[0.16em] uppercase"
+        >
+          {/* Chờ file logo chính thức — hiện dùng chữ. */}
+          Pebble Vina
+        </Link>
+
+        <nav className="hidden items-center gap-1 lg:flex">
+          {NAV.map((item) => (
+            <Link
+              key={item.key}
+              href={item.href}
+              className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {t(item.key)}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <LocaleSwitcher />
+
+          <Button asChild size="sm" className="hidden md:inline-flex">
+            <Link href="/ai-assessment">{tc("assessment")}</Link>
+          </Button>
+
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden"
+                aria-label={t("openMenu")}
+              >
+                <Menu className="size-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-full sm:max-w-sm">
+              <SheetHeader>
+                <SheetTitle className="text-left font-display tracking-[0.16em] uppercase">
+                  Pebble Vina
+                </SheetTitle>
+              </SheetHeader>
+              <nav className="flex flex-col gap-1 px-4">
+                {NAV.map((item) => (
+                  <Link
+                    key={item.key}
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className="border-b py-3 text-base"
+                  >
+                    {t(item.key)}
+                  </Link>
+                ))}
+              </nav>
+              <div className="mt-4 px-4">
+                <Button asChild className="w-full">
+                  <Link href="/ai-assessment" onClick={() => setOpen(false)}>
+                    {tc("assessment")}
+                  </Link>
+                </Button>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+    </motion.header>
+  );
+}
