@@ -221,3 +221,21 @@ ngữ và CTA đã sát mép ở đúng 1024px. Bỏ weight 300 khỏi `next/fon
 nào dùng — font này không phải variable font nên mỗi nấc là một file tải riêng.
 **Đổi lại thì phải sửa:** khối thang chữ trong LỚP 3 và phần đăng ký ở LỚP 4 của
 `globals.css`. Component không phải đụng.
+
+## 2026-08-05 — Footer mở bằng danh tính pháp nhân, không bằng câu tuyên ngôn
+**Bối cảnh:** Footer đang mở bằng một câu closing cỡ lớn, phần liên hệ để `<Gap>`
+chờ dữ liệu.
+**Chọn:** Bỏ câu closing. Điền địa chỉ, điện thoại, email và mã số thuế thật.
+Cột "Công ty" xếp theo giá trị chuyển đổi (contact → ai-assessment → about →
+case-studies), không theo thứ tự sitemap.
+**Vì:** `CtaBand` ngay phía trên đã nói xong bước tiếp theo; footer nhắc lại một
+lần nữa thành hai lời mời ngang hàng, trái §23. Footer là điểm dừng cuối của
+người quét trang — việc của nó là danh tính, đường đi và điều kiện pháp lý.
+**Dữ liệu đã được xác nhận:** Landmark 72 (O1912, tầng 19, Cầu Giấy, Hà Nội),
+`0345 913 369`, `contact@pebblevina.com`, MST `0111545175`. Người dùng xác nhận
+là dữ liệu chính thức của pháp nhân ngày 2026-08-05. Đây là lần đầu site công bố
+dữ liệu pháp nhân thật thay cho ô chờ — mọi thay đổi sau này phải hỏi lại nguồn.
+**Đã cân nhắc và bỏ:** giữ `<Gap>` tới khi có brand kit — dữ liệu pháp nhân
+không phụ thuộc brand kit, giữ thêm chỉ làm trang trông dở dang lâu hơn.
+**Đổi lại thì phải sửa:** khối `footer.office` trong `messages/vi.json` và
+`src/components/layout/site-footer.tsx`.
