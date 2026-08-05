@@ -1,20 +1,26 @@
 "use client";
 
-import { ArrowDown, ArrowRight } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { MediaFrame } from "@/components/motion/media-frame";
+import Image from "next/image";
 import { Parallax, ScrollStage } from "@/components/motion/parallax";
-import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
+import { CtaButton } from "@/components/pv/cta-button";
+import { GapChip } from "@/components/pv/gap";
+import { Highlight } from "@/components/pv/highlight";
 import { DUR, EASE, LIFT, STAGGER } from "@/lib/motion";
 
 /**
  * Hero — §9 Section 1.
- * Nhiệm vụ: trong 10–15 giây trả lời Pebble là ai, giúp ai, tạo kết quả gì,
- * bước tiếp theo là gì. Không đặt danh sách công nghệ ở đây.
+ * Answers who Pebble is, who it serves, what result it produces and what the
+ * next step is, within 10–15 seconds. No technology list here.
  *
- * Đây là khối duy nhất trên trang được dùng ScrollStage (biên độ mạnh).
+ * Locked to exactly one viewport (min-h-dvh) with the pitch centred in it, so
+ * no slack can accumulate at either edge.
+ *
+ * Copy budget: "AI" appears exactly once on this screen. It is the hook, and
+ * repeating it turns a claim into a slogan.
+ *
+ * This is the only block on the page allowed to use ScrollStage.
  */
 export function Hero() {
   const t = useTranslations("home.hero");
@@ -37,27 +43,16 @@ export function Hero() {
       };
 
   return (
-    <section className="tone-dark relative isolate overflow-hidden">
-      {/* nền lưới kỹ thuật + quầng sáng, chỉ dùng ở hero */}
-      <div aria-hidden className="pv-grid-bg absolute inset-0 opacity-40" />
-      <Parallax amount="subtle" className="absolute inset-0 -z-10">
-        <div
-          aria-hidden
-          className="absolute top-[-20%] left-1/2 size-[46rem] -translate-x-1/2 rounded-full opacity-25 blur-3xl"
-          style={{
-            background:
-              "radial-gradient(circle, var(--brand) 0%, transparent 65%)",
-          }}
-        />
-      </Parallax>
+    <section className="tone-dark relative isolate flex min-h-dvh flex-col overflow-hidden">
+      <HeroBackdrop />
 
-      <ScrollStage className="pv-container flex min-h-[92svh] flex-col justify-center pt-28 pb-20 lg:pt-36">
-        <div className="grid items-center gap-14 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
+      <div className="relative flex flex-1 items-center">
+        <ScrollStage className="pv-container w-full pt-20 pb-16 lg:pt-24">
           <motion.div
             variants={container}
             initial="hidden"
             animate="visible"
-            className="flex flex-col gap-7"
+            className="mx-auto flex max-w-4xl flex-col items-center gap-6 text-center"
           >
             <motion.span
               variants={item}
@@ -66,65 +61,89 @@ export function Hero() {
               {t("eyebrow")}
             </motion.span>
 
+            {/* 25ch keeps the headline at two lines down to lg; below that it
+                wraps naturally rather than being capped into short ragged lines. */}
             <motion.h1
               variants={item}
-              className="max-w-[15ch] font-display text-4xl leading-[1.04] font-semibold text-balance sm:text-5xl lg:text-6xl xl:text-7xl"
+              className="max-w-[25ch] font-display text-4xl leading-[1.06] font-semibold text-balance sm:text-5xl lg:text-6xl xl:text-[4.25rem]"
             >
-              {t("title")}
+              <Highlight>{t("title")}</Highlight>
             </motion.h1>
 
             <motion.p
               variants={item}
-              className="max-w-xl text-lg leading-relaxed text-muted-foreground text-pretty"
+              className="max-w-2xl text-lg leading-relaxed text-muted-foreground text-balance"
             >
-              {t("lead")}
+              <Highlight>{t("lead")}</Highlight>
             </motion.p>
 
-            <motion.div variants={item} className="flex flex-wrap gap-3">
-              <Button asChild size="lg" className="group">
-                <Link href="/ai-assessment">
-                  {tc("assessment")}
-                  <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="/how-we-deliver">{tc("deliver")}</Link>
-              </Button>
-            </motion.div>
-
-            <motion.ul
+            <motion.div
               variants={item}
-              className="mt-4 flex flex-col gap-2 border-t pt-6 text-sm text-muted-foreground sm:flex-row sm:gap-8"
+              className="mt-2 flex flex-col items-center gap-3 sm:flex-row sm:gap-5"
             >
-              <li>{t("proof1")}</li>
-              <li>{t("proof2")}</li>
-              <li>{t("proof3")}</li>
-            </motion.ul>
+              <CtaButton href="/ai-assessment" size="lg">
+                {tc("assessment")}
+              </CtaButton>
+              <CtaButton
+                href="/how-we-deliver"
+                size="lg"
+                variant="link"
+                arrow={false}
+                className="px-0"
+              >
+                {tc("deliver")}
+              </CtaButton>
+            </motion.div>
           </motion.div>
+        </ScrollStage>
+      </div>
 
-          <motion.div
-            initial={reduced ? false : { opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: DUR.scene, ease: EASE.outSoft, delay: 0.25 }}
-          >
-            <MediaFrame
-              ratio="portrait"
-              priority
-              need="Ảnh chủ đạo trang chủ. Gợi ý: người thật đang làm việc với hệ thống trong môi trường doanh nghiệp hoặc phòng lab. Không dùng robot, não phát sáng, tay chạm màn hình hay ảnh stock bắt tay."
-            />
-          </motion.div>
-        </div>
-
-        <motion.div
-          initial={reduced ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.1, duration: DUR.slow }}
-          className="mt-16 hidden items-center gap-2 font-mono text-[11px] tracking-[0.16em] text-subtle-foreground uppercase lg:flex"
-        >
-          <ArrowDown className="size-3.5 animate-bounce" />
-          {t("scrollHint")}
-        </motion.div>
-      </ScrollStage>
+      <GapChip
+        kind="confirm"
+        className="absolute right-6 bottom-6 hidden lg:inline-flex"
+      >
+        <span title={t("mediaNeed")}>{t("mediaGap")}</span>
+      </GapChip>
     </section>
+  );
+}
+
+/**
+ * Layer order matters: the scrim sits directly on the photo so it can guarantee
+ * contrast, while the grid and brand glow stay above it and keep their edge.
+ * Without `src` the empty state is the grid and glow alone — a deliberate
+ * technical surface, not a hole waiting for stock art.
+ */
+function HeroBackdrop({ src, alt }: { src?: string; alt?: string }) {
+  return (
+    <div aria-hidden className="absolute inset-0 -z-10">
+      {src ? (
+        <Image
+          src={src}
+          alt={alt ?? ""}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+      ) : null}
+
+      <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/80 to-background" />
+
+      <Parallax amount="subtle" className="absolute inset-0">
+        <div
+          className="absolute top-[6%] left-1/2 size-[60rem] -translate-x-1/2 rounded-full opacity-30 blur-3xl"
+          style={{
+            background:
+              "radial-gradient(circle, var(--brand) 0%, transparent 65%)",
+          }}
+        />
+      </Parallax>
+
+      <div className="pv-grid-bg absolute inset-0 opacity-60" />
+
+      {/* Settles the grid into flat background before the next section starts. */}
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
+    </div>
   );
 }

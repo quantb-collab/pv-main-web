@@ -119,6 +119,33 @@
   --sidebar-accent-foreground: var(--pv-ink-900);
   --sidebar-border: var(--pv-ink-200);
   --sidebar-ring: var(--pv-brand-500);
+
+  /* Controls (button, input, select) carry their own radius, decoupled from
+     --radius so card/image rounding can change without reshaping controls. */
+  /* ---- Highlight ramp -------------------------------------------------
+     Gradient + halo applied to key terms inside running text. Derived from
+     the brand ramp so a brand-kit swap carries through untouched.
+     Light surfaces need a dark ramp to stay readable and a faint halo; the
+     dark override below inverts both. */
+  --highlight-from: var(--pv-brand-600);
+  --highlight-via: var(--pv-brand-500);
+  --highlight-to: var(--pv-brand-700);
+  --highlight-glow: var(--pv-brand-500);
+  /* Two halo layers: a wide flat bleed and a tight gradient rim. On light
+     surfaces both stay near-invisible — a glow on white reads as a misprint. */
+  --highlight-halo-opacity: 0.16;
+  --highlight-halo-blur: 0.55em;
+  --highlight-rim-opacity: 0.3;
+  --highlight-rim-blur: 0.16em;
+
+  /* Controls (button, input, select) carry their own radius, decoupled from
+     --radius so card/image rounding can change without reshaping controls. */
+  --radius-control: 0.375rem;
+
+  --shadow-control:
+    0 1px 2px -1px oklch(0 0 0 / 12%), 0 1px 1px oklch(0 0 0 / 4%);
+  --shadow-control-hover:
+    0 3px 8px -3px oklch(0 0 0 / 16%), 0 1px 2px oklch(0 0 0 / 6%);
 }
 
 /* --------------------------------------------------------------------------
@@ -166,6 +193,23 @@
   --sidebar-accent-foreground: var(--pv-ink-50);
   --sidebar-border: oklch(1 0 0 / 12%);
   --sidebar-ring: var(--pv-brand-400);
+
+  /* Near-white core reads as an emitting source rather than tinted text. */
+  --highlight-from: var(--pv-brand-300);
+  --highlight-via: var(--pv-brand-100);
+  --highlight-to: var(--pv-brand-400);
+  --highlight-glow: var(--pv-brand-400);
+  --highlight-halo-opacity: 0.6;
+  --highlight-halo-blur: 0.75em;
+  --highlight-rim-opacity: 0.9;
+  --highlight-rim-blur: 0.2em;
+
+  /* Drop shadows are invisible on dark surfaces — separate the control with a
+     top inset highlight instead, and deepen the drop layer underneath. */
+  --shadow-control:
+    inset 0 1px 0 oklch(1 0 0 / 10%), 0 1px 2px oklch(0 0 0 / 32%);
+  --shadow-control-hover:
+    inset 0 1px 0 oklch(1 0 0 / 14%), 0 4px 12px -3px oklch(0 0 0 / 45%);
 }
 
 /* Section tối tự sơn nền + chữ, không cần nhớ class */
@@ -273,6 +317,11 @@
   --font-display: var(--font-brand), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
+  /* Indirection keeps the .tone-dark remap live at use sites */
+  --radius-control: var(--radius-control);
+  --shadow-control: var(--shadow-control);
+  --shadow-control-hover: var(--shadow-control-hover);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -357,6 +406,27 @@
     linear-gradient(to bottom, var(--border) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 40%, transparent 100%);
+}
+
+/* Gradient fill for a highlighted term. Paired with a blurred duplicate behind
+   it (see components/pv/highlight.tsx) to produce the emitted halo. */
+@utility pv-highlight {
+  background-image: linear-gradient(
+    100deg,
+    var(--highlight-from) 0%,
+    var(--highlight-via) 50%,
+    var(--highlight-to) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  /* Clipped text has no colour of its own, so forced-colours modes would drop
+     it entirely. Hand the glyphs back to the OS palette instead. */
+  @media (forced-colors: active) {
+    background-image: none;
+    color: currentColor;
+  }
 }
 
 /* Chữ chạy gradient — chỉ dùng cho 1 cụm nhấn trên mỗi trang. */

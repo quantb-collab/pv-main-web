@@ -92,3 +92,100 @@ dẫn khoá lọt vào phần chữ hiển thị. Gộp vào `pnpm verify`.
 một trang hỏng trước mặt khách hàng.
 **Giới hạn đã biết:** chỉ soát trang đã build tĩnh, không soát nhánh chỉ hiện
 khi tương tác.
+
+## 2026-08-05 — Tách "control" thành một tầng token riêng
+**Bối cảnh:** Nút dùng `rounded-lg` (10px) trên chiều cao 32px — tỷ lệ đó trông
+tròn và mềm. Sửa `--radius` để nút vuông hơn thì kéo theo cả thẻ, ảnh và
+`BeforeAfter`.
+**Chọn:** Thêm `--radius-control` (6px), `--shadow-control`,
+`--shadow-control-hover` ở LỚP 2, remap trong `.tone-dark`. Nút, input và
+select trigger dùng bộ token này; thẻ và ảnh vẫn theo `--radius`.
+**Vì:** Bo góc của control và bo góc của khối nội dung là hai quyết định khác
+nhau. Buộc chúng vào một biến nghĩa là mỗi lần chỉnh nút phải chấp nhận thẻ
+đổi theo.
+**Đã cân nhắc và bỏ:** hạ thẳng `--radius` (kéo theo thẻ/ảnh); viết
+`rounded-[6px]` tại chỗ (vi phạm luật 2, `check:tokens` không bắt được px).
+**Đổi lại thì phải sửa:** khối control trong LỚP 2 + `.tone-dark`, đăng ký ở
+LỚP 4.
+
+## 2026-08-05 — Đổ bóng chỉ dành cho control
+**Bối cảnh:** Hệ này dùng viền tóc thay đổ bóng (`CardGrid` cách nhau bằng
+`gap-px bg-border`). Nhưng nút phẳng hoàn toàn thì không đọc ra là bấm được.
+**Chọn:** Bóng chỉ gắn vào variant có bề mặt — `default`, `outline`,
+`secondary`, `destructive`. `ghost` và `link` không có bóng. Trên nền tối,
+bóng đen vô hình nên token đổi sang vạch sáng inset ở cạnh trên.
+**Vì:** Ngoại lệ có ranh giới rõ thì vẫn là hệ nhất quán; đổ bóng ở mọi nơi mới
+là phá hệ.
+**Đổi lại thì phải sửa:** `--shadow-control*` trong `globals.css`. Component
+không phải đụng.
+
+## 2026-08-05 — `CtaButton` gom nút dẫn trang
+**Bối cảnh:** Sáu chỗ chép lại cùng một khối `Button asChild` + `Link` +
+`ArrowRight` kèm class hover giống hệt nhau.
+**Chọn:** `src/components/pv/cta-button.tsx`. Prop `arrow` tắt mũi tên cho nút
+phụ.
+**Vì:** Mũi tên là động từ của nút. Gom một chỗ thì nhãn bỏ được "Xem" mà người
+đọc vẫn hiểu là đi tới trang khác — nhãn ngắn lại trung bình 6 ký tự.
+**Đổi lại thì phải sửa:** `cta-button.tsx` và các call site.
+
+## 2026-08-05 — Thang cao control 36/40/44px
+**Bối cảnh:** shadcn bản mới mặc định h-8/h-9 — thang của app UI dày đặc, không
+phải của trang bán hàng. Nhãn `cta.assessment` 27 ký tự nằm trong nút cao 32px
+với padding ngang 10px.
+**Chọn:** `sm` h-9, `default` h-10, `lg` h-11, padding ngang px-3.5/4/5. Input
+và SelectTrigger kéo theo cho khớp hàng trong header.
+**Vì:** Nút CTA chính của hero là phần tử được bấm nhiều nhất trên site. 32px
+là dưới ngưỡng 44px khuyến nghị cho vùng chạm trên di động.
+**Đổi lại thì phải sửa:** `size` trong `button.tsx`, `input.tsx`, `select.tsx` —
+cả ba đều bị `shadcn add` ghi đè, đã ghi chú ngay trong file.
+
+## 2026-08-05 — Hero khoá đúng một viewport, căn giữa, ảnh làm nền
+**Bối cảnh:** Hero cũ dùng `min-h-[92svh]` + `justify-center` — sàn tối thiểu
+chứ không phải chiều cao cố định, nên khối nội dung ngắn hơn để lại hai dải
+trống không ai kiểm soát. Thêm `mt-16` của scroll hint đẩy tiếp xuống. Tiêu đề
+`max-w-[15ch]` ở `text-7xl` vỡ thành 4 dòng, sinh dòng cụt "hành của".
+**Chọn:** `min-h-dvh`, nội dung căn giữa cả hai trục, ảnh chủ đạo chuyển từ thẻ
+`MediaFrame` dọc bên phải thành lớp nền toàn khung có scrim. Tiêu đề nới lên
+`max-w-[25ch]` để nằm 2 dòng ở desktop.
+**Vì:** First view là thứ quyết định người đọc có cuộn tiếp hay không. Ô trống
+không giải thích được là mất niềm tin ngay giây đầu.
+**Đã cân nhắc và bỏ:** split hai cột với ảnh tràn mép phải; bỏ ảnh, cột phải
+thành chỉ mục 5 tầng năng lực.
+**Ràng buộc kéo theo:** first view giờ phụ thuộc vào một tấm ảnh nền thật.
+Chưa có thì `GapChip` ở góc dưới phải giữ nợ đó. Yêu cầu ảnh nằm ở khoá
+`home.hero.mediaNeed`.
+
+## 2026-08-05 — Hero chỉ nhắc "AI" đúng một lần
+**Bối cảnh:** Bản cũ có "AI" ba lần trong ba dòng (eyebrow, tiêu đề, lead) cùng
+với "full-stack", "năng lực vận hành", "hệ thống AI kiểm soát được".
+**Chọn:** "AI" chỉ xuất hiện trong tiêu đề. Eyebrow nói phạm vi bằng chữ thường
+("Từ quy trình đến hạ tầng"), lead nói cách bắt đầu, không nhắc công nghệ.
+Tiêu đề mới: "AI làm phần việc lặp lại, người giữ quyết định".
+**Vì:** Nhắc lại một từ khoá ba lần biến khẳng định thành khẩu hiệu. Tiêu đề
+mới đồng thời trả lời nỗi lo lớn nhất của người mua Enterprise — mất quyền
+kiểm soát — đúng ràng buộc blueprint về "doanh nghiệp tự hành".
+**Đã cân nhắc và bỏ:** dải ba bằng chứng ghim đáy hero (proof1–3) — người dùng
+đánh giá là không rõ ràng, đã xoá khỏi `messages/vi.json`.
+**Đổi lại thì phải sửa:** khối `home.hero` trong `messages/vi.json`.
+
+## 2026-08-05 — Gradient highlight cho từ khoá, dẫn xuất từ brand ramp
+**Bối cảnh:** Cần "AI" nổi lên như một hook thị giác trong câu chữ thường.
+**Chọn:** Ba token gradient + hai lớp quầng (`--highlight-*`) khai ở LỚP 2,
+`.tone-dark` remap. Utility `pv-highlight` dùng `background-clip: text`.
+Component `<Highlight>` gắn sẵn vào `SectionHeader`, `Card`, `StatementList`
+và hero.
+**Vì:** Gắn vào block dùng chung thay vì sửa từng trang — trang mới ghép từ
+block là tự có. Gradient dẫn xuất từ `--pv-brand-*` nên khi chốt brand kit chỉ
+sửa LỚP 1.
+**Đã cân nhắc và bỏ:** đánh dấu thủ công bằng rich text `<ai>` trong
+`messages/vi.json` (phải sửa 45 chuỗi và mọi call site sang `t.rich`); tô cả
+chữ nhỏ và chip (chữ phát sáng ở 11px là nhiễu).
+**Giới hạn đã biết:** `background-clip: text` cần `color: transparent`, nên
+chế độ forced-colors phải có nhánh trả chữ về `currentColor` — đã có trong
+utility.
+**Bẫy đã gặp:** `<Highlight>` bản đầu chỉ xử lý chuỗi trần nên bỏ sót tiêu đề
+thẻ của `IndexGrid` — chỗ đó truyền `title` là element `<a>`. Đã cho đệ quy
+vào cả element, có chốt chặn `children == null` để `cloneElement` không xoá
+ruột thẻ rỗng như `<br />`.
+**Đổi lại thì phải sửa:** khối `--highlight-*` trong `globals.css`, biểu thức
+nhận diện từ khoá trong `highlight.tsx`.

@@ -19,14 +19,14 @@
   },
 
   "cta": {
-    "assessment": "Đánh giá cơ hội ứng dụng AI",
-    "process": "Trao đổi một quy trình cụ thể",
-    "architecture": "Trao đổi về kiến trúc AI",
-    "usecase": "Trao đổi bài toán này",
-    "poc": "Xác định phạm vi PoC",
+    "assessment": "Đặt buổi đánh giá",
+    "process": "Trao đổi quy trình",
+    "architecture": "Trao đổi kiến trúc",
+    "usecase": "Trao đổi bài toán",
+    "poc": "Khoanh phạm vi PoC",
     "contact": "Liên hệ",
-    "deliver": "Xem cách chúng tôi triển khai",
-    "technology": "Xem năng lực công nghệ",
+    "deliver": "Cách triển khai",
+    "technology": "Năng lực công nghệ",
     "more": "Xem chi tiết"
   },
 
@@ -57,13 +57,11 @@
     },
 
     "hero": {
-      "eyebrow": "Full-stack AI cho doanh nghiệp",
-      "title": "Biến AI thành năng lực vận hành của doanh nghiệp",
-      "lead": "Bắt đầu từ một bài toán đủ nhỏ để đo được, rồi mở rộng thành hệ thống AI kiểm soát được.",
-      "proof1": "Xuyên suốt từ quy trình đến hạ tầng",
-      "proof2": "Đội ngũ Việt Nam và Hàn Quốc",
-      "proof3": "Cloud, hybrid hoặc hạ tầng riêng",
-      "scrollHint": "Cuộn để xem"
+      "eyebrow": "Từ quy trình đến hạ tầng",
+      "title": "AI làm phần việc lặp lại, người giữ quyết định",
+      "lead": "Bắt đầu từ một quy trình có thật, đo được kết quả, rồi mở rộng.",
+      "mediaGap": "Cần ảnh nền hero",
+      "mediaNeed": "Ảnh nền toàn khung cho first view, khổ ngang tối thiểu 2560px, vùng giữa đủ tối và ít chi tiết để chữ đè lên vẫn đọc được. Gợi ý: người thật đang làm việc với hệ thống trong môi trường doanh nghiệp hoặc phòng lab. Không dùng robot, não phát sáng, tay chạm màn hình hay ảnh stock bắt tay."
     },
 
     "problem": {
@@ -541,6 +539,8 @@
       "problem": "Quy trình đang gặp vấn đề",
       "problemHint": "Một đoạn ngắn cũng đủ. Ví dụ: mỗi tháng mất hai ngày để đối chiếu chứng từ giữa hai hệ thống.",
       "timeline": "Thời điểm dự kiến bắt đầu",
+      "back": "Quay lại",
+      "next": "Tiếp tục",
       "submit": "Gửi thông tin",
       "privacy": "Thông tin của bạn chỉ dùng để liên hệ về nội dung này.",
       "sensitiveNote": "Vui lòng không gửi dữ liệu nhạy cảm hoặc tài liệu nội bộ qua biểu mẫu này.",

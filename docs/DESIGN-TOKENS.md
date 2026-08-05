@@ -33,6 +33,65 @@ dùng token** — nhờ vậy `.tone-dark` mới có tác dụng.
 
 Không tự viết `bg-slate-900 text-white` cho một section.
 
+## Control — nút, input, select
+
+Control có bo góc và đổ bóng **riêng**, không dùng chung với thẻ và ảnh.
+
+| Token | Giá trị | Dùng ở |
+|---|---|---|
+| `--radius-control` | 6px → `rounded-control` | button, input, select trigger, chip |
+| `--shadow-control` | gần như không thấy | variant có bề mặt, trạng thái nghỉ |
+| `--shadow-control-hover` | nhấc nhẹ | cùng variant, trạng thái hover |
+
+`--radius` (10px) vẫn dành cho thẻ, ảnh, `BeforeAfter`. Chỉnh nút không được
+kéo theo thẻ.
+
+Đổ bóng là **ngoại lệ có ranh giới**: hệ này dùng viền tóc cho khối lớn, bóng
+chỉ để nút đọc ra là bấm được. `ghost` và `link` không có bóng. Trên `.tone-dark`
+token tự đổi sang vạch sáng inset ở cạnh trên — component không phải đụng.
+
+Thang cao: `sm` 36px · `default` 40px · `lg` 44px. `lg` cho hero và dải CTA,
+`sm` cho header, `default` cho mọi chỗ còn lại.
+
+## Highlight — làm nổi từ khoá trong câu
+
+Từ khoá được tô bằng gradient brand kèm hai lớp quầng sáng, đọc như chữ phát
+sáng. Hiện chỉ áp cho **"AI"**, viết hoa và đứng thành từ riêng.
+
+| Token | Vai trò |
+|---|---|
+| `--highlight-from/via/to` | ba chặng gradient, dẫn xuất từ `--pv-brand-*` |
+| `--highlight-glow` | màu lớp quầng rộng |
+| `--highlight-halo-opacity` · `--highlight-halo-blur` | quầng rộng — ánh toả ra nền |
+| `--highlight-rim-opacity` · `--highlight-rim-blur` | quầng sát viền — giữ nét chữ |
+
+Nền sáng dùng ramp đậm (`brand-600→700`) và quầng gần như tắt; `.tone-dark`
+đảo sang ramp sáng có lõi gần trắng và quầng mạnh. Đổi brand kit ở LỚP 1 thì
+gradient tự đổi theo, không đụng component.
+
+Dùng qua `<Highlight>` (`src/components/pv/highlight.tsx`), đã gắn sẵn vào
+`SectionHeader` (title + lead), `Card` (title + body), `StatementList` và hero.
+Trang mới ghép từ những block đó thì không phải làm gì thêm.
+
+Không áp cho eyebrow mono, chip `PillRow`, nhãn nút và chữ nhỏ — chữ phát sáng
+ở cỡ 11px là nhiễu, không phải điểm nhấn.
+
+Nhận diện từ khoá phân biệt hoa thường và có biên từ: bắt "AI", không bắt đại
+từ "ai", cũng không bắt đuôi của HAI / MAI / OpenAI.
+
+## Nhãn nút
+
+Trần **20 ký tự**. Nút hẹp nhất là nút trong header — nhãn phải vừa chỗ đó.
+
+Nút dẫn sang trang khác luôn dùng `<CtaButton>`; mũi tên của nó đã là động từ
+"đi tới", nên nhãn **bỏ** "Xem", "Tìm hiểu thêm", "Khám phá".
+
+> ❌ "Xem cách chúng tôi triển khai" → ✅ "Cách triển khai"
+> ❌ "Đánh giá cơ hội ứng dụng AI" → ✅ "Đặt buổi đánh giá"
+
+Nút phụ đặt `arrow={false}` — hai mũi tên cạnh nhau thành hai lời mời ngang
+hàng, trái §23.
+
 ## Chuyển động
 
 | Token | Dùng cho |

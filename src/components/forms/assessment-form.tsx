@@ -103,12 +103,10 @@ export function AssessmentForm() {
       <div className="mt-6 flex gap-3">
         {step === 2 ? (
           <Button type="button" variant="ghost" onClick={() => setStep(1)}>
-            Quay lại
+            {t("back")}
           </Button>
         ) : null}
-        <Button type="submit">
-          {step === 1 ? "Tiếp tục" : t("submit")}
-        </Button>
+        <Button type="submit">{step === 1 ? t("next") : t("submit")}</Button>
       </div>
     </form>
   );

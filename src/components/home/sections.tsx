@@ -1,4 +1,3 @@
-import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { MediaFrame } from "@/components/motion/media-frame";
 import { Reveal } from "@/components/motion/reveal";
@@ -10,10 +9,9 @@ import {
   StatementList,
   StepRail,
 } from "@/components/pv/blocks";
+import { CtaButton } from "@/components/pv/cta-button";
 import { Gap } from "@/components/pv/gap";
 import { Section, SectionHeader } from "@/components/pv/section";
-import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
 
 /**
  * Các section của trang chủ, đúng thứ tự §9 blueprint.
@@ -86,12 +84,9 @@ export async function StartHere() {
             <Gap kind="confirm">{t("priorityGap")}</Gap>
           </Reveal>
           <Reveal className="mt-8">
-            <Button asChild variant="outline" className="group">
-              <Link href="/use-cases">
-                {tc("more")}
-                <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-            </Button>
+            <CtaButton href="/use-cases" variant="outline">
+              {tc("more")}
+            </CtaButton>
           </Reveal>
         </div>
 
@@ -165,12 +160,9 @@ export async function Deliver() {
           lead={t("lead")}
         >
           <Reveal className="mt-4">
-            <Button asChild variant="outline" className="group">
-              <Link href="/how-we-deliver">
-                {tc("deliver")}
-                <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-            </Button>
+            <CtaButton href="/how-we-deliver" variant="outline">
+              {tc("deliver")}
+            </CtaButton>
           </Reveal>
         </SectionHeader>
 
@@ -198,12 +190,9 @@ export async function Enterprise() {
         items={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => t(`e${n}`))}
       />
       <Reveal className="mt-10">
-        <Button asChild variant="outline" className="group">
-          <Link href="/how-we-deliver/governance">
-            {tc("more")}
-            <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
-        </Button>
+        <CtaButton href="/how-we-deliver/governance" variant="outline">
+          {tc("more")}
+        </CtaButton>
       </Reveal>
     </Section>
   );
@@ -228,12 +217,9 @@ export async function FullStack() {
             items={[1, 2, 3, 4].map((n) => t(`b${n}`))}
           />
           <Reveal className="mt-8">
-            <Button asChild variant="outline" className="group">
-              <Link href="/technology">
-                {tc("technology")}
-                <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-            </Button>
+            <CtaButton href="/technology" variant="outline">
+              {tc("technology")}
+            </CtaButton>
           </Reveal>
         </div>
 

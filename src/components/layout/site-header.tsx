@@ -5,6 +5,7 @@ import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
+import { CtaButton } from "@/components/pv/cta-button";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -75,15 +76,20 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           <LocaleSwitcher />
 
-          <Button asChild size="sm" className="hidden md:inline-flex">
-            <Link href="/ai-assessment">{tc("assessment")}</Link>
-          </Button>
+          <CtaButton
+            href="/ai-assessment"
+            size="sm"
+            arrow={false}
+            className="hidden md:inline-flex"
+          >
+            {tc("assessment")}
+          </CtaButton>
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon-sm"
                 className="lg:hidden"
                 aria-label={t("openMenu")}
               >
@@ -109,11 +115,13 @@ export function SiteHeader() {
                 ))}
               </nav>
               <div className="mt-4 px-4">
-                <Button asChild className="w-full">
-                  <Link href="/ai-assessment" onClick={() => setOpen(false)}>
-                    {tc("assessment")}
-                  </Link>
-                </Button>
+                <CtaButton
+                  href="/ai-assessment"
+                  onClick={() => setOpen(false)}
+                  className="w-full"
+                >
+                  {tc("assessment")}
+                </CtaButton>
               </div>
             </SheetContent>
           </Sheet>

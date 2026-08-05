@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { Highlight } from "@/components/pv/highlight";
 import { cn } from "@/lib/utils";
 
 /**
@@ -67,10 +68,12 @@ export function Card({
           {String(index).padStart(2, "0")}
         </span>
       ) : null}
-      <h3 className="font-display text-lg leading-snug font-medium">{title}</h3>
+      <h3 className="font-display text-lg leading-snug font-medium">
+        <Highlight>{title}</Highlight>
+      </h3>
       {children ? (
         <p className="text-sm leading-relaxed text-muted-foreground">
-          {children}
+          <Highlight>{children}</Highlight>
         </p>
       ) : null}
     </RevealItem>
@@ -96,7 +99,9 @@ export function StatementList({
           className="flex items-start gap-4 border-b py-4 last:border-b-0"
         >
           <span className="mt-2 size-1.5 shrink-0 rounded-full bg-brand" />
-          <span className="text-base leading-relaxed">{item}</span>
+          <span className="text-base leading-relaxed">
+            <Highlight>{item}</Highlight>
+          </span>
         </RevealItem>
       ))}
     </RevealGroup>
@@ -119,7 +124,7 @@ export function PillRow({
       {items.map((item, i) => (
         <RevealItem
           key={i}
-          className="rounded-full border px-4 py-2 text-sm transition-colors duration-300 hover:border-brand hover:text-brand"
+          className="rounded-control border px-3.5 py-2 text-sm transition-colors duration-(--dur-fast) hover:border-brand hover:text-brand"
         >
           {item}
         </RevealItem>

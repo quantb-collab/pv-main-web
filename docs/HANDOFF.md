@@ -36,7 +36,7 @@ registry — trái với luật "registry là nguồn sự thật" của chính 
    dùng) — cho khách thấy 6 và 7 trang con
 4. Viết nội dung đầy đủ cho một solution page mẫu để kiểm chứng
    `SolutionTemplate` — đề xuất `enterprise-knowledge`
-5. Chốt commit đầu tiên cho toàn bộ phần việc này
+5. Xử lý quyền GitHub rồi `git push -u origin main` (xem Trạng thái kỹ thuật)
 
 ## Đang chờ quyết định
 
@@ -66,7 +66,12 @@ registry — trái với luật "registry là nguồn sự thật" của chính 
 
 ## Trạng thái kỹ thuật
 
-- Lệnh kiểm tra cuối: `pnpm verify` — sạch, 104 trang, không khoá nào thiếu
-- Commit cuối: `d6b4b37` — mới là commit khởi tạo của create-next-app
-- Việc chưa commit: **có, toàn bộ** (20 mục trong `git status`). Cần chốt commit
-  đầu tiên trước khi sang phiên mới.
+- Lệnh kiểm tra cuối: `pnpm verify` — sạch (104 trang, 39 file, không lỗi)
+- Commit cuối: `5970f8e` — `feat: scaffold Pebble Vina site with vi/en/ko and
+  page registry`, 96 file
+- Việc chưa commit: không
+- Remote: `origin` → `https://github.com/quantb-collab/pv-main-web.git`
+- **Chưa push được.** Git trên máy xác thực bằng `quantruong-2518`, repo đích
+  thuộc `quantb-collab` → HTTP 403. Credential nằm ở macOS Keychain, chưa cài
+  `gh`. Cần cấp quyền ghi cho `quantruong-2518` hoặc đổi sang tài khoản có
+  quyền, rồi chạy `git push -u origin main`.

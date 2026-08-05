@@ -1,9 +1,7 @@
-import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { CtaButton } from "@/components/pv/cta-button";
 import { Section, SectionHeader } from "@/components/pv/section";
-import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
 import type { Cta } from "@/content/registry";
 
 /**
@@ -47,12 +45,9 @@ export async function CtaBand({
           lead={lead ?? tf("lead")}
         >
           <Reveal className="mt-4">
-            <Button asChild size="lg" className="group">
-              <Link href={HREF[cta]}>
-                {t(cta === "none" ? "contact" : cta)}
-                <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-            </Button>
+            <CtaButton href={HREF[cta]} size="lg">
+              {t(cta === "none" ? "contact" : cta)}
+            </CtaButton>
           </Reveal>
         </SectionHeader>
 

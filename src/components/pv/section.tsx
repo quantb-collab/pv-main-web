@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Reveal } from "@/components/motion/reveal";
+import { Highlight } from "@/components/pv/highlight";
 import { cn } from "@/lib/utils";
 
 /**
@@ -104,11 +105,13 @@ export function SectionHeader({
         </span>
       ) : null}
 
-      <Tag className={cn("font-semibold leading-[1.08]", size)}>{title}</Tag>
+      <Tag className={cn("font-semibold leading-[1.08]", size)}>
+        <Highlight>{title}</Highlight>
+      </Tag>
 
       {lead ? (
         <p className="text-lg leading-relaxed text-muted-foreground text-pretty">
-          {lead}
+          <Highlight>{lead}</Highlight>
         </p>
       ) : null}
 
