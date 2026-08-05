@@ -59,20 +59,22 @@ export function Card({
   return (
     <RevealItem
       className={cn(
-        "group relative flex flex-col gap-2.5 bg-background p-6 transition-colors duration-300 hover:bg-surface lg:p-8",
+        "group relative flex flex-col gap-3 bg-background p-6 transition-colors duration-300 hover:bg-surface lg:p-8",
         className,
       )}
     >
       {index !== undefined ? (
-        <span className="font-mono text-[11px] text-subtle-foreground tabular-nums">
+        <span className="font-mono text-micro font-medium text-subtle-foreground tabular-nums">
           {String(index).padStart(2, "0")}
         </span>
       ) : null}
-      <h3 className="font-display text-lg leading-snug font-medium">
+      <h3 className="font-display text-title font-semibold">
         <Highlight>{title}</Highlight>
       </h3>
+      {/* body-sm chứ không phải body: thẻ nằm trong lưới 3–4 cột, ở cỡ thân
+          bài đầy đủ mỗi dòng chỉ còn khoảng 30 ký tự và đọc thành ngắt quãng. */}
       {children ? (
-        <p className="text-sm leading-relaxed text-muted-foreground">
+        <p className="text-body-sm text-muted-foreground">
           <Highlight>{children}</Highlight>
         </p>
       ) : null}
@@ -98,8 +100,10 @@ export function StatementList({
           key={i}
           className="flex items-start gap-4 border-b py-4 last:border-b-0"
         >
-          <span className="mt-2 size-1.5 shrink-0 rounded-full bg-brand" />
-          <span className="text-base leading-relaxed">
+          {/* Lề trên tính bằng em để chấm luôn nằm giữa dòng đầu, kể cả khi
+              cỡ thân bài co giãn theo khổ màn hình. */}
+          <span className="mt-[0.65em] size-1.5 shrink-0 rounded-full bg-brand" />
+          <span className="max-w-[68ch] text-body">
             <Highlight>{item}</Highlight>
           </span>
         </RevealItem>
@@ -124,7 +128,7 @@ export function PillRow({
       {items.map((item, i) => (
         <RevealItem
           key={i}
-          className="rounded-control border px-3.5 py-2 text-sm transition-colors duration-(--dur-fast) hover:border-brand hover:text-brand"
+          className="rounded-control border px-3.5 py-2 text-ui font-medium transition-colors duration-(--dur-fast) hover:border-brand hover:text-brand"
         >
           {item}
         </RevealItem>
@@ -161,15 +165,15 @@ export function StepRail({
       <ol className="flex flex-col">
         {steps.map((step, i) => (
           <RevealItem key={i} as="li" className="relative flex gap-5 pb-10 last:pb-0 md:gap-7">
-            <span className="relative z-10 mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full border bg-background font-mono text-xs tabular-nums md:size-10 md:text-sm">
+            <span className="relative z-10 mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full border bg-background font-mono text-micro font-medium tabular-nums md:size-10 md:text-ui">
               {i + 1}
             </span>
             <div className="flex flex-col gap-2 pt-1">
-              <h3 className="font-display text-lg leading-snug font-medium md:text-xl">
+              <h3 className="font-display text-title font-semibold">
                 {step.title}
               </h3>
               {step.body ? (
-                <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                <p className="max-w-[62ch] text-body text-muted-foreground">
                   {step.body}
                 </p>
               ) : null}
@@ -177,10 +181,10 @@ export function StepRail({
                 <dl className="mt-2 grid gap-x-8 gap-y-2 sm:grid-cols-2">
                   {step.meta.map((m) => (
                     <div key={m.label} className="flex flex-col gap-0.5">
-                      <dt className="font-mono text-[10px] tracking-[0.14em] text-subtle-foreground uppercase">
+                      <dt className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
                         {m.label}
                       </dt>
-                      <dd className="text-sm leading-relaxed text-muted-foreground">
+                      <dd className="text-body-sm text-muted-foreground">
                         {m.value}
                       </dd>
                     </div>
@@ -223,10 +227,10 @@ export function LayerStack({
             className="absolute inset-y-0 left-0 w-1 bg-brand"
             style={{ opacity: 1 - i * 0.15 }}
           />
-          <span className="font-mono text-[11px] text-subtle-foreground tabular-nums">
+          <span className="font-mono text-micro font-medium text-subtle-foreground tabular-nums">
             L{i + 1}
           </span>
-          <span className="font-display text-base font-medium">{layer}</span>
+          <span className="font-display text-title font-semibold">{layer}</span>
         </RevealItem>
       ))}
     </RevealGroup>
@@ -253,24 +257,24 @@ export function BeforeAfter({
   return (
     <div className={cn("grid gap-px overflow-hidden rounded-xl border bg-border md:grid-cols-2", className)}>
       <Reveal direction="right" className="bg-background p-6 lg:p-8">
-        <h3 className="font-mono text-[11px] tracking-[0.16em] text-subtle-foreground uppercase">
+        <h3 className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
           {beforeTitle}
         </h3>
         <ul className="mt-5 flex flex-col gap-3">
           {before.map((b, i) => (
-            <li key={i} className="text-sm leading-relaxed text-muted-foreground">
+            <li key={i} className="text-body text-muted-foreground">
               {b}
             </li>
           ))}
         </ul>
       </Reveal>
       <Reveal direction="left" className="bg-surface p-6 lg:p-8">
-        <h3 className="font-mono text-[11px] tracking-[0.16em] text-brand uppercase">
+        <h3 className="font-mono text-eyebrow font-medium text-brand uppercase">
           {afterTitle}
         </h3>
         <ul className="mt-5 flex flex-col gap-3">
           {after.map((a, i) => (
-            <li key={i} className="text-sm leading-relaxed">
+            <li key={i} className="text-body">
               {a}
             </li>
           ))}

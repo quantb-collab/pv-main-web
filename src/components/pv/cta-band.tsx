@@ -59,10 +59,10 @@ export async function CtaBand({
                 direction="left"
                 className="flex items-baseline gap-4 border-b py-4 last:border-b-0"
               >
-                <span className="font-mono text-[11px] text-subtle-foreground tabular-nums">
+                <span className="font-mono text-micro font-medium text-subtle-foreground tabular-nums">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="text-base leading-relaxed">{item}</span>
+                <span className="text-body">{item}</span>
               </RevealItem>
             ))}
           </RevealGroup>

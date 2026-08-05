@@ -115,11 +115,11 @@ function MediaPending({ need }: { need?: string }) {
             "repeating-linear-gradient(45deg, var(--border) 0 1px, transparent 1px 12px)",
         }}
       />
-      <span className="relative rounded-full border border-warning/40 bg-warning/10 px-2.5 py-0.5 font-mono text-[10px] tracking-widest text-warning uppercase">
+      <span className="relative rounded-full border border-warning/40 bg-warning/10 px-2.5 py-0.5 font-mono text-micro font-medium text-warning uppercase">
         Cần bổ sung ảnh
       </span>
       {need ? (
-        <p className="relative max-w-[28ch] text-xs leading-relaxed text-muted-foreground">
+        <p className="relative max-w-[34ch] text-meta text-muted-foreground">
           {need}
         </p>
       ) : null}

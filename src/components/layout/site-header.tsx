@@ -55,18 +55,21 @@ export function SiteHeader() {
       <div className="pv-container flex h-16 items-center justify-between gap-6 lg:h-20">
         <Link
           href="/"
-          className="font-display text-sm font-semibold tracking-[0.16em] uppercase"
+          className="font-display text-ui font-semibold tracking-brand uppercase"
         >
           {/* Chờ file logo chính thức — hiện dùng chữ. */}
           Pebble Vina
         </Link>
 
+        {/* Nav weight 500 chứ không 400: ở 14px trên nền mờ, chữ 400 tụt hẳn
+            xuống hàng phụ. Bù lại phải siết px-3 → px-2.5, vì sáu mục tiếng
+            Việt cộng wordmark, chuyển ngữ và CTA đã sát mép ở đúng 1024px. */}
         <nav className="hidden items-center gap-1 lg:flex">
           {NAV.map((item) => (
             <Link
               key={item.key}
               href={item.href}
-              className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="rounded-md px-2.5 py-2 text-ui font-medium whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground"
             >
               {t(item.key)}
             </Link>
@@ -98,7 +101,7 @@ export function SiteHeader() {
             </SheetTrigger>
             <SheetContent side="right" className="w-full sm:max-w-sm">
               <SheetHeader>
-                <SheetTitle className="text-left font-display tracking-[0.16em] uppercase">
+                <SheetTitle className="text-left font-display text-ui font-semibold tracking-brand uppercase">
                   Pebble Vina
                 </SheetTitle>
               </SheetHeader>
@@ -108,7 +111,7 @@ export function SiteHeader() {
                     key={item.key}
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="border-b py-3 text-base"
+                    className="border-b py-3 text-body font-medium"
                   >
                     {t(item.key)}
                   </Link>

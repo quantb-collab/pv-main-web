@@ -58,7 +58,7 @@ export default async function AiAssessmentPage({
                 className="mt-5"
                 items={[1, 2, 3, 4].map((n) => t(`prepare.p${n}`))}
               />
-              <p className="mt-4 text-sm text-muted-foreground">
+              <p className="mt-4 text-body-sm text-muted-foreground">
                 {t("prepare.note")}
               </p>
             </div>
@@ -72,10 +72,10 @@ export default async function AiAssessmentPage({
           </div>
 
           <Reveal direction="left" className="lg:sticky lg:top-28 lg:self-start">
-            <h2 className="font-display text-2xl font-medium">
+            <h2 className="font-display text-subhead font-semibold">
               {t("form.title")}
             </h2>
-            <p className="mt-2 mb-6 text-sm text-muted-foreground">
+            <p className="mt-3 mb-6 text-body-sm text-muted-foreground">
               {t("form.lead")}
             </p>
             <AssessmentForm />

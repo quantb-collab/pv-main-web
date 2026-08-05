@@ -56,23 +56,24 @@ export function Hero() {
           >
             <motion.span
               variants={item}
-              className="font-mono text-[11px] tracking-[0.2em] text-brand uppercase"
+              className="font-mono text-eyebrow font-medium text-brand uppercase"
             >
               {t("eyebrow")}
             </motion.span>
 
             {/* 25ch keeps the headline at two lines down to lg; below that it
-                wraps naturally rather than being capped into short ragged lines. */}
+                wraps naturally rather than being capped into short ragged lines.
+                Size, leading and tracking all ride on the `display` role. */}
             <motion.h1
               variants={item}
-              className="max-w-[25ch] font-display text-4xl leading-[1.06] font-semibold text-balance sm:text-5xl lg:text-6xl xl:text-[4.25rem]"
+              className="max-w-[25ch] font-display text-display font-semibold text-balance"
             >
               <Highlight>{t("title")}</Highlight>
             </motion.h1>
 
             <motion.p
               variants={item}
-              className="max-w-2xl text-lg leading-relaxed text-muted-foreground text-balance"
+              className="max-w-[52ch] text-lead text-muted-foreground text-balance"
             >
               <Highlight>{t("lead")}</Highlight>
             </motion.p>

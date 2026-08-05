@@ -42,9 +42,14 @@ Bảng theo dõi tiến độ nội bộ: `/track`
 footer, sitemap và bảng `/track`. Thêm trang = thêm entry ở đó trước.
 
 **2. Chỉ dùng token.**
-Không hardcode màu, easing, thời lượng, khoảng cách section trong component.
-Màu và nhịp lấy từ `src/app/globals.css`; easing/duration cho JS lấy từ
-`src/lib/motion.ts`. Hai file này phải khớp nhau.
+Không hardcode màu, cỡ chữ, easing, thời lượng, khoảng cách section trong
+component. Màu, thang chữ và nhịp lấy từ `src/app/globals.css`; easing/duration
+cho JS lấy từ `src/lib/motion.ts`. Hai file này phải khớp nhau.
+
+Chữ gọi theo vai trò (`text-body`, `text-title`, `text-eyebrow`…), không gọi
+theo cỡ (`text-sm`, `text-lg`, `text-[11px]`). Mỗi vai trò đã mang sẵn cỡ,
+line-height và tracking, nên không viết thêm `leading-*` hay `tracking-*`.
+Bảng vai trò: `docs/DESIGN-TOKENS.md` mục *Thang chữ*.
 
 **3. Ghép từ block có sẵn.**
 `src/components/pv/blocks.tsx` và `section.tsx` là bộ dựng trang. Cần biến thể

@@ -56,7 +56,7 @@ export default async function AboutPage({
       <Section tone="surface">
         <div className="grid gap-10 md:grid-cols-2 lg:gap-16">
           <Reveal className="rounded-xl border bg-background p-6 lg:p-8">
-            <h3 className="font-display text-xl font-medium">
+            <h3 className="font-display text-title font-semibold">
               {t("vietnam.title")}
             </h3>
             <div className="mt-4">
@@ -68,7 +68,7 @@ export default async function AboutPage({
           </Reveal>
 
           <Reveal delay={0.06} className="rounded-xl border bg-background p-6 lg:p-8">
-            <h3 className="font-display text-xl font-medium">
+            <h3 className="font-display text-title font-semibold">
               {t("korea.title")}
             </h3>
             <div className="mt-4">

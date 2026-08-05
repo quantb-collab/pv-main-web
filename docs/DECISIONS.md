@@ -189,3 +189,35 @@ vào cả element, có chốt chặn `children == null` để `cloneElement` kh�
 ruột thẻ rỗng như `<br />`.
 **Đổi lại thì phải sửa:** khối `--highlight-*` trong `globals.css`, biểu thức
 nhận diện từ khoá trong `highlight.tsx`.
+
+## 2026-08-05 — Thang chữ theo vai trò, thay cho thang Tailwind mặc định
+**Bối cảnh:** Thân bài đang chạy `text-sm` 14px ở thẻ, bước quy trình và footer,
+nhỏ hơn chuẩn đọc của trang B2B. Cỡ chữ nằm rải rác trong 102 chỗ dưới dạng
+`text-lg`, `text-[11px]`, `text-[2.75rem]` — không token nào cai quản, nên hai
+component cùng vai trò lại ra hai cỡ khác nhau. Weight cũng phẳng: tiêu đề 600,
+tiêu đề thẻ 500, eyebrow 400 nhìn mảnh và chìm.
+**Chọn:** Mười một vai trò khai ở LỚP 3 (`--pv-text-*` + `--pv-leading-*` +
+`--pv-tracking-*`), đăng ký ở LỚP 4 nên mỗi utility mang sẵn cả ba thuộc tính:
+`text-display` `text-headline` `text-subhead` `text-title` `text-lead`
+`text-body` `text-body-sm` `text-ui` `text-meta` `text-micro` `text-eyebrow`.
+Cỡ dùng `clamp()` co giãn giữa 375px và 1440px. Weight rút còn ba nấc 600/500/400.
+`body` nhận `text-body` làm mặc định.
+**Vì:** Vai trò thì gọi tên được ở chỗ dùng và sửa được ở một chỗ; cỡ thì không.
+`clamp` bỏ hẳn các bậc `sm:` `lg:` `xl:` vốn phải nhớ đồng bộ ở từng component.
+Ba con số cụ thể đã cân trong token: thân bài 16→17.5px; line-height không dưới
+1.35 cho chữ chạy vì tiếng Việt chồng hai tầng dấu (ữ, ế, ộ) nên dấu chạm nhau
+trước khi chữ chạm nhau; tracking đi ngược cỡ chữ nên `globals.css` bỏ luôn
+`tracking-tight` áp chung cho h1–h3 — nó ép h3 24px nhận cùng độ siết với h1 72px.
+**Đã cân nhắc và bỏ:** chỉnh lại giá trị của chính thang Tailwind (`--text-sm`,
+`--text-base`…) — làm vậy thì `src/components/ui/` do shadcn sinh ra cũng đổi
+theo, và lần `shadcn add` sau sẽ lệch; đặt `--text-*--font-weight` để utility
+mang luôn weight — cùng lớp `utilities` nên `font-normal` viết sau không chắc
+đè được, weight vì thế vẫn khai tay ở component.
+**Ràng buộc kéo theo:** phần ưu tiên của `clamp` phải luôn có thành phần `rem`
+(`1.8rem + 3vw`), không được dùng `vw` trần — `vw` trần thì phóng to chữ của
+trình duyệt không ăn, vi phạm WCAG 1.4.4. Nav header phải siết `px-3` → `px-2.5`
+để bù phần weight 500 làm chữ rộng ra: sáu mục tiếng Việt cộng wordmark, chuyển
+ngữ và CTA đã sát mép ở đúng 1024px. Bỏ weight 300 khỏi `next/font` vì không chỗ
+nào dùng — font này không phải variable font nên mỗi nấc là một file tải riêng.
+**Đổi lại thì phải sửa:** khối thang chữ trong LỚP 3 và phần đăng ký ở LỚP 4 của
+`globals.css`. Component không phải đụng.

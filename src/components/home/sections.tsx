@@ -117,9 +117,7 @@ export async function Maturity() {
           direction="left"
           className="self-start rounded-xl border bg-surface p-6 lg:sticky lg:top-28 lg:p-8"
         >
-          <p className="text-base leading-relaxed text-pretty">
-            {t("humanNote")}
-          </p>
+          <p className="text-body text-pretty">{t("humanNote")}</p>
         </Reveal>
       </div>
     </Section>

@@ -9,7 +9,7 @@ Nguồn: `src/app/globals.css` (CSS) và `src/lib/motion.ts` (JS).
 |---|---|---|
 | 1 | Brand ramp `--pv-brand-*`, `--pv-ink-*`, `--pv-signal-*` | Khi chốt brand kit. Sửa **chỉ ở đây**. |
 | 2 | Semantic token: `--background`, `--foreground`, `--surface`, `--primary`, `--brand`… | Khi đổi cách dùng màu, không phải khi đổi màu |
-| 3 | Motion & layout: `--ease-*`, `--dur-*`, `--section-y`, `--container-max` | Khi đổi nhịp toàn site |
+| 3 | Motion, layout & chữ: `--ease-*`, `--dur-*`, `--section-y`, `--container-max`, `--pv-text-*` | Khi đổi nhịp hoặc thang chữ toàn site |
 | 4 | Đăng ký với Tailwind (`@theme inline`) | Khi thêm token mới cần utility |
 | 5 | Utility dùng chung: `pv-container`, `pv-section`, `pv-grid-bg`… | Khi thêm mẫu bố cục dùng lại nhiều nơi |
 
@@ -22,6 +22,47 @@ Ba nấc nền: `bg-background` → `bg-surface` → `bg-surface-2`
 Ba nấc chữ: `text-foreground` → `text-muted-foreground` → `text-subtle-foreground`
 
 Dùng đúng nấc, đừng pha `opacity` để làm chữ nhạt hơn.
+
+## Thang chữ
+
+Chọn theo **vai trò của chữ**, không theo cỡ. Không dùng `text-sm`, `text-lg`,
+`text-[11px]` cho nội dung nữa — thang Tailwind mặc định chỉ còn dành cho
+`src/components/ui/`.
+
+| Vai trò | Cỡ (375 → 1440) | Weight | Dùng ở |
+|---|---|---|---|
+| `text-display` | 40 → 72 | 600 | h1, mỗi trang một cái |
+| `text-headline` | 32 → 52 | 600 | h2 mở section |
+| `text-subhead` | 24 → 34 | 600 | h3, tiêu đề khối trong section |
+| `text-title` | 19 → 21 | 600 | tiêu đề thẻ, bước, tầng |
+| `text-lead` | 18 → 21 | 400 | câu dẫn dưới tiêu đề |
+| `text-body` | 16 → 17.5 | 400 | thân bài |
+| `text-body-sm` | 15 | 400 | thân bài trong cột hẹp: thẻ lưới 3–4 cột, footer |
+| `text-ui` | 14 | 500 | nav, chip, nhãn control |
+| `text-meta` | 13 | 400 | chú thích, dòng pháp lý, ô bảng |
+| `text-micro` | 11 | 500 | số thứ tự mono, chip ô chờ |
+| `text-eyebrow` | 12 | 500 | eyebrow mono viết hoa |
+
+Mỗi utility mang sẵn **cỡ + line-height + tracking**. Viết `text-body` là đủ,
+không kèm `leading-relaxed` hay `tracking-tight` nữa. Cần khác thì `leading-*`
+và `tracking-*` vẫn đè lên được.
+
+Ba điều đã cân trong token:
+
+- **Co giãn mượt** bằng `clamp()` giữa 375px và 1440px, không nhảy bậc ở
+  breakpoint. Phần ưu tiên của clamp luôn có `rem` nên phóng to chữ của trình
+  duyệt vẫn ăn — dùng `vw` trần là vi phạm WCAG 1.4.4.
+- **line-height rộng** hơn mức quen thuộc vì tiếng Việt chồng hai tầng dấu
+  (ữ, ế, ộ): dòng sát nhau thì dấu chạm nhau trước khi chữ chạm nhau.
+- **tracking đi ngược cỡ chữ**: cỡ lớn siết âm, cỡ nhỏ nới dương. Vì vậy
+  `globals.css` không còn đặt `tracking-tight` chung cho h1–h3.
+
+Ba nấc weight, không hơn: **600** tiêu đề và wordmark · **500** eyebrow, nav,
+nhãn · **400** thân bài. Font brand không phải variable font, mỗi nấc là một
+file tải riêng.
+
+Độ dài dòng: câu dẫn `max-w-[58ch]`, thân bài `max-w-[68ch]`. Đừng để `max-w-3xl`
+tự quyết — ở cỡ chữ mới nó thành 85–90 ký tự một dòng, mắt mất đầu dòng kế tiếp.
 
 ## Nhịp sáng / tối
 

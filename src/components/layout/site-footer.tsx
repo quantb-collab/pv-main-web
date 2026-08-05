@@ -38,14 +38,14 @@ export async function SiteFooter() {
             đường đi, và điều kiện pháp lý. */}
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            <span className="font-display text-sm font-semibold tracking-[0.16em] uppercase">
+            <span className="font-display text-ui font-semibold tracking-brand uppercase">
               Pebble Vina
             </span>
 
-            <h2 className="mt-6 font-mono text-[11px] tracking-[0.18em] text-subtle-foreground uppercase">
+            <h2 className="mt-6 font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
               {t("office.label")}
             </h2>
-            <address className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground not-italic">
+            <address className="mt-4 max-w-xs text-body-sm text-muted-foreground not-italic">
               <span className="block text-foreground">{t("office.entity")}</span>
               <span className="mt-1 block whitespace-pre-line">
                 {t("office.address")}
@@ -68,7 +68,7 @@ export async function SiteFooter() {
                 </a>
               </span>
 
-              <span className="mt-4 block font-mono text-[11px] text-subtle-foreground">
+              <span className="mt-4 block font-mono text-micro text-subtle-foreground">
                 {t("office.taxId")}
               </span>
             </address>
@@ -99,7 +99,7 @@ export async function SiteFooter() {
           </FooterColumn>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t pt-6 text-xs text-subtle-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-4 border-t pt-6 text-meta text-subtle-foreground sm:flex-row sm:items-center sm:justify-between">
           <span>
             © {new Date().getFullYear()} {t("rights")}
           </span>
@@ -125,7 +125,7 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <h2 className="font-mono text-[11px] tracking-[0.18em] text-subtle-foreground uppercase">
+      <h2 className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
         {title}
       </h2>
       <ul className="mt-4 flex flex-col gap-2.5">{children}</ul>
@@ -144,7 +144,7 @@ function FooterLink({
     <li>
       <Link
         href={href}
-        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+        className="text-body-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         {children}
       </Link>

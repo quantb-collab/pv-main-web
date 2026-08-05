@@ -52,12 +52,12 @@ export function Gap({ kind = "confirm", children, className }: GapProps) {
     <div
       data-gap={kind}
       className={cn(
-        "rounded-lg border border-dashed p-4 text-sm leading-relaxed",
+        "rounded-lg border border-dashed p-4 text-body-sm",
         tone,
         className,
       )}
     >
-      <span className="mb-1.5 block font-mono text-[10px] tracking-widest uppercase opacity-80">
+      <span className="mb-1.5 block font-mono text-micro font-medium uppercase opacity-80">
         {label}
       </span>
       <span className="text-foreground/80">{children}</span>
@@ -72,7 +72,7 @@ export function GapChip({ kind = "confirm", children, className }: GapProps) {
     <span
       data-gap={kind}
       className={cn(
-        "inline-flex items-center rounded border border-dashed px-1.5 py-0.5 font-mono text-[11px] align-middle",
+        "inline-flex items-center rounded border border-dashed px-1.5 py-0.5 font-mono text-micro align-middle",
         tone,
         className,
       )}

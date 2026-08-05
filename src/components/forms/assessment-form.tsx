@@ -31,8 +31,10 @@ export function AssessmentForm() {
         transition={{ duration: DUR.slow, ease: EASE.out }}
         className="rounded-xl border bg-surface p-8"
       >
-        <h3 className="font-display text-xl font-medium">{t("successTitle")}</h3>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        <h3 className="font-display text-title font-semibold">
+          {t("successTitle")}
+        </h3>
+        <p className="mt-2 text-body-sm text-muted-foreground">
           {t("successBody")}
         </p>
       </motion.div>
@@ -53,7 +55,7 @@ export function AssessmentForm() {
       className="rounded-xl border p-6 lg:p-8"
     >
       <div className="mb-6 flex items-center gap-3">
-        <span className="font-mono text-[11px] tracking-[0.16em] text-subtle-foreground uppercase">
+        <span className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
           {step} / 2
         </span>
         <span className="h-px flex-1 bg-border" />
@@ -79,7 +81,7 @@ export function AssessmentForm() {
                   {t("problem")}
                 </Label>
                 <Textarea id="problem" name="problem" rows={4} required />
-                <p className="mt-2 text-xs text-subtle-foreground">
+                <p className="mt-2 text-meta text-subtle-foreground">
                   {t("problemHint")}
                 </p>
               </div>
@@ -96,7 +98,7 @@ export function AssessmentForm() {
         </motion.div>
       </AnimatePresence>
 
-      <p className="mt-6 text-xs leading-relaxed text-subtle-foreground">
+      <p className="mt-6 text-meta text-subtle-foreground">
         {t("sensitiveNote")} {t("privacy")}
       </p>
 

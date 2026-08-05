@@ -244,6 +244,76 @@
   --container-max: 1280px;
   --gutter: 1.25rem;
   --section-y: 5rem;
+
+  /* ---- THANG CHỮ ------------------------------------------------------
+     Mười một VAI TRÒ, không phải mười một cỡ. Chọn theo việc chữ đang làm
+     (`text-body`, `text-eyebrow`), không theo việc nó to bằng bao nhiêu
+     (`text-sm`, `text-[11px]`) — nhờ vậy chỉnh thang chỉ sửa ở đây.
+
+     Ba điều đã cân sẵn trong token, component không phải nhớ:
+
+     1. Cỡ co giãn mượt giữa 375px và 1440px bằng clamp, không nhảy bậc ở
+        breakpoint. Không viết `text-3xl sm:text-4xl lg:text-[2.75rem]` nữa.
+     2. line-height rộng hơn mức quen thuộc vì tiếng Việt chồng hai tầng dấu
+        (ữ, ế, ộ): dòng sát nhau thì dấu chạm nhau trước khi chữ chạm nhau.
+        Đây là lý do không có vai trò nào dưới 1.35 trừ chữ mono một dòng.
+     3. letter-spacing đi ngược cỡ chữ: cỡ lớn siết âm để không rời rạc, cỡ
+        nhỏ nới dương để không dính. Vì vậy KHÔNG áp `tracking-tight` chung
+        cho h1–h3 nữa — mỗi vai trò tự mang tracking của mình.
+     --------------------------------------------------------------------- */
+
+  /* Tiêu đề — font-display, weight 600 */
+  --pv-text-display: clamp(2.5rem, 1.8rem + 3vw, 4.5rem); /* 40 → 72 */
+  --pv-leading-display: 1.08;
+  --pv-tracking-display: -0.032em;
+
+  --pv-text-headline: clamp(2rem, 1.56rem + 1.88vw, 3.25rem); /* 32 → 52 */
+  --pv-leading-headline: 1.14;
+  --pv-tracking-headline: -0.022em;
+
+  --pv-text-subhead: clamp(1.5rem, 1.28rem + 0.94vw, 2.125rem); /* 24 → 34 */
+  --pv-leading-subhead: 1.22;
+  --pv-tracking-subhead: -0.015em;
+
+  --pv-text-title: clamp(1.1875rem, 1.144rem + 0.19vw, 1.3125rem); /* 19 → 21 */
+  --pv-leading-title: 1.35;
+  --pv-tracking-title: -0.008em;
+
+  /* Thân bài — weight 400 */
+  --pv-text-lead: clamp(1.125rem, 1.06rem + 0.28vw, 1.3125rem); /* 18 → 21 */
+  --pv-leading-lead: 1.55;
+  --pv-tracking-lead: -0.004em;
+
+  --pv-text-body: clamp(1rem, 0.967rem + 0.14vw, 1.09375rem); /* 16 → 17.5 */
+  --pv-leading-body: 1.65;
+  --pv-tracking-body: 0em;
+
+  /* Thân bài trong cột hẹp (thẻ trong lưới 3–4 cột, footer) */
+  --pv-text-body-sm: 0.9375rem; /* 15 */
+  --pv-leading-body-sm: 1.6;
+  --pv-tracking-body-sm: 0em;
+
+  /* Chữ của giao diện — nav, chip, nhãn control. weight 500, không co giãn:
+     phần tử điều khiển phải giữ nguyên kích thước ở mọi khổ màn hình. */
+  --pv-text-ui: 0.875rem; /* 14 */
+  --pv-leading-ui: 1.4;
+  --pv-tracking-ui: 0em;
+
+  --pv-text-meta: 0.8125rem; /* 13 — chú thích, dòng pháp lý, ô bảng */
+  --pv-leading-meta: 1.5;
+  --pv-tracking-meta: 0.005em;
+
+  --pv-text-micro: 0.6875rem; /* 11 — số thứ tự mono, chip ô chờ */
+  --pv-leading-micro: 1.35;
+  --pv-tracking-micro: 0.02em;
+
+  /* Eyebrow mono viết hoa. weight 500 — 400 ở cỡ này nhìn mảnh và chìm. */
+  --pv-text-eyebrow: 0.75rem; /* 12 */
+  --pv-leading-eyebrow: 1.4;
+  --pv-tracking-eyebrow: 0.16em;
+
+  /* Giãn chữ của wordmark. Dùng chung cho header, footer, mobile menu. */
+  --pv-tracking-brand: 0.16em;
 }
 
 @media (min-width: 768px) {
@@ -316,6 +386,54 @@
   --font-sans: var(--font-brand), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-brand), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Thang chữ theo vai trò. Mỗi utility mang sẵn cỡ + line-height + tracking,
+     nên `text-body` là đủ — không phải nhớ kèm `leading-*` hay `tracking-*`. */
+  --text-display: var(--pv-text-display);
+  --text-display--line-height: var(--pv-leading-display);
+  --text-display--letter-spacing: var(--pv-tracking-display);
+
+  --text-headline: var(--pv-text-headline);
+  --text-headline--line-height: var(--pv-leading-headline);
+  --text-headline--letter-spacing: var(--pv-tracking-headline);
+
+  --text-subhead: var(--pv-text-subhead);
+  --text-subhead--line-height: var(--pv-leading-subhead);
+  --text-subhead--letter-spacing: var(--pv-tracking-subhead);
+
+  --text-title: var(--pv-text-title);
+  --text-title--line-height: var(--pv-leading-title);
+  --text-title--letter-spacing: var(--pv-tracking-title);
+
+  --text-lead: var(--pv-text-lead);
+  --text-lead--line-height: var(--pv-leading-lead);
+  --text-lead--letter-spacing: var(--pv-tracking-lead);
+
+  --text-body: var(--pv-text-body);
+  --text-body--line-height: var(--pv-leading-body);
+  --text-body--letter-spacing: var(--pv-tracking-body);
+
+  --text-body-sm: var(--pv-text-body-sm);
+  --text-body-sm--line-height: var(--pv-leading-body-sm);
+  --text-body-sm--letter-spacing: var(--pv-tracking-body-sm);
+
+  --text-ui: var(--pv-text-ui);
+  --text-ui--line-height: var(--pv-leading-ui);
+  --text-ui--letter-spacing: var(--pv-tracking-ui);
+
+  --text-meta: var(--pv-text-meta);
+  --text-meta--line-height: var(--pv-leading-meta);
+  --text-meta--letter-spacing: var(--pv-tracking-meta);
+
+  --text-micro: var(--pv-text-micro);
+  --text-micro--line-height: var(--pv-leading-micro);
+  --text-micro--letter-spacing: var(--pv-tracking-micro);
+
+  --text-eyebrow: var(--pv-text-eyebrow);
+  --text-eyebrow--line-height: var(--pv-leading-eyebrow);
+  --text-eyebrow--letter-spacing: var(--pv-tracking-eyebrow);
+
+  --tracking-brand: var(--pv-tracking-brand);
 
   /* Indirection keeps the .tone-dark remap live at use sites */
   --radius-control: var(--radius-control);
@@ -452,10 +570,14 @@
     @apply font-sans;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* Font brand có nhiều nét; bật optical sizing để cỡ lớn không bị béo. */
+    font-optical-sizing: auto;
   }
 
+  /* Cỡ chữ mặc định của trang là vai trò "body". Mọi chữ không khai báo vai
+     trò khác sẽ rơi vào đây, thay vì rơi về 16px trần của trình duyệt. */
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground text-body;
   }
 
   /* Lenis điều khiển scroll → tắt smooth native để không xung đột */
@@ -470,11 +592,15 @@
     overflow: hidden;
   }
 
-  /* Tiêu đề: cân chữ, siết letter-spacing ở cỡ lớn */
+  /* Tiêu đề: cân chữ và giữ đúng một nấc weight cho mọi cấp.
+     KHÔNG đặt tracking ở đây — mỗi vai trò trong thang chữ tự mang tracking
+     riêng, siết dần theo cỡ. Đặt `tracking-tight` chung sẽ ép h3 24px nhận
+     cùng độ siết với h1 72px, và chữ nhỏ siết quá thì dính vào nhau. */
   h1,
   h2,
-  h3 {
-    @apply font-display tracking-tight;
+  h3,
+  h4 {
+    @apply font-display font-semibold;
     text-wrap: balance;
   }
 

@@ -20,11 +20,19 @@ import "../globals.css";
  * Be Vietnam Pro cùng họ geometric sans, hỗ trợ tiếng Việt đầy đủ.
  * Muốn đổi font: sửa DUY NHẤT khối này. Tên biến --font-brand giữ nguyên nên
  * globals.css và component không phải đụng tới.
+ *
+ * BA NẤC WEIGHT, không hơn. Font này không phải variable font — mỗi weight là
+ * một file tải riêng, nên thêm một nấc là thêm một request cho mọi người dùng.
+ *   600  tiêu đề mọi cấp, tiêu đề thẻ, wordmark
+ *   500  eyebrow, nav, nhãn nút, nhãn meta, số thứ tự
+ *   400  thân bài, câu dẫn, chú thích
+ * 700 chỉ để trình duyệt dùng cho <strong> trong nội dung, không gọi tay.
+ * 300 đã bỏ: không chỗ nào dùng, và chữ mảnh trên nền tối là chữ khó đọc.
  */
 const brandFont = Be_Vietnam_Pro({
   variable: "--font-brand",
   subsets: ["latin", "latin-ext", "vietnamese"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 

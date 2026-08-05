@@ -66,15 +66,19 @@ export default async function TrackPage({
               key={c.status}
               className={`rounded-lg border px-4 py-3 ${STATUS_TONE[c.status]}`}
             >
-              <div className="font-mono text-2xl tabular-nums">{c.count}</div>
-              <div className="mt-0.5 text-xs">
+              <div className="font-mono text-subhead font-semibold tabular-nums">
+                {c.count}
+              </div>
+              <div className="mt-0.5 text-meta">
                 {t(`statusLabel.${c.status}`)}
               </div>
             </div>
           ))}
           <div className="rounded-lg border border-warning/30 bg-warning/10 px-4 py-3 text-warning">
-            <div className="font-mono text-2xl tabular-nums">{gaps.length}</div>
-            <div className="mt-0.5 text-xs">{t("gaps")}</div>
+            <div className="font-mono text-subhead font-semibold tabular-nums">
+              {gaps.length}
+            </div>
+            <div className="mt-0.5 text-meta">{t("gaps")}</div>
           </div>
         </div>
       </Section>
@@ -96,11 +100,11 @@ export default async function TrackPage({
             >
               <Link
                 href={page.path}
-                className="shrink-0 font-mono text-xs text-brand sm:w-64"
+                className="shrink-0 font-mono text-meta text-brand sm:w-64"
               >
                 {page.path}
               </Link>
-              <span className="text-sm leading-relaxed">{gap}</span>
+              <span className="text-body-sm">{gap}</span>
             </li>
           ))}
         </ul>
@@ -120,27 +124,27 @@ function PhaseTable({
 }) {
   return (
     <div>
-      <h2 className="font-display text-xl font-medium">{title}</h2>
+      <h2 className="font-display text-title font-semibold">{title}</h2>
       <div className="mt-5 overflow-x-auto rounded-xl border">
-        <table className="w-full min-w-[56rem] text-left text-sm">
+        <table className="w-full min-w-[56rem] text-left text-body-sm">
           <thead className="border-b bg-surface">
-            <tr className="font-mono text-[10px] tracking-[0.14em] text-subtle-foreground uppercase">
-              <th className="p-3 font-normal">{t("pages")}</th>
-              <th className="p-3 font-normal">{t("status")}</th>
-              <th className="p-3 font-normal">{t("audience")}</th>
-              <th className="p-3 font-normal">{t("funnel")}</th>
-              <th className="p-3 font-normal">{t("cta")}</th>
-              <th className="p-3 font-normal">{t("gaps")}</th>
+            <tr className="font-mono text-micro text-subtle-foreground uppercase">
+              <th className="p-3 font-medium">{t("pages")}</th>
+              <th className="p-3 font-medium">{t("status")}</th>
+              <th className="p-3 font-medium">{t("audience")}</th>
+              <th className="p-3 font-medium">{t("funnel")}</th>
+              <th className="p-3 font-medium">{t("cta")}</th>
+              <th className="p-3 font-medium">{t("gaps")}</th>
             </tr>
           </thead>
           <tbody>
             {pages.map((p) => (
               <tr key={p.key} className="border-b last:border-b-0 align-top">
                 <td className="p-3">
-                  <Link href={p.path} className="font-mono text-xs text-brand">
+                  <Link href={p.path} className="font-mono text-meta text-brand">
                     {p.path}
                   </Link>
-                  <p className="mt-1 max-w-md text-xs leading-relaxed text-muted-foreground">
+                  <p className="mt-1 max-w-md text-meta text-muted-foreground">
                     {p.objective}
                   </p>
                 </td>
@@ -149,16 +153,16 @@ function PhaseTable({
                     {t(`statusLabel.${p.status}`)}
                   </Badge>
                 </td>
-                <td className="p-3 text-xs text-muted-foreground">
+                <td className="p-3 text-meta text-muted-foreground">
                   {t(`audienceLabel.${p.audiencePrimary}`)}
                 </td>
-                <td className="p-3 text-xs text-muted-foreground">
+                <td className="p-3 text-meta text-muted-foreground">
                   {t(`funnelLabel.${p.funnel}`)}
                 </td>
-                <td className="p-3 font-mono text-xs text-muted-foreground">
+                <td className="p-3 font-mono text-meta text-muted-foreground">
                   {p.cta}
                 </td>
-                <td className="p-3 font-mono text-xs tabular-nums">
+                <td className="p-3 font-mono text-meta tabular-nums">
                   {p.gaps.length > 0 ? (
                     <span className="text-warning">{p.gaps.length}</span>
                   ) : (

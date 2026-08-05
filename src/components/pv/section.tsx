@@ -84,33 +84,37 @@ export function SectionHeader({
   className,
   children,
 }: SectionHeaderProps) {
+  /* Một vai trò cho mỗi cấp tiêu đề. Cỡ, line-height và tracking đã nằm trong
+     token nên ở đây không còn bậc breakpoint nào để quên đồng bộ. */
   const size =
     Tag === "h1"
-      ? "text-4xl sm:text-5xl lg:text-6xl"
+      ? "text-display"
       : Tag === "h2"
-        ? "text-3xl sm:text-4xl lg:text-[2.75rem]"
-        : "text-2xl sm:text-3xl";
+        ? "text-headline"
+        : "text-subhead";
 
   return (
     <Reveal
       className={cn(
-        "flex max-w-3xl flex-col gap-4",
+        "flex max-w-3xl flex-col gap-4 md:gap-5",
         align === "center" && "mx-auto items-center text-center",
         className,
       )}
     >
       {eyebrow ? (
-        <span className="font-mono text-[11px] tracking-[0.18em] text-subtle-foreground uppercase">
+        <span className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
           {eyebrow}
         </span>
       ) : null}
 
-      <Tag className={cn("font-semibold leading-[1.08]", size)}>
+      <Tag className={cn("font-display font-semibold", size)}>
         <Highlight>{title}</Highlight>
       </Tag>
 
+      {/* 58ch, không phải max-w-3xl: ở cỡ lead 21px thì 3xl thành ~73 ký tự
+          một dòng, quá dài để mắt bắt được đầu dòng kế tiếp. */}
       {lead ? (
-        <p className="text-lg leading-relaxed text-muted-foreground text-pretty">
+        <p className="max-w-[58ch] text-lead text-muted-foreground text-pretty">
           <Highlight>{lead}</Highlight>
         </p>
       ) : null}

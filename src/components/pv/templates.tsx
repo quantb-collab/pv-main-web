@@ -41,17 +41,15 @@ function Block({
 
   return (
     <div className="border-t py-8 first:border-t-0 first:pt-0">
-      <h3 className="font-mono text-[11px] tracking-[0.16em] text-subtle-foreground uppercase">
+      <h3 className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
         {label}
       </h3>
-      <div className="mt-4 max-w-3xl">
+      <div className="mt-4 max-w-[68ch]">
         {hasContent ? (
           items ? (
             <StatementList items={items} />
           ) : (
-            <p className="text-base leading-relaxed text-muted-foreground">
-              {text}
-            </p>
+            <p className="text-body text-muted-foreground">{text}</p>
           )
         ) : (
           <Gap kind="confirm">{need}</Gap>
@@ -261,21 +259,21 @@ export async function StubPage({
       <Section>
         <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:gap-16">
           <div>
-            <h2 className="font-mono text-[11px] tracking-[0.16em] text-subtle-foreground uppercase">
+            <h2 className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
               Nhiệm vụ của trang
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+            <p className="mt-4 text-body text-muted-foreground">
               {page.objective}
             </p>
 
-            <h2 className="mt-10 font-mono text-[11px] tracking-[0.16em] text-subtle-foreground uppercase">
+            <h2 className="mt-10 font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
               Câu hỏi trang phải trả lời
             </h2>
             <StatementList className="mt-4" items={page.questions} />
           </div>
 
           <div className="flex flex-col gap-4">
-            <h2 className="font-mono text-[11px] tracking-[0.16em] text-subtle-foreground uppercase">
+            <h2 className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
               Còn thiếu
             </h2>
             {page.gaps.map((gap) => (

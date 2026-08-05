@@ -40,13 +40,13 @@ export function LocaleSwitcher() {
       <SelectTrigger
         size="sm"
         aria-label={t("language")}
-        className="w-[4.5rem] border-transparent bg-transparent font-mono text-xs"
+        className="w-[4.5rem] border-transparent bg-transparent font-mono text-meta"
       >
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         {locales.map((l) => (
-          <SelectItem key={l} value={l} className="font-mono text-xs">
+          <SelectItem key={l} value={l} className="font-mono text-meta">
             {localeShort[l]}
           </SelectItem>
         ))}

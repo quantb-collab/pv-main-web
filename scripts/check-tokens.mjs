@@ -6,8 +6,8 @@ import { join } from "node:path";
  * SOÁT GIÁ TRỊ HARDCODE
  * ----------------------------------------------------------------------------
  * Luật số 2 của repo: component chỉ dùng token. Luật không có công cụ kiểm tra
- * là luật sẽ bị quên. Script này bắt màu, easing và thời lượng viết thẳng vào
- * component thay vì lấy từ globals.css hoặc src/lib/motion.ts.
+ * là luật sẽ bị quên. Script này bắt màu, cỡ chữ, easing và thời lượng viết
+ * thẳng vào component thay vì lấy từ globals.css hoặc src/lib/motion.ts.
  *
  * Bỏ qua:
  *   - src/components/ui/**  — shadcn sinh ra, sẽ bị ghi đè khi chạy `add`
@@ -35,6 +35,19 @@ const RULES = [
     name: "easing viết thẳng",
     re: /cubic-bezier|ease-\[/,
     fix: "dùng EASE trong src/lib/motion.ts",
+  },
+  {
+    // Thang Tailwind mặc định chỉ còn dành cho src/components/ui/ (đã SKIP).
+    // Ngoài đó, chữ phải gọi theo vai trò để mọi trang cùng một hệ.
+    name: "cỡ chữ viết thẳng",
+    re: /\btext-(xs|sm|base|lg|xl|[2-9]xl)\b|\btext-\[[0-9.]/,
+    fix: "dùng vai trò trong thang chữ: text-body, text-title, text-eyebrow… (docs/DESIGN-TOKENS.md § Thang chữ)",
+  },
+  {
+    // tracking-brand được phép — nó là token của repo, không phải giá trị Tailwind.
+    name: "line-height / tracking viết thẳng",
+    re: /\bleading-|\btracking-(tighter|tight|normal|wide|wider|widest|\[)/,
+    fix: "vai trò trong thang chữ đã mang sẵn line-height và tracking, không viết thêm",
   },
 ];
 

@@ -55,7 +55,8 @@ log ra console rồi in nguyên `home.enterprise.e6` lên mặt trang. Luôn ch�
 - [ ] Metadata: `title` và `description` lấy từ messages, không rỗng
 - [ ] Ảnh qua `<MediaFrame>`, có `alt` hoặc `need`
 - [ ] Không chuỗi tiếng Việt nằm trong JSX
-- [ ] Không màu / easing / thời lượng hardcode
+- [ ] Không màu / cỡ chữ / easing / thời lượng hardcode — `pnpm check:tokens`
+- [ ] Chữ gọi theo vai trò; thân bài không tụt xuống cỡ nhãn giao diện
 - [ ] Thử ở 375px, 768px, 1440px
 - [ ] Không tràn ngang ở mobile
 
