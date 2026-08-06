@@ -4,6 +4,7 @@ import { Reveal } from "@/components/motion/reveal";
 import {
   Card,
   CardGrid,
+  DefinitionList,
   LayerStack,
   PillRow,
   StatementList,
@@ -18,13 +19,50 @@ import { Section, SectionHeader } from "@/components/pv/section";
  * Mỗi section chỉ ghép từ block dùng chung — không tự dựng lưới riêng.
  */
 
+/**
+ * Section 2 — Hành trình & định vị Pebble Vina (chèn theo quyết định chủ dự
+ * án 2026-08-06, ngoài danh sách §9 gốc). Header GỘP MỘT DÒNG duy nhất —
+ * không eyebrow, không câu tuyên bố, không gạch chân — theo yêu cầu chủ dự
+ * án 2026-08-06 (các concept statement/underline trước đó đã bị loại).
+ *
+ * Thân section là DefinitionList theo ĐÚNG thứ tự diễn dịch chủ dự án đưa
+ * (không đảo, không diễn lại):
+ *   2026 — Hà Nội   ra đời, xác định ngay mục tiêu (giá trị năng lực sản
+ *                   xuất và vận hành cho doanh nghiệp)
+ *   Trọng tâm       BA MẢNG KINH DOANH: phần cứng · phần mềm · đào tạo AI
+ *                   (đào tạo AI là một mảng dịch vụ, KHÔNG phải "nhân sự
+ *                   nội bộ được đào tạo AI" — đã từng hiểu sai)
+ *   Cách làm        rõ ràng mà không cứng nhắc, linh hoạt theo từng bài toán
+ *
+ * KHÔNG claim quy mô/vị thế — công ty mới, chưa có bằng chứng, registry cấm
+ * số liệu chưa xác minh. Chi tiết dịch vụ từng mảng thuộc section offer sẽ
+ * dựng sau, không liệt kê ở đây.
+ */
+export async function Identity() {
+  const t = await getTranslations("home.who");
+
+  return (
+    <Section id="pebble-vina" sky="night">
+      <SectionHeader title={t("title")} />
+      <DefinitionList
+        className="mt-14 w-full max-w-3xl"
+        items={[1, 2, 3].map((n) => ({
+          label: t(`r${n}Label`),
+          text: t(`r${n}Text`),
+        }))}
+      />
+    </Section>
+  );
+}
+
 /* §9 Section 2 — Problem Recognition */
 export async function Problem() {
   const t = await getTranslations("home.problem");
 
   return (
     <Section id="van-de" sky="night">
-      <SectionHeader eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
+      {/* Không lead: tiêu đề đã nói trọn ý, ba thẻ bên dưới là phần triển khai. */}
+      <SectionHeader eyebrow={t("eyebrow")} title={t("title")} />
       {/* Ba mục. Không mở rộng: người mua Enterprise quét, không đọc hết danh sách. */}
       <div className="mt-14 overflow-hidden rounded-xl border">
         <CardGrid cols={3}>
@@ -107,11 +145,11 @@ export async function Maturity() {
     <Section id="lo-trinh" sky="deep">
       <SectionHeader eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
       <div className="mt-14 grid gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
+        {/* Nhãn trần, không mô tả — năm nấc tự kể được câu chuyện (một công
+            việc → toàn doanh nghiệp), phần "con người ở đâu" đã có ghi chú
+            bên cạnh, còn phân quyền/nhật ký thuộc section Enterprise. */}
         <StepRail
-          steps={[1, 2, 3, 4, 5].map((n) => ({
-            title: t(`s${n}Title`),
-            body: t(`s${n}Body`),
-          }))}
+          steps={[1, 2, 3, 4, 5].map((n) => ({ title: t(`s${n}Title`) }))}
         />
         <Reveal
           direction="left"

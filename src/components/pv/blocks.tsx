@@ -113,6 +113,43 @@ export function StatementList({
 }
 
 /* -------------------------------------------------------------------------- */
+/* Danh sách định nghĩa — các vế nối tiếp một câu tuyên bố                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Mỗi hàng là một nhãn mono ngắn và một vế nội dung cỡ lead — dùng khi vài
+ * dòng dữ kiện phải đọc như phần tiếp của tiêu đề đứng trên, nên chữ to hơn
+ * thân bài, không chấm đầu dòng, không hộp viền, không vạch phân cách (chủ
+ * dự án đã bỏ divider 2026-08-06); các hàng tách nhau bằng khoảng trống.
+ * Thứ tự hàng là thứ tự kể chuyện — người gọi quyết, block không sắp lại.
+ */
+export function DefinitionList({
+  items,
+  className,
+}: {
+  items: { label: ReactNode; text: ReactNode }[];
+  className?: string;
+}) {
+  return (
+    <RevealGroup className={cn("flex flex-col gap-8 sm:gap-10", className)}>
+      {items.map((item, i) => (
+        <RevealItem
+          key={i}
+          className="grid grid-cols-1 items-baseline gap-2 sm:grid-cols-[9rem_1fr] sm:gap-8"
+        >
+          <span className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
+            {item.label}
+          </span>
+          <p className="max-w-[58ch] text-lead text-pretty">
+            <Highlight>{item.text}</Highlight>
+          </p>
+        </RevealItem>
+      ))}
+    </RevealGroup>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /* Chip — nhóm từ khoá ngắn                                                    */
 /* -------------------------------------------------------------------------- */
 

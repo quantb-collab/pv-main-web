@@ -5,6 +5,7 @@ import {
   Deliver,
   Enterprise,
   FullStack,
+  Identity,
   Maturity,
   Outcomes,
   Problem,
@@ -25,10 +26,12 @@ export async function generateMetadata({
 }
 
 /**
- * Trang chủ — 11 section theo §9 blueprint.
- * Thứ tự này là thứ tự thuyết phục, không sắp xếp lại tuỳ ý:
- * nhận ra vấn đề → thấy kết quả → biết bắt đầu ở đâu → tin cách làm
- * → tin năng lực → thấy bằng chứng → biết bước tiếp theo.
+ * Trang chủ — 12 section: 11 theo §9 blueprint + Identity ở vị trí 2
+ * (chèn theo quyết định chủ dự án 2026-08-06 — hook giữ thuần cảm xúc,
+ * phần "là ai / làm gì" dồn về một section riêng ngay dưới).
+ * Thứ tự còn lại là thứ tự thuyết phục, không sắp xếp lại tuỳ ý:
+ * biết là ai → nhận ra vấn đề → thấy kết quả → biết bắt đầu ở đâu
+ * → tin cách làm → tin năng lực → thấy bằng chứng → biết bước tiếp theo.
  */
 export default async function HomePage({
   params,
@@ -43,6 +46,7 @@ export default async function HomePage({
   return (
     <>
       <Hero />
+      <Identity />
       <Problem />
       <Outcomes />
       <StartHere />
@@ -54,7 +58,7 @@ export default async function HomePage({
       <Proof />
       <CtaBand
         cta="assessment"
-        items={[1, 2, 3, 4, 5].map((n) => t(`g${n}`))}
+        items={[1, 2, 3, 4].map((n) => t(`g${n}`))}
       />
     </>
   );

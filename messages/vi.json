@@ -60,7 +60,7 @@
   "home": {
     "meta": {
       "title": "Pebble Vina — Biến AI thành năng lực vận hành của doanh nghiệp",
-      "description": "Công ty Full-stack AI cho doanh nghiệp: từ bài toán vận hành, dữ liệu, mô hình đến nền tảng, hạ tầng và thiết bị."
+      "description": "Công ty Full-stack AI cho doanh nghiệp: từ bài toán vận hành, dữ liệu, mô hình đến nền tảng, hạ tầng, thiết bị."
     },
     "hero": {
       "title": "Pebble Vina — đồng hành xây dựng doanh nghiệp số tự vận hành",
@@ -68,10 +68,18 @@
       "mediaGap": "Cần ảnh nền hero",
       "mediaNeed": "Ảnh nền toàn khung cho first view. BẮT BUỘC: khổ ngang tối thiểu 2560px; một phần ba giữa khung phải trống và ít chi tiết vì tiêu đề đè lên đó; ảnh nằm dưới lớp phủ tối 50–100% nên chỉ giữ lại bố cục và mảng sáng, mọi chi tiết nhỏ sẽ mất. ÁNH SÁNG: một nguồn sáng lạnh duy nhất, đặt thấp hoặc từ một bên, phần còn lại chìm về đen. Không đèn trần đều, không ánh vàng — cả hệ màu của site không có màu ấm nào. CHỦ THỂ: môi trường làm việc thật của Pebble Vina lúc sớm hoặc đêm — phòng vận hành, lối đi giữa hàng tủ máy, xưởng trước ca, hoặc một người ngồi làm việc nhìn từ phía sau và chiếm phần nhỏ trong khung. Có dấu vết con người nhưng không phải ảnh chân dung. BỐ CỤC: một đường ngang mạnh nằm thấp trong khung (mép bàn, dãy tủ, đường chân trời) để khớp với dải sáng chân trời của site. KỸ THUẬT: nhiễu ở vùng tối càng thấp càng tốt — site đã có lớp hạt riêng, ảnh nhiễu sẵn thì cộng dồn thành vỡ hạt. CẤM: robot, não phát sáng, tay chạm màn hình, cyberpunk, neon, dashboard dựng giả, ảnh bắt tay, ảnh stock nói chung."
     },
+    "who": {
+      "title": "Hành trình — định vị doanh nghiệp",
+      "r1Label": "Khởi phát",
+      "r1Text": "2026 tại Hà Nội, Pebble Vina ra đời. Mục tiêu tối quan trọng được xác định ngay: tạo giá trị năng lực sản xuất và vận hành cho doanh nghiệp.",
+      "r2Label": "Trọng tâm",
+      "r2Text": "Phần cứng, phần mềm và đào tạo AI — tất cả cùng một chuẩn làm việc rõ ràng.",
+      "r3Label": "Cách làm",
+      "r3Text": "Không cứng nhắc — hiểu từng bài toán, đưa giải pháp linh hoạt cho từng doanh nghiệp."
+    },
     "problem": {
       "eyebrow": "Điều đang xảy ra",
       "title": "AI đã vào công ty bạn, nhưng chưa vào quy trình",
-      "lead": "Ba điều thường gặp ở doanh nghiệp đã dùng AI được một thời gian.",
       "i1Title": "Mỗi người một công cụ",
       "i1Body": "Kết quả khác nhau giữa các phòng ban, không ai kiểm tra được đúng sai.",
       "i2Title": "Dữ liệu nội bộ đứng ngoài",
@@ -82,13 +90,13 @@
     "outcomes": {
       "eyebrow": "Kết quả",
       "title": "Chúng tôi nhận việc theo kết quả, không theo tên công nghệ",
-      "lead": "Mỗi dự án bắt đầu bằng hai câu hỏi: việc nào được rút ngắn, và đo bằng gì.",
+      "lead": "Mỗi dự án bắt đầu bằng hai câu hỏi: rút ngắn việc nào, đo bằng gì.",
       "o1Title": "Tìm thông tin nhanh hơn",
       "o1Body": "Hỏi bằng tiếng Việt, nhận câu trả lời kèm trích dẫn nguồn nội bộ.",
       "o2Title": "Giảm nhập liệu thủ công",
       "o2Body": "Chứng từ được bóc tách, kiểm tra, rồi đẩy vào hệ thống sẵn có.",
       "o3Title": "Tự động chuẩn bị báo cáo",
-      "o3Body": "Báo cáo định kỳ dựng sẵn từ dữ liệu hiện có, người phụ trách chỉ rà và ký.",
+      "o3Body": "Báo cáo định kỳ dựng sẵn từ dữ liệu hiện có — người phụ trách rà và ký.",
       "o4Title": "Kiểm soát dữ liệu và chi phí",
       "o4Body": "Biết dữ liệu ở đâu, ai truy cập được gì, mỗi tháng tốn bao nhiêu.",
       "numbersGap": "Chỉ số cho từng nhóm kết quả — chỉ công bố khi có case study kèm điều kiện đo."
@@ -96,7 +104,7 @@
     "startHere": {
       "eyebrow": "Điểm bắt đầu",
       "title": "Bắt đầu từ một việc có thật, đủ nhỏ để đo được",
-      "lead": "Những bài toán thường được chọn cho giai đoạn đầu: phạm vi rõ, dữ liệu có sẵn, kết quả thấy được sớm.",
+      "lead": "Giai đoạn đầu chọn bài toán phạm vi rõ, dữ liệu sẵn, kết quả thấy sớm.",
       "u1": "Kho tri thức nội bộ",
       "u2": "Trợ lý theo phòng ban",
       "u3": "Bóc tách chứng từ",
@@ -108,26 +116,21 @@
     "maturity": {
       "eyebrow": "Lộ trình",
       "title": "Không cần thay đổi cả tổ chức để bắt đầu",
-      "lead": "Mỗi nấc có phạm vi riêng, và chỉ mở nấc sau khi nấc trước đã chạy được.",
+      "lead": "Mỗi nấc có phạm vi riêng; nấc sau chỉ mở khi nấc trước chạy được.",
       "s1Title": "AI hỗ trợ một công việc",
-      "s1Body": "Một nhóm nhỏ, một việc lặp lại hằng ngày.",
       "s2Title": "AI nằm trong một quy trình",
-      "s2Body": "AI làm các bước đã chuẩn hoá, con người phê duyệt.",
       "s3Title": "AI vận hành trong một phòng ban",
-      "s3Body": "Có người chịu trách nhiệm chất lượng đầu ra.",
       "s4Title": "Nhiều phòng ban dùng chung nền tảng",
-      "s4Body": "Dữ liệu, phân quyền và chi phí quản lý tập trung.",
       "s5Title": "AI liên thông toàn doanh nghiệp",
-      "s5Body": "Công việc đi xuyên hệ thống, có nhật ký truy lại từng bước.",
-      "humanNote": "Con người tập trung vào quyết định, phê duyệt và xử lý ngoại lệ. AI thực hiện những bước có thể chuẩn hoá và kiểm soát."
+      "humanNote": "Con người giữ quyết định, phê duyệt, ngoại lệ; AI làm các bước chuẩn hoá, kiểm soát được."
     },
     "why": {
       "eyebrow": "Vì sao chọn Pebble Vina",
       "title": "Cách làm quyết định kết quả nhiều hơn công cụ",
       "p1Title": "Bắt đầu từ đúng bài toán",
-      "p1Body": "Không mở đầu bằng chọn công cụ, mà bằng việc đang tốn thời gian.",
+      "p1Body": "Mở đầu bằng việc đang tốn thời gian, không phải bằng công cụ.",
       "p2Title": "Nghiệm thu bằng kết quả",
-      "p2Body": "Chốt trước đo bằng gì: thời gian, thao tác, độ chính xác, tỷ lệ sử dụng, chi phí.",
+      "p2Body": "Chốt trước đo bằng gì: thời gian, độ chính xác hay chi phí.",
       "p3Title": "Dữ liệu vẫn trong tay bạn",
       "p3Body": "Cloud, hybrid hoặc hạ tầng riêng, tuỳ mức nhạy cảm của dữ liệu.",
       "p4Title": "Mở rộng được xuyên suốt",
@@ -136,7 +139,7 @@
     "deliver": {
       "eyebrow": "Cách triển khai",
       "title": "Tám bước, mỗi bước có tiêu chí để đi tiếp",
-      "lead": "Bên mua luôn biết đang ở đâu, cần gì để sang bước sau, và ai chịu trách nhiệm phần nào.",
+      "lead": "Bên mua luôn biết đang ở đâu, cần gì để sang bước sau, ai chịu trách nhiệm phần nào.",
       "s1": "Đánh giá hiện trạng",
       "s2": "Xếp thứ tự ưu tiên",
       "s3": "Thiết kế giải pháp",
@@ -149,7 +152,7 @@
     "enterprise": {
       "eyebrow": "Chuẩn Enterprise ngay từ thiết kế",
       "title": "Biết ai đã xem gì, AI đã làm gì, người nào đã duyệt",
-      "lead": "Đây là những thứ quyết định một hệ thống AI có được phép chạy trong doanh nghiệp hay không.",
+      "lead": "Những thứ quyết định hệ thống AI có được phép chạy trong doanh nghiệp không.",
       "e1": "Phân quyền theo vai trò",
       "e2": "Câu trả lời có nguồn",
       "e3": "Nhật ký hoạt động",
@@ -164,21 +167,21 @@
     "fullstack": {
       "eyebrow": "Năng lực xuyên suốt",
       "title": "Một đầu mối chịu trách nhiệm từ quy trình xuống phần cứng",
-      "lead": "Phần lớn dự án AI dừng ở lớp ứng dụng. Khi quy mô tăng, điểm nghẽn thường nằm ở dữ liệu, hạ tầng hoặc thiết bị.",
+      "lead": "Phần lớn dự án AI dừng ở lớp ứng dụng; quy mô tăng thì điểm nghẽn lộ ra ở dữ liệu, hạ tầng, thiết bị.",
       "l1": "Quy trình nghiệp vụ",
       "l2": "Ứng dụng và AI agent",
       "l3": "Dữ liệu và nền tảng doanh nghiệp",
       "l4": "Hạ tầng",
       "l5": "Thiết bị biên và bán dẫn",
-      "b1": "Một đầu mối chịu trách nhiệm",
+      "b1": "Sự cố không bị đẩy qua lại giữa các nhà cung cấp",
       "b2": "Kiến trúc đồng bộ giữa các lớp",
       "b3": "Ít phụ thuộc nhiều nhà cung cấp",
-      "b4": "Tối ưu sâu được khi quy mô tăng"
+      "b4": "Quy mô tăng thì còn dư địa giảm chi phí ở tầng dưới"
     },
     "proof": {
       "eyebrow": "Bằng chứng",
       "title": "Vì sao nên tin Pebble Vina",
-      "lead": "Phần này chỉ điền bằng dữ liệu đã kiểm chứng và đã được phép công bố.",
+      "lead": "Chỗ này chỉ điền dữ liệu đã kiểm chứng và được phép công bố.",
       "caseGap": "Một case study có số liệu: bài toán, phạm vi, chỉ số trước và sau, kèm xác nhận cho phép công bố.",
       "partnerGap": "Danh sách khách hàng và đối tác được phép hiển thị logo.",
       "teamGap": "Ảnh đội ngũ, phòng lab và sản phẩm thật. Không dùng ảnh mua sẵn.",
@@ -186,13 +189,12 @@
     },
     "finalCta": {
       "eyebrow": "Bước tiếp theo",
-      "title": "Bắt đầu từ một bài toán đủ rõ để đo được kết quả",
-      "lead": "Buổi đánh giá đầu tiên nhằm xác định nên làm gì trước, không nhằm chốt hợp đồng.",
+      "title": "Bắt đầu từ một bài toán đủ rõ để đo kết quả",
+      "lead": "Buổi đánh giá đầu tiên xác định nên làm gì trước, không nhằm chốt hợp đồng.",
       "g1": "Xác định vấn đề ưu tiên",
-      "g2": "Đánh giá quy trình và dữ liệu hiện có",
-      "g3": "Đề xuất phạm vi ban đầu",
-      "g4": "Đề xuất chỉ số để đo kết quả",
-      "g5": "Kết luận bước tiếp theo nên là gì"
+      "g2": "Đánh giá quy trình, dữ liệu hiện có",
+      "g3": "Đề xuất phạm vi và chỉ số đo kết quả",
+      "g4": "Thống nhất bước tiếp theo"
     }
   },
   "solutions": {
@@ -510,7 +512,7 @@
     "receive": {
       "title": "Bạn nhận được gì",
       "r1": "Xác định vấn đề ưu tiên",
-      "r2": "Đánh giá quy trình và dữ liệu hiện có",
+      "r2": "Đánh giá quy trình, dữ liệu hiện có",
       "r3": "Đề xuất phạm vi ban đầu",
       "r4": "Đề xuất chỉ số để đo kết quả",
       "r5": "Kết luận bước tiếp theo nên là gì"

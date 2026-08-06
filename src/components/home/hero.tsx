@@ -12,8 +12,12 @@ import { DUR, EASE, LIFT, STAGGER } from "@/lib/motion";
 
 /**
  * Hero — §9 Section 1.
- * Answers who Pebble is, who it serves, what result it produces and what the
- * next step is, within 10–15 seconds. No technology list here.
+ * The HOOK, and only the hook: promise in the H1, tool slogan as the lead.
+ * No technology list, no category talk — deliberately non-technical. The
+ * question "Pebble Vina là ai / làm gì" is answered by the section right
+ * below (Identity, §9 Section 2 — chèn theo quyết định chủ dự án
+ * 2026-08-06): it unpacks "mạnh và ổn định" and carries the positioning
+ * line + stack rail that briefly lived here earlier the same day.
  *
  * Locked to exactly one viewport (min-h-dvh) with the pitch centred in it, so
  * no slack can accumulate at either edge.
@@ -178,7 +182,7 @@ export function Hero() {
 function ExploreCue({ label, reduced }: { label: string; reduced: boolean }) {
   return (
     <motion.a
-      href="#van-de"
+      href="#pebble-vina"
       initial={reduced ? undefined : { opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: DUR.slow, ease: EASE.out, delay: 0.6 }}
