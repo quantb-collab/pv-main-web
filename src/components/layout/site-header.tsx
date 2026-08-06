@@ -19,8 +19,13 @@ import { cn } from "@/lib/utils";
 
 /**
  * Thanh điều hướng.
- * Trong suốt khi ở đỉnh trang (đè lên hero nền tối), chuyển sang nền đặc
- * khi bắt đầu cuộn. Một CTA duy nhất — §23 cấm nhiều CTA ngang hàng.
+ * Trong suốt khi ở đỉnh trang (đè lên hero), chuyển sang nền mờ đục khi bắt
+ * đầu cuộn. Một CTA duy nhất — §23 cấm nhiều CTA ngang hàng.
+ *
+ * Không còn khai nấc trời: cả site là một bảng màu đêm, nên header lấy màu
+ * chữ từ trang. Nền lúc cuộn dùng `--background` mặc định (nấc `night`) —
+ * cố ý không đổi theo section đang trôi qua, vì một thanh nav đổi màu liên
+ * tục theo nền bên dưới thì đọc ra là lỗi chứ không phải hiệu ứng.
  */
 
 const NAV = [
@@ -49,7 +54,7 @@ export function SiteHeader() {
         "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
         scrolled
           ? "border-b bg-background/85 backdrop-blur-md"
-          : "tone-dark border-b border-transparent bg-transparent",
+          : "border-b border-transparent bg-transparent",
       )}
     >
       <div className="pv-container flex h-16 items-center justify-between gap-6 lg:h-20">

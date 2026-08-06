@@ -57,8 +57,17 @@ export function Parallax({
   }
 
   return (
-    <div ref={ref} className={cn("will-change-transform", className)}>
-      <motion.div style={axis === "y" ? { y: shift } : { x: shift }}>
+    <div ref={ref} className={cn(className)}>
+      {/* Div này nhận transform khi cuộn, mà phần tử có transform trở thành
+          containing block cho mọi con absolute. Nếu để nó không kích thước
+          (position static, cao 0) thì ngay pixel cuộn đầu tiên các lớp nền
+          `inset-0`/`bottom-0` bên trong co về 0 và biến mất khỏi màn hình.
+          h-full chỉ có nghĩa khi cha có chiều cao (hero: absolute inset-0);
+          trong flow thường nó rơi về auto, vô hại. */}
+      <motion.div
+        style={axis === "y" ? { y: shift } : { x: shift }}
+        className="h-full w-full will-change-transform"
+      >
         {children}
       </motion.div>
     </div>

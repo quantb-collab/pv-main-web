@@ -27,7 +27,7 @@ export default async function GovernancePage({
 
   return (
     <>
-      <Section tone="dark" className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <SectionHeader
           as="h1"
           eyebrow="Vận hành và quản trị"
@@ -36,7 +36,7 @@ export default async function GovernancePage({
         />
       </Section>
 
-      <Section>
+      <Section sky="rise">
         <div className="overflow-hidden rounded-xl border">
           <CardGrid cols={2}>
             {[1, 2, 3, 4].map((n) => (

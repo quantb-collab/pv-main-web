@@ -27,7 +27,7 @@ export default async function AssessmentPage({
 
   return (
     <>
-      <Section tone="dark" className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <SectionHeader
           as="h1"
           eyebrow="AI Readiness Assessment"
@@ -36,7 +36,7 @@ export default async function AssessmentPage({
         />
       </Section>
 
-      <Section>
+      <Section sky="rise">
         <div className="grid gap-14 lg:grid-cols-2 lg:gap-20">
           <div>
             <SectionHeader as="h3" title={t("scopeTitle")} />

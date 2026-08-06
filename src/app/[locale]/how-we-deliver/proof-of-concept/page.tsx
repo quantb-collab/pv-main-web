@@ -25,7 +25,7 @@ export default async function PocPage({
 
   return (
     <>
-      <Section tone="dark" className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <SectionHeader
           as="h1"
           eyebrow="PoC Scoping Workshop"
@@ -34,7 +34,7 @@ export default async function PocPage({
         />
       </Section>
 
-      <Section>
+      <Section sky="rise">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeader title={t("outputTitle")} />
           <StatementList

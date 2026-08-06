@@ -23,7 +23,7 @@ export async function Problem() {
   const t = await getTranslations("home.problem");
 
   return (
-    <Section id="van-de" tone="surface">
+    <Section id="van-de" sky="night">
       <SectionHeader eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
       {/* Ba mục. Không mở rộng: người mua Enterprise quét, không đọc hết danh sách. */}
       <div className="mt-14 overflow-hidden rounded-xl border">
@@ -44,7 +44,7 @@ export async function Outcomes() {
   const t = await getTranslations("home.outcomes");
 
   return (
-    <Section id="ket-qua">
+    <Section id="ket-qua" sky="night">
       <SectionHeader eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
       <div className="mt-14 overflow-hidden rounded-xl border">
         <CardGrid cols={4}>
@@ -68,7 +68,7 @@ export async function StartHere() {
   const tc = await getTranslations("cta");
 
   return (
-    <Section id="bat-dau" tone="surface">
+    <Section id="bat-dau" sky="night">
       <div className="grid gap-14 lg:grid-cols-[1fr_1.05fr] lg:items-center lg:gap-20">
         <div>
           <SectionHeader
@@ -104,7 +104,7 @@ export async function Maturity() {
   const t = await getTranslations("home.maturity");
 
   return (
-    <Section id="lo-trinh">
+    <Section id="lo-trinh" sky="deep">
       <SectionHeader eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
       <div className="mt-14 grid gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
         <StepRail
@@ -129,7 +129,7 @@ export async function Why() {
   const t = await getTranslations("home.why");
 
   return (
-    <Section id="vi-sao" tone="surface">
+    <Section id="vi-sao" sky="deep">
       <SectionHeader eyebrow={t("eyebrow")} title={t("title")} />
       <div className="mt-14 overflow-hidden rounded-xl border">
         <CardGrid cols={4}>
@@ -150,7 +150,7 @@ export async function Deliver() {
   const tc = await getTranslations("cta");
 
   return (
-    <Section id="trien-khai">
+    <Section id="trien-khai" sky="deep">
       <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
         <SectionHeader
           eyebrow={t("eyebrow")}
@@ -176,7 +176,7 @@ export async function Enterprise() {
   const tc = await getTranslations("cta");
 
   return (
-    <Section id="enterprise" tone="dark">
+    <Section id="enterprise" sky="deep">
       <SectionHeader eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
       {/*
         Mười mục nhưng chỉ là nhãn, không kèm mô tả.
@@ -202,7 +202,7 @@ export async function FullStack() {
   const tc = await getTranslations("cta");
 
   return (
-    <Section id="nang-luc">
+    <Section id="nang-luc" sky="rise">
       <div className="grid gap-14 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-20">
         <div>
           <SectionHeader
@@ -232,7 +232,7 @@ export async function Proof() {
   const t = await getTranslations("home.proof");
 
   return (
-    <Section id="bang-chung" tone="surface">
+    <Section id="bang-chung" sky="rise">
       <SectionHeader eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
       <div className="mt-12 grid gap-4 sm:grid-cols-2">
         <Reveal>

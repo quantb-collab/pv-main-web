@@ -21,7 +21,7 @@ sai và ai phải sửa.
 4. Đếm ô chờ: `document.querySelectorAll("[data-gap]").length`. Trạng thái
    `ready` yêu cầu bằng 0.
 5. Kiểm tra khả năng tiếp cận: tab qua toàn bộ link và nút, viền focus có nhìn
-   thấy không, tương phản ở cả vùng sáng và `.tone-dark`, và trang có còn đọc
+   thấy không, tương phản ở cả năm nấc `sky` (kiểm `rise` và `dawn` trước), và trang có còn đọc
    được khi bật giảm chuyển động không.
 
 Bạn được phép sửa **duy nhất** trường `status` trong `src/content/registry.ts`,

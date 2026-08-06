@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 //   1. rounded-control (6px) replaces rounded-lg and the per-size overrides —
 //      one radius at every size, so large buttons are not rounder than small.
 //   2. shadow-control on surface-bearing variants only; the token flips under
-//      .tone-dark. ghost/link stay flat because they are not surfaces.
+//      every sky level. ghost/link stay flat because they are not surfaces.
 //   3. h-10/h-11 scale instead of the h-8/h-9 app-UI default.
 // See docs/DESIGN-TOKENS.md § Control.
 

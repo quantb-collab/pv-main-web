@@ -74,7 +74,7 @@ export async function SolutionTemplate({ page }: { page: PageEntry }) {
 
   return (
     <>
-      <Section tone="dark" className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-20">
           <SectionHeader
             as="h1"
@@ -91,7 +91,7 @@ export async function SolutionTemplate({ page }: { page: PageEntry }) {
         </div>
       </Section>
 
-      <Section>
+      <Section sky="night">
         <Block
           label={tpl("outcome")}
           text={get("outcome")}
@@ -109,7 +109,7 @@ export async function SolutionTemplate({ page }: { page: PageEntry }) {
         />
       </Section>
 
-      <Section tone="surface">
+      <Section sky="deep">
         <SectionHeader
           eyebrow={tpl("before")}
           title={tpl("after")}
@@ -130,7 +130,7 @@ export async function SolutionTemplate({ page }: { page: PageEntry }) {
         )}
       </Section>
 
-      <Section>
+      <Section sky="deep">
         <div className="grid gap-x-16 md:grid-cols-2">
           <Block
             label={tpl("aiRole")}
@@ -155,7 +155,7 @@ export async function SolutionTemplate({ page }: { page: PageEntry }) {
         </div>
       </Section>
 
-      <Section tone="surface">
+      <Section sky="rise">
         <Block
           label={tpl("metrics")}
           items={getList("metrics")}
@@ -206,7 +206,7 @@ export async function UseCaseTemplate({ page }: { page: PageEntry }) {
 
   return (
     <>
-      <Section tone="dark" className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <SectionHeader
           as="h1"
           eyebrow={t("hero.eyebrow")}
@@ -215,7 +215,7 @@ export async function UseCaseTemplate({ page }: { page: PageEntry }) {
         />
       </Section>
 
-      <Section>
+      <Section sky="rise">
         {blocks.map((b) => (
           <Block
             key={b.key}
@@ -247,7 +247,7 @@ export async function StubPage({
 
   return (
     <>
-      <Section tone="dark" className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <SectionHeader
           as="h1"
           eyebrow={t("eyebrow")}
@@ -256,7 +256,7 @@ export async function StubPage({
         />
       </Section>
 
-      <Section>
+      <Section sky="rise">
         <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:gap-16">
           <div>
             <h2 className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">

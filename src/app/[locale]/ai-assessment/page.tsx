@@ -32,7 +32,7 @@ export default async function AiAssessmentPage({
 
   return (
     <>
-      <Section tone="dark" className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <SectionHeader
           as="h1"
           eyebrow={t("hero.eyebrow")}
@@ -41,7 +41,7 @@ export default async function AiAssessmentPage({
         />
       </Section>
 
-      <Section>
+      <Section sky="rise">
         <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
           <div className="flex flex-col gap-10">
             <div>

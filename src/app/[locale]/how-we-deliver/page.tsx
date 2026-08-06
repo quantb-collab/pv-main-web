@@ -47,7 +47,7 @@ export default async function HowWeDeliverPage({
 
   return (
     <>
-      <Section tone="dark" className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <SectionHeader
           as="h1"
           eyebrow={t("hero.eyebrow")}
@@ -56,7 +56,7 @@ export default async function HowWeDeliverPage({
         />
       </Section>
 
-      <Section tone="surface">
+      <Section sky="night">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeader title={t("principles.title")} />
           <StatementList
@@ -65,7 +65,7 @@ export default async function HowWeDeliverPage({
         </div>
       </Section>
 
-      <Section>
+      <Section sky="deep">
         <StepRail steps={steps} />
         <Reveal className="mt-12 grid max-w-4xl gap-4 sm:grid-cols-2">
           <Gap kind="confirm">{t("engagementGap")}</Gap>
@@ -73,7 +73,7 @@ export default async function HowWeDeliverPage({
         </Reveal>
       </Section>
 
-      <Section tone="surface">
+      <Section sky="rise">
         <SectionHeader title="Ba hình thức bắt đầu" />
         <div className="mt-12 overflow-hidden rounded-xl border">
           <CardGrid cols={3}>

@@ -11,46 +11,106 @@
     1. Component CHỈ dùng token (bg-surface, text-muted-foreground, ease-out-expo…).
        Không hardcode hex/oklch/ms/px trong component.
     2. Đổi brand = sửa DUY NHẤT khối "LỚP 1" bên dưới. Không đụng component.
-    3. Vùng nền tối dùng class `.tone-dark` trên <section>, không tự bôi màu tối.
+    3. Nền của section lấy từ thang `sky` (prop `sky` của <Section>), không tự
+       bôi màu nền cho một section.
+
+  CHỦ ĐỀ: ĐÊM TRƯỚC BÌNH MINH, TRÊN MẶT TITAN SẦN
+  ----------------------------------------------------------------------------
+  Cả site là MỘT bầu trời dọc. Đỉnh trang là giờ tối nhất; càng cuộn xuống
+  chân trời càng sáng. Thứ ló rạng KHÔNG phải nắng vàng — là XANH DA TRỜI,
+  đúng màu của bầu trời lúc rạng, không phải màu của đèn.
+
+  Chất liệu là titan sần: nền không phải mặt phẳng nhẵn mà là kim loại nhám.
+  Hai thứ làm nên nó, và phải đi cùng nhau:
+    - thang trời `--pv-night-*` có chroma rất thấp (0.008–0.022) và ngả lạnh —
+      titan là kim loại xám, màu chỉ hiện ra ở chỗ ánh sáng chạm vào;
+    - lớp hạt `pv-grain` phủ lên mọi section. Bỏ lớp hạt thì cùng bộ màu đó
+      tụt xuống thành nền xám phẳng.
+
+  Vì vậy:
+    - không có chế độ sáng, chỉ có một bảng màu đêm (LỚP 2);
+    - mọi ánh sáng trên trang đều dẫn xuất từ `--brand`, không có màu ấm nào
+      ngoài `--warning` của ô chờ (chỉ hiện lúc dev/review);
+    - mỗi section khai một nấc trong thang `sky`, và các nấc trên một trang
+      phải đi theo chiều sáng dần.
   ============================================================================
 */
 
-/* `dark:` hoạt động cho cả theme tối toàn trang lẫn section .tone-dark */
-@custom-variant dark (&:is(.dark *, .tone-dark, .tone-dark *));
+/* Một chế độ duy nhất, nhưng `.dark` vẫn phải có mặt trên <html>: các component
+   shadcn trong src/components/ui/ điều chỉnh bằng biến thể `dark:`. */
+@custom-variant dark (&:is(.dark, .dark *));
 
 /* ==========================================================================
    LỚP 1 — BRAND RAMP  ⚠️ [CẦN PEBBLE VINA XÁC NHẬN]
-   Toàn bộ giá trị dưới đây là PLACEHOLDER trung tính, chọn để trang render
-   đáng tin khi review khung. CHƯA phải màu brand chốt.
+   Hướng màu (xanh da trời trên titan sần) là quyết định của chủ đề, đã chốt.
+   Giá trị cụ thể vẫn là PLACEHOLDER — chưa phải brand kit chính thức.
    Khi có brand kit: thay 100% giá trị trong khối này, không sửa nơi khác.
    ========================================================================== */
 :root {
-  /* Brand — màu nhấn chính (nút, link nhấn, đồ hoạ dẫn hướng) */
-  --pv-brand-50: oklch(0.971 0.013 252);
-  --pv-brand-100: oklch(0.936 0.028 252);
-  --pv-brand-200: oklch(0.883 0.05 252);
-  --pv-brand-300: oklch(0.808 0.078 253);
-  --pv-brand-400: oklch(0.707 0.112 255);
-  --pv-brand-500: oklch(0.606 0.138 257);
-  --pv-brand-600: oklch(0.512 0.146 258);
-  --pv-brand-700: oklch(0.428 0.134 259);
-  --pv-brand-800: oklch(0.354 0.11 260);
-  --pv-brand-900: oklch(0.296 0.086 262);
-  --pv-brand-950: oklch(0.204 0.06 264);
+  /* Brand — xanh da trời. Hue quanh 234–255: lam sạch, KHÔNG kéo về cyan
+     (195) ở đầu sáng và KHÔNG kéo về chàm (270) ở đầu tối.
 
-  /* Ink — thang trung tính cho nền, chữ, viền */
+     Ba điều giữ cho nó không rơi lại vào "xanh đèn LED" của bản đầu:
+       1. Chroma đạt đỉnh ở KHÚC GIỮA thang (500–600) rồi tụt về hai đầu. Bản
+          đầu gắt nhất ở chính chỗ sáng nhất, nên nó đọc ra là bóng đèn.
+       2. Trần chroma 0.122 chứ không 0.152. Lam kịch chroma trên nền tối là
+          màu của link chưa ghé thăm và của đèn báo nguồn.
+       3. Hue chỉ trôi 21 độ trên cả thang. Bản đầu trôi 55 độ (205 → 260) nên
+          đầu sáng ra cyan còn đầu tối ra chàm — hai màu khác nhau trong cùng
+          một thang thì không thang nào đọc ra là một màu.
+
+     Phần lớn việc "trời sáng lên" nằm ở thang night bên dưới chứ không ở đây:
+     brand là ánh sáng, night là vật mà ánh sáng chạm vào. */
+  --pv-brand-50: oklch(0.971 0.014 235);
+  --pv-brand-100: oklch(0.941 0.03 234);
+  --pv-brand-200: oklch(0.891 0.055 234);
+  --pv-brand-300: oklch(0.822 0.083 236);
+  --pv-brand-400: oklch(0.744 0.104 238);
+  --pv-brand-500: oklch(0.66 0.118 242);
+  --pv-brand-600: oklch(0.572 0.122 246);
+  --pv-brand-700: oklch(0.484 0.11 249);
+  --pv-brand-800: oklch(0.402 0.091 251);
+  --pv-brand-900: oklch(0.326 0.071 253);
+  --pv-brand-950: oklch(0.226 0.048 255);
+
+  /* Ink — thang trung tính cho chữ và viền. Ngả lạnh nhưng chroma rất thấp:
+     đây là màu của kim loại, không phải của mực xanh. Chữ trắng tuyệt đối
+     trên nền tối thì chói, nên nấc 50 dừng ở 0.976. */
   --pv-ink-0: oklch(1 0 0);
-  --pv-ink-50: oklch(0.984 0.003 260);
-  --pv-ink-100: oklch(0.968 0.006 260);
-  --pv-ink-200: oklch(0.929 0.011 260);
-  --pv-ink-300: oklch(0.869 0.016 260);
-  --pv-ink-400: oklch(0.704 0.02 260);
-  --pv-ink-500: oklch(0.554 0.024 260);
-  --pv-ink-600: oklch(0.446 0.026 260);
-  --pv-ink-700: oklch(0.372 0.028 262);
-  --pv-ink-800: oklch(0.279 0.03 263);
-  --pv-ink-900: oklch(0.208 0.031 264);
-  --pv-ink-950: oklch(0.145 0.028 265);
+  --pv-ink-50: oklch(0.976 0.003 250);
+  --pv-ink-100: oklch(0.948 0.004 250);
+  --pv-ink-200: oklch(0.906 0.006 249);
+  --pv-ink-300: oklch(0.856 0.008 248);
+  --pv-ink-400: oklch(0.74 0.011 246);
+  --pv-ink-500: oklch(0.604 0.013 244);
+  --pv-ink-600: oklch(0.49 0.014 243);
+  --pv-ink-700: oklch(0.396 0.015 242);
+  --pv-ink-800: oklch(0.308 0.016 241);
+  --pv-ink-900: oklch(0.224 0.016 240);
+  --pv-ink-950: oklch(0.15 0.015 239);
+
+  /* ---- NIGHT — thang bầu trời, cũng là thang titan --------------------
+     Bảy nấc, dùng làm NỀN cho section. Nấc cao hơn = trời sáng hơn một chút.
+
+     CHROMA THẤP LÀ CỐ Ý (0.008 → 0.023, thấp hơn hẳn bản LED đầu tiên). Titan
+     là kim loại xám: màu chỉ hiện ra ở chỗ ánh sáng chạm vào. Nền đêm mà tự nó
+     đã xanh thì quầng bình minh không còn gì để nói — nó chìm vào một nền cùng
+     màu. Hue trôi 265 (than ngả chàm, đêm sâu) → 238 (xanh da trời, sát bình
+     minh), nên trời không sáng lên bằng cách xám đi mà bằng cách ngả dần sang
+     đúng màu của ánh sáng sắp tới.
+
+     Kèm bắt buộc: lớp hạt `pv-grain`. Không có nó thì bộ số này ra nền xám
+     phẳng chứ không ra mặt titan.
+
+     Một section KHÔNG gọi thẳng các biến này — nó khai `sky` và lấy cả bộ
+     nền/chữ đã cân contrast ở khối `.sky-*` LỚP 2. */
+  --pv-night-0: oklch(0.11 0.008 265);
+  --pv-night-1: oklch(0.14 0.011 259);
+  --pv-night-2: oklch(0.173 0.014 253);
+  --pv-night-3: oklch(0.21 0.017 248);
+  --pv-night-4: oklch(0.252 0.02 243);
+  --pv-night-5: oklch(0.298 0.022 240);
+  --pv-night-6: oklch(0.348 0.023 238);
 
   /* Signal — chỉ dùng cho trạng thái, KHÔNG dùng làm màu trang trí */
   --pv-signal-danger: oklch(0.577 0.245 27.3);
@@ -61,161 +121,171 @@
 }
 
 /* ==========================================================================
-   LỚP 2 — SEMANTIC TOKENS (chế độ SÁNG = mặc định, dùng cho thân bài)
+   LỚP 2 — SEMANTIC TOKENS
+   Site này chỉ có MỘT chế độ: đêm. Không còn cặp sáng/tối để đồng bộ, nên
+   bảng dưới đây là bảng duy nhất — mặc định của trang, tương ứng nấc `night`
+   trong thang sky. Section muốn nấc khác thì khai `sky`, xem khối `.sky-*`.
    Tên token tương thích shadcn/ui + bổ sung thang surface & brand của dự án.
    ========================================================================== */
 :root {
   --radius: 0.625rem;
 
-  --background: var(--pv-ink-0);
-  --foreground: var(--pv-ink-900);
+  --background: var(--pv-night-1);
+  --foreground: var(--pv-ink-50);
 
-  /* Thang bề mặt 3 nấc: background → surface → surface-2 */
-  --surface: var(--pv-ink-50);
-  --surface-2: var(--pv-ink-100);
+  /* Thang bề mặt 3 nấc: background → surface → surface-2.
+     Bất biến của hệ: một bề mặt nổi lên = một nấc trời sáng hơn. */
+  --surface: var(--pv-night-2);
+  --surface-2: var(--pv-night-3);
 
-  --card: var(--pv-ink-0);
-  --card-foreground: var(--pv-ink-900);
-  --popover: var(--pv-ink-0);
-  --popover-foreground: var(--pv-ink-900);
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
 
-  --primary: var(--pv-brand-600);
-  --primary-foreground: var(--pv-ink-0);
-  --secondary: var(--pv-ink-100);
-  --secondary-foreground: var(--pv-ink-900);
+  --primary: var(--pv-brand-400);
+  --primary-foreground: var(--pv-night-0);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--foreground);
 
-  --muted: var(--pv-ink-100);
-  --muted-foreground: var(--pv-ink-500);
-  /* Chữ tam cấp: chú thích, eyebrow, header bảng */
+  --muted: var(--surface-2);
+  /* Chữ nhị/tam cấp đã dịch lên một nấc so với bản nền sáng: trên nền đêm,
+     ink-500 rơi xuống dưới 4.5:1 ngay ở nấc trời tối nhất. */
+  --muted-foreground: var(--pv-ink-300);
   --subtle-foreground: var(--pv-ink-400);
 
-  --accent: var(--pv-ink-100);
-  --accent-foreground: var(--pv-ink-900);
+  --accent: var(--surface-2);
+  --accent-foreground: var(--foreground);
 
-  /* Brand dùng trực tiếp cho đồ hoạ/decor, tách khỏi --primary của nút */
-  --brand: var(--pv-brand-600);
-  --brand-soft: var(--pv-brand-50);
-  --brand-on: var(--pv-ink-0);
+  /* Brand dùng trực tiếp cho đồ hoạ/decor, tách khỏi --primary của nút.
+     Đây cũng là màu của ánh bình minh: mọi quầng sáng trên trang đọc nó. */
+  --brand: var(--pv-brand-400);
+  --brand-soft: var(--pv-brand-950);
+  --brand-on: var(--pv-night-0);
 
   --destructive: var(--pv-signal-danger);
   --warning: var(--pv-signal-warn);
   --success: var(--pv-signal-ok);
 
-  --border: var(--pv-ink-200);
-  --input: var(--pv-ink-200);
-  --ring: var(--pv-brand-500);
-
-  --chart-1: var(--pv-brand-500);
-  --chart-2: var(--pv-brand-700);
-  --chart-3: var(--pv-ink-500);
-  --chart-4: var(--pv-brand-300);
-  --chart-5: var(--pv-ink-700);
-
-  --sidebar: var(--pv-ink-50);
-  --sidebar-foreground: var(--pv-ink-900);
-  --sidebar-primary: var(--pv-brand-600);
-  --sidebar-primary-foreground: var(--pv-ink-0);
-  --sidebar-accent: var(--pv-ink-100);
-  --sidebar-accent-foreground: var(--pv-ink-900);
-  --sidebar-border: var(--pv-ink-200);
-  --sidebar-ring: var(--pv-brand-500);
-
-  /* Controls (button, input, select) carry their own radius, decoupled from
-     --radius so card/image rounding can change without reshaping controls. */
-  /* ---- Highlight ramp -------------------------------------------------
-     Gradient + halo applied to key terms inside running text. Derived from
-     the brand ramp so a brand-kit swap carries through untouched.
-     Light surfaces need a dark ramp to stay readable and a faint halo; the
-     dark override below inverts both. */
-  --highlight-from: var(--pv-brand-600);
-  --highlight-via: var(--pv-brand-500);
-  --highlight-to: var(--pv-brand-700);
-  --highlight-glow: var(--pv-brand-500);
-  /* Two halo layers: a wide flat bleed and a tight gradient rim. On light
-     surfaces both stay near-invisible — a glow on white reads as a misprint. */
-  --highlight-halo-opacity: 0.16;
-  --highlight-halo-blur: 0.55em;
-  --highlight-rim-opacity: 0.3;
-  --highlight-rim-blur: 0.16em;
-
-  /* Controls (button, input, select) carry their own radius, decoupled from
-     --radius so card/image rounding can change without reshaping controls. */
-  --radius-control: 0.375rem;
-
-  --shadow-control:
-    0 1px 2px -1px oklch(0 0 0 / 12%), 0 1px 1px oklch(0 0 0 / 4%);
-  --shadow-control-hover:
-    0 3px 8px -3px oklch(0 0 0 / 16%), 0 1px 2px oklch(0 0 0 / 6%);
-}
-
-/* --------------------------------------------------------------------------
-   Chế độ TỐI. `.dark` = toàn trang. `.tone-dark` = một section.
-   Cùng một bảng remap → mọi component con tự đổi màu, không sửa component.
-   -------------------------------------------------------------------------- */
-.dark,
-.tone-dark {
-  --background: var(--pv-ink-950);
-  --foreground: var(--pv-ink-50);
-
-  --surface: var(--pv-ink-900);
-  --surface-2: var(--pv-ink-800);
-
-  --card: var(--pv-ink-900);
-  --card-foreground: var(--pv-ink-50);
-  --popover: var(--pv-ink-900);
-  --popover-foreground: var(--pv-ink-50);
-
-  --primary: var(--pv-brand-400);
-  --primary-foreground: var(--pv-ink-950);
-  --secondary: var(--pv-ink-800);
-  --secondary-foreground: var(--pv-ink-50);
-
-  --muted: var(--pv-ink-800);
-  --muted-foreground: var(--pv-ink-400);
-  --subtle-foreground: var(--pv-ink-500);
-
-  --accent: var(--pv-ink-800);
-  --accent-foreground: var(--pv-ink-50);
-
-  --brand: var(--pv-brand-400);
-  --brand-soft: var(--pv-brand-950);
-  --brand-on: var(--pv-ink-950);
-
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 16%);
+  /* Viền là ánh sáng bị chặn, không phải mực: dùng trắng trong suốt để một
+     đường kẻ giữ đúng độ tương phản trên mọi nấc sky. */
+  --border: oklch(1 0 0 / 14%);
+  --input: oklch(1 0 0 / 18%);
   --ring: var(--pv-brand-400);
 
-  --sidebar: var(--pv-ink-900);
-  --sidebar-foreground: var(--pv-ink-50);
+  --chart-1: var(--pv-brand-400);
+  --chart-2: var(--pv-brand-600);
+  --chart-3: var(--pv-ink-400);
+  --chart-4: var(--pv-brand-200);
+  --chart-5: var(--pv-ink-600);
+
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--pv-brand-400);
-  --sidebar-primary-foreground: var(--pv-ink-950);
-  --sidebar-accent: var(--pv-ink-800);
-  --sidebar-accent-foreground: var(--pv-ink-50);
-  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-primary-foreground: var(--pv-night-0);
+  --sidebar-accent: var(--surface-2);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
   --sidebar-ring: var(--pv-brand-400);
 
-  /* Near-white core reads as an emitting source rather than tinted text. */
+  /* ---- Highlight ramp -------------------------------------------------
+     Gradient + quầng cho từ khoá trong câu chữ thường. Dẫn xuất từ brand ramp
+     nên đổi brand kit là nó theo. Lõi ngả gần trắng để chữ đọc ra là NGUỒN
+     phát sáng, không phải chữ được tô xanh. */
   --highlight-from: var(--pv-brand-300);
   --highlight-via: var(--pv-brand-100);
   --highlight-to: var(--pv-brand-400);
   --highlight-glow: var(--pv-brand-400);
+  /* Hai lớp quầng: một vệt loang rộng và một viền gradient sát nét chữ. */
   --highlight-halo-opacity: 0.6;
   --highlight-halo-blur: 0.75em;
   --highlight-rim-opacity: 0.9;
   --highlight-rim-blur: 0.2em;
 
-  /* Drop shadows are invisible on dark surfaces — separate the control with a
-     top inset highlight instead, and deepen the drop layer underneath. */
+  /* Controls (button, input, select) carry their own radius, decoupled from
+     --radius so card/image rounding can change without reshaping controls. */
+  --radius-control: 0.375rem;
+
+  /* Bóng đen vô hình trên nền tối — tách control bằng vạch sáng inset ở cạnh
+     trên, và làm sâu lớp đổ bóng phía dưới. */
   --shadow-control:
     inset 0 1px 0 oklch(1 0 0 / 10%), 0 1px 2px oklch(0 0 0 / 32%);
   --shadow-control-hover:
     inset 0 1px 0 oklch(1 0 0 / 14%), 0 4px 12px -3px oklch(0 0 0 / 45%);
+
+  /* Cường độ ánh bình minh của section hiện tại, 0 → 1. Vạch chân trời và
+     quầng sáng đọc biến này; `.sky-*` là nơi duy nhất đặt nó. */
+  --sky-light: 0.2;
 }
 
-/* Section tối tự sơn nền + chữ, không cần nhớ class */
-.tone-dark {
+/* --------------------------------------------------------------------------
+   THANG SKY — năm nấc của một đêm
+   --------------------------------------------------------------------------
+   Mỗi <Section> khai đúng một nấc. Nấc chỉ được đi lên trong một trang: mạch
+   của trang là một lần trời sáng, không phải trời sáng rồi tối lại.
+
+     void   giờ tối nhất, chưa có gì            → hero, đầu trang
+     night  nền đêm mặc định                     → thân bài
+     deep   trời đã nhạt hơn một nấc             → thân bài, xen kẽ
+     rise   chân trời bắt đầu ăn sáng            → section ngay trước CTA
+     dawn   ánh sáng đã lên                      → dải CTA đóng trang
+
+   Mỗi nấc remap CẢ nền lẫn chữ. Nền sáng lên thì chữ phải sáng theo, nếu
+   không `--subtle-foreground` tụt xuống dưới 4.5:1 ở hai nấc cuối.
+   Component không phải biết gì về chuyện này — nó vẫn gọi `text-muted-foreground`.
+   -------------------------------------------------------------------------- */
+.sky-void,
+.sky-night,
+.sky-deep,
+.sky-rise,
+.sky-dawn {
   background-color: var(--background);
   color: var(--foreground);
+
+  --card: var(--surface);
+  --popover: var(--surface);
+  --muted: var(--surface-2);
+  --accent: var(--surface-2);
+  --secondary: var(--surface-2);
+}
+
+.sky-void {
+  --sky-light: 0;
+  --background: var(--pv-night-0);
+  --surface: var(--pv-night-1);
+  --surface-2: var(--pv-night-2);
+}
+
+.sky-night {
+  --sky-light: 0.2;
+  --background: var(--pv-night-1);
+  --surface: var(--pv-night-2);
+  --surface-2: var(--pv-night-3);
+}
+
+.sky-deep {
+  --sky-light: 0.42;
+  --background: var(--pv-night-2);
+  --surface: var(--pv-night-3);
+  --surface-2: var(--pv-night-4);
+}
+
+.sky-rise {
+  --sky-light: 0.7;
+  --background: var(--pv-night-3);
+  --surface: var(--pv-night-4);
+  --surface-2: var(--pv-night-5);
+}
+
+.sky-dawn {
+  --sky-light: 1;
+  --background: var(--pv-night-4);
+  --surface: var(--pv-night-5);
+  --surface-2: var(--pv-night-6);
+  /* Hai nấc cuối nền đã đủ sáng để kéo tụt chữ phụ — dịch cả thang chữ lên
+     một nấc thay vì chấp nhận 4.2:1 ở eyebrow và dòng meta. */
+  --muted-foreground: var(--pv-ink-200);
+  --subtle-foreground: var(--pv-ink-300);
 }
 
 /* ==========================================================================
@@ -435,7 +505,7 @@
 
   --tracking-brand: var(--pv-tracking-brand);
 
-  /* Indirection keeps the .tone-dark remap live at use sites */
+  /* Indirection keeps the per-sky remap live at use sites */
   --radius-control: var(--radius-control);
   --shadow-control: var(--shadow-control);
   --shadow-control-hover: var(--shadow-control-hover);
@@ -457,6 +527,15 @@
   --animate-shimmer: shimmer 2.4s var(--ease-in-out-quart) infinite;
   --animate-float: float 9s var(--ease-in-out-quart) infinite;
   --animate-pan: pan 18s linear infinite;
+  /* Gợi ý cuộn: một cái hích xuống rồi về, không phải nhịp nảy liên tục. */
+  --animate-nudge: nudge 2.4s var(--ease-in-out-quart) infinite;
+  /* Bộ ba nhịp sống của DawnRings (hero). Ba chu kỳ cố ý KHÔNG chia hết cho
+     nhau (16 / 7 / 5.2) để trường sóng không bao giờ bắt cùng pha — bắt cùng
+     pha thì thành đèn nháy. Tất cả đủ chậm để biết trang đang sống mà không
+     nhận ra chuyển động khi đang đọc chữ. */
+  --animate-dawn-swell: dawn-swell 16s var(--ease-in-out-quart) infinite;
+  --animate-dawn-pulse: dawn-pulse 7s var(--ease-in-out-quart) infinite;
+  --animate-dawn-twinkle: dawn-twinkle 5.2s var(--ease-in-out-quart) infinite;
 
   @keyframes marquee {
     from {
@@ -492,6 +571,48 @@
       background-position: 200% 50%;
     }
   }
+  @keyframes nudge {
+    0%,
+    60%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    30% {
+      transform: translate3d(0, 5px, 0);
+    }
+  }
+  /* Trường sóng thở: phồng 1.2% từ nguồn sáng ở đáy rồi xẹp lại — sóng đang
+     lan chứ không phải hình dán. Đặt trên phần tử có transform-origin đáy. */
+  @keyframes dawn-swell {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.012);
+    }
+  }
+  /* Vệt bình minh loé theo nhịp hải đăng: sáng chậm, dịu chậm. */
+  @keyframes dawn-pulse {
+    0%,
+    100% {
+      opacity: 0.45;
+    }
+    55% {
+      opacity: 1;
+    }
+  }
+  /* Node nhấp nháy như sao xa — đổi scale, không đổi opacity, vì mỗi node
+     mang sẵn một nấc mờ theo khoảng cách trong decor.tsx. */
+  @keyframes dawn-twinkle {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.5);
+    }
+  }
 }
 
 /* ==========================================================================
@@ -517,13 +638,170 @@
   border-width: 1px;
 }
 
-/* Nền lưới kỹ thuật, dùng cho vùng "phòng lab". Chỉ dùng ở hero/anchor. */
+/* --------------------------------------------------------------------------
+   Chân trời — thứ tách hai section liền nhau
+   --------------------------------------------------------------------------
+   Hai nền đêm cách nhau 3% độ sáng thì mắt đọc ra là lỗi render, không phải
+   ranh giới. Nên ranh giới không nằm ở màu nền: nó là một vạch sáng.
+
+   `pv-horizon`  vạch 1px ở mép TRÊN section, sáng nhất ở giữa, tắt dần ra hai
+                 mép — một đường chân trời nhìn từ chính diện.
+   `pv-skyglow`  quầng LED dâng từ mép DƯỚI section. Ở boundary, quầng của
+                 section trên và vạch của section dưới chồng lên nhau thành
+                 một dải sáng duy nhất.
+
+   Cả hai đọc `--sky-light` nên cường độ tự tăng dần theo mạch của trang;
+   component không truyền tham số nào.
+   -------------------------------------------------------------------------- */
+@utility pv-horizon {
+  pointer-events: none;
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background-image: linear-gradient(
+    to right,
+    transparent 0%,
+    var(--border) 14%,
+    var(--brand) 50%,
+    var(--border) 86%,
+    transparent 100%
+  );
+  opacity: calc(0.4 + 0.6 * var(--sky-light, 0.2));
+}
+
+@utility pv-skyglow {
+  pointer-events: none;
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  /* 38.2% = phần bù của lát vàng (1 − 1/φ): quầng chiếm đúng phần dưới vạch
+     vàng của section. Ở hero, chữ đậu TRÊN vạch đó (xem hero.tsx) nên ánh
+     sáng dâng lên vừa chạm chân khối chữ mà không trèo lên sau lưng nó. */
+  height: 38.2%;
+  min-height: 12rem;
+  max-height: 30rem;
+  background-image: radial-gradient(
+    110% 100% at 50% 100%,
+    var(--brand) 0%,
+    transparent 72%
+  );
+  /* Không bao giờ về 0 tuyệt đối: đêm sâu nhất vẫn phải thấy ánh sáng đang
+     tới ở rìa dưới, nếu không thì đó là đêm chết chứ không phải trước bình minh.
+     Sàn 0.07 cũng là thứ tách hai section cùng nấc trời: mép trên tối, mép
+     dưới có quầng, rồi vạch chân trời — nhịp đó đọc ra ranh giới ngay cả khi
+     hai nền giống hệt nhau. */
+  opacity: calc(0.07 + 0.23 * var(--sky-light, 0.2));
+}
+
+/* Hero nằm ở nấc tối nhất nhưng là khung DUY NHẤT có trọn một màn hình bầu
+   trời trống để ánh sáng loang ra — cùng cường độ với một section thường thì
+   ở đó nó biến mất. Kèm với `pv-skyglow` trên cùng phần tử. */
+@utility pv-skyglow-hero {
+  --sky-light: 0.5;
+}
+
+/* --------------------------------------------------------------------------
+   Đồ hoạ trang trí — xem src/components/pv/decor.tsx
+   --------------------------------------------------------------------------
+   Hai lớp này chỉ đặt KHUNG và ĐỘ ĐẬM; hình nằm trong component. Độ đậm đọc
+   `--sky-light` nên trang trí cũng sáng dần theo mạch trời, không phải một
+   hoạ tiết dán cố định.
+   -------------------------------------------------------------------------- */
+
+/* Cung chân trời ở đáy section. */
+@utility pv-arc {
+  pointer-events: none;
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  width: 100%;
+  height: 9rem;
+  color: var(--brand);
+  /* Nhạt hơn hẳn quầng sáng: cung là đường viền của ánh sáng, thấy nó rõ hơn
+     chính ánh sáng thì thành hình vẽ chứ không thành chân trời. */
+  opacity: calc(0.08 + 0.24 * var(--sky-light, 0.2));
+}
+
+/* Gợn bình minh của hero. Không đọc `--sky-light`: hero ở nấc `void` (=0) nên
+   sẽ tắt hẳn, mà đây lại là vector chính của trang chủ.
+   Nhốt trong 61.8% dưới của khung — lát vàng lớn, phần bù của 38.2% mà
+   `pv-skyglow` chiếm và là phần trời hero chừa lại dưới khối chữ. Phủ trọn
+   khung thì ở khổ hẹp trường sóng phóng theo `slice` trèo lên tận hàng CTA. */
+@utility pv-rings {
+  pointer-events: none;
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 61.8%;
+  min-height: 18rem;
+  color: var(--brand);
+  opacity: 0.32;
+  /* Che dần ra rìa để các gợn không kết thúc bằng một nét cắt ngang khung.
+     Mask rộng ngang, thấp dọc — theo đúng hình của trường sóng dẹt. */
+  mask-image: radial-gradient(
+    96% 92% at 50% 100%,
+    black 38%,
+    transparent 100%
+  );
+}
+
+/* Node của DawnRings: twinkle scale quanh tâm chính nó — không có transform-box
+   thì SVG xoay/scale quanh gốc viewBox và node bay khỏi chỗ. Delay âm, mỗi
+   node một pha để chòm sao không nháy đồng loạt như đèn trang trí. */
+.pv-rings .pv-node {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.pv-rings .pv-node:nth-of-type(2) {
+  animation-delay: -1.3s;
+}
+.pv-rings .pv-node:nth-of-type(3) {
+  animation-delay: -2.6s;
+}
+.pv-rings .pv-node:nth-of-type(4) {
+  animation-delay: -3.4s;
+}
+.pv-rings .pv-node:nth-of-type(5) {
+  animation-delay: -4.7s;
+}
+
+/* --------------------------------------------------------------------------
+   Titan sần — chất liệu của mọi bề mặt
+   --------------------------------------------------------------------------
+   Nhiễu fractal xám phủ lên nền section. Đây là NỬA CÒN LẠI của chất liệu:
+   thang `--pv-night-*` cố ý để chroma rất thấp, và nếu không có lớp hạt này
+   thì bộ màu đó ra nền xám phẳng chứ không ra mặt kim loại nhám.
+
+   Chế độ hoà `overlay` chứ không phải phủ đè: xám 50% là điểm trung tính của
+   overlay, nên hạt chỉ ĐẨY LỆCH độ sáng sẵn có theo hai chiều. Nhờ vậy cùng
+   một lớp hạt chạy đúng ở cả nấc `void` lẫn nấc `dawn` — phủ đè thì ở nấc tối
+   nó làm bạc nền, ở nấc sáng nó biến mất.
+
+   Núm chỉnh duy nhất là `opacity` bên dưới. Hạt quá rõ thì hạ, đừng đổi
+   `baseFrequency` — tần số đó quyết định cỡ hạt, và cỡ hạt là thứ phân biệt
+   "kim loại nhám" với "ảnh nhiễu vì kém chất lượng".
+   -------------------------------------------------------------------------- */
+@utility pv-grain {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  background-repeat: repeat;
+  mix-blend-mode: overlay;
+  opacity: 0.42;
+}
+
+/* Nền lưới kỹ thuật, dùng cho vùng "phòng lab". Chỉ dùng ở hero/anchor.
+   Tâm mask ở 38% dọc — vạch vàng của khung, cùng chỗ hero đặt khối chữ —
+   nên lưới sáng nhất ngay sau lưng chữ rồi lặn dần về hai mép. */
 @utility pv-grid-bg {
   background-image:
     linear-gradient(to right, var(--border) 1px, transparent 1px),
     linear-gradient(to bottom, var(--border) 1px, transparent 1px);
   background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 38%, black 40%, transparent 100%);
 }
 
 /* Gradient fill for a highlighted term. Paired with a blurred duplicate behind

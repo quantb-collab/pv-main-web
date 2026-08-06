@@ -29,7 +29,7 @@ export default async function UseCasesPage({
 
   return (
     <>
-      <Section tone="dark" className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <SectionHeader
           as="h1"
           eyebrow={t("hero.eyebrow")}
@@ -38,7 +38,7 @@ export default async function UseCasesPage({
         />
       </Section>
 
-      <Section>
+      <Section sky="rise">
         <IndexGrid
           items={children.map((c) => {
             const slug = c.key.split(".")[1];

@@ -23,7 +23,8 @@ Bạn dựng giao diện cho website Pebble Vina. Mục tiêu không phải làm
 1. Xem entry của trang trong `src/content/registry.ts` để biết nhiệm vụ và CTA.
 2. Chọn cấu trúc: template có sẵn (`SolutionTemplate`, `UseCaseTemplate`,
    `StubPage`) hoặc ghép block theo trình tự thuyết phục 6 bước.
-3. Giữ nhịp sáng/tối: hero tối → thân bài sáng xen `tone="surface"` → `CtaBand`
+3. Giữ mạch trời: hero `sky="void"` → thân bài sáng dần qua `night`/`deep` →
+   `rise` ngay trước `CtaBand` (tự đặt `dawn`). Nấc chỉ đi lên.
    tối → footer tối. Không để hai section `surface` liền nhau.
 4. Chuyển động chỉ qua `Reveal` / `RevealGroup` / `RevealItem` / `Parallax`.
    Không gọi `motion.create()` trong thân component.

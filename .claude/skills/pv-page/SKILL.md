@@ -62,7 +62,7 @@ export async function generateMetadata({ params }) { /* title + description từ
 export default async function Page({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);          // bắt buộc, nếu không sẽ mất static render
-  // Hero tone="dark" → nội dung → <CtaBand cta={page.cta} />
+  // Hero sky="void" → nội dung sáng dần → <CtaBand cta={page.cta} />
 }
 ```
 

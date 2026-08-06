@@ -26,7 +26,7 @@ export default async function CaseStudiesPage({
 
   return (
     <>
-      <Section tone="dark" className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <SectionHeader
           as="h1"
           eyebrow={t("hero.eyebrow")}
@@ -35,7 +35,7 @@ export default async function CaseStudiesPage({
         />
       </Section>
 
-      <Section>
+      <Section sky="rise">
         <Reveal className="max-w-2xl">
           <Gap kind="proof">{t("gap")}</Gap>
         </Reveal>

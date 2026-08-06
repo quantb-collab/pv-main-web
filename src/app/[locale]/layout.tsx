@@ -83,10 +83,16 @@ export default async function LocaleLayout({
 
   const t = await getTranslations("site");
 
+  /*
+    `dark` cố định trên <html>: site chỉ có một chế độ là đêm (xem khối chủ đề
+    ở đầu globals.css). Class này không bật/tắt gì của LỚP 2 — bảng màu ở đó đã
+    là bảng đêm — nó có mặt để biến thể `dark:` của các component shadcn trong
+    src/components/ui/ khớp với nền thật mà chúng đang nằm trên.
+  */
   return (
     <html
       lang={locale}
-      className={`${brandFont.variable} ${mono.variable} h-full`}
+      className={`dark ${brandFont.variable} ${mono.variable} h-full`}
       suppressHydrationWarning
     >
       <head>

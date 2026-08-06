@@ -3,7 +3,12 @@ import { Link } from "@/i18n/navigation";
 import { footerPages } from "@/content/registry";
 
 /**
- * Footer nền tối — cùng cặp với hero, khép nhịp sáng/tối của trang.
+ * Footer — mặt đất dưới đường chân trời.
+ *
+ * Đứng ngay sau `CtaBand` (nấc `dawn`, chỗ sáng nhất trang) nên nó lùi xuống
+ * một nấc: dải CTA phải là điểm sáng cuối cùng mắt dừng lại, không phải danh
+ * sách link. Vạch chân trời ở mép trên là thứ tách hai khối đó ra.
+ *
  * Danh sách link lấy từ registry, không viết tay, để không lệch khi thêm trang.
  */
 
@@ -31,7 +36,10 @@ export async function SiteFooter() {
   const legal = footerPages("legal");
 
   return (
-    <footer className="tone-dark border-t">
+    <footer className="sky-deep relative isolate">
+      <span aria-hidden className="pv-grain -z-10" />
+      <span aria-hidden className="pv-horizon -z-10" />
+
       <div className="pv-container py-16 lg:py-20">
         {/* Không mở footer bằng một câu tuyên ngôn: CtaBand ngay phía trên đã
             nói xong bước tiếp theo. Footer làm việc khác — danh tính pháp nhân,

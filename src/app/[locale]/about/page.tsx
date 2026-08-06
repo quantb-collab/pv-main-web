@@ -32,7 +32,7 @@ export default async function AboutPage({
 
   return (
     <>
-      <Section tone="dark" className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <SectionHeader
           as="h1"
           eyebrow={t("hero.eyebrow")}
@@ -41,7 +41,7 @@ export default async function AboutPage({
         />
       </Section>
 
-      <Section>
+      <Section sky="night">
         <div className="grid gap-14 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-20">
           <div>
             <SectionHeader title={t("mission.title")} lead={t("mission.body")} />
@@ -53,7 +53,7 @@ export default async function AboutPage({
         </div>
       </Section>
 
-      <Section tone="surface">
+      <Section sky="deep">
         <div className="grid gap-10 md:grid-cols-2 lg:gap-16">
           <Reveal className="rounded-xl border bg-background p-6 lg:p-8">
             <h3 className="font-display text-title font-semibold">
@@ -78,7 +78,7 @@ export default async function AboutPage({
         </div>
       </Section>
 
-      <Section>
+      <Section sky="deep">
         <div className="grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeader title={t("principles.title")} />
           <StatementList
@@ -87,7 +87,7 @@ export default async function AboutPage({
         </div>
       </Section>
 
-      <Section tone="surface">
+      <Section sky="rise">
         <SectionHeader title="Bằng chứng cần bổ sung" />
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           <Gap kind="proof">{t("leadershipGap")}</Gap>

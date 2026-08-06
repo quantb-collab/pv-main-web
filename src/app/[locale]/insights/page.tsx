@@ -50,7 +50,7 @@ export default async function InsightsPage({
 
   return (
     <>
-      <Section tone="dark" className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <SectionHeader
           as="h1"
           eyebrow={t("hero.eyebrow")}
@@ -59,7 +59,7 @@ export default async function InsightsPage({
         />
       </Section>
 
-      <Section>
+      <Section sky="rise">
         <div className="overflow-hidden rounded-xl border">
           <CardGrid cols={2}>
             {groups.map((g, i) => (

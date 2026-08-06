@@ -70,7 +70,8 @@ Trạng thái `ready` yêu cầu bằng 0.
 
 - [ ] Bật `prefers-reduced-motion` → trang vẫn đọc được, không còn parallax
 - [ ] Tab được qua toàn bộ link và nút, có viền focus nhìn thấy
-- [ ] Tương phản chữ đạt WCAG AA ở cả vùng sáng và vùng `.tone-dark`
+- [ ] Tương phản chữ đạt WCAG AA ở **cả năm nấc sky** — kiểm ở `rise` và
+      `dawn` trước, đó là hai nấc nền sáng nhất nên chữ phụ tụt trước ở đó
 - [ ] Tắt JavaScript → nội dung vẫn hiện (nhờ khối `<noscript>` ở layout)
 - [ ] Không dùng animation làm phương tiện truyền đạt duy nhất một thông tin
 

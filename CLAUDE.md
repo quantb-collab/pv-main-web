@@ -46,6 +46,16 @@ Không hardcode màu, cỡ chữ, easing, thời lượng, khoảng cách sectio
 component. Màu, thang chữ và nhịp lấy từ `src/app/globals.css`; easing/duration
 cho JS lấy từ `src/lib/motion.ts`. Hai file này phải khớp nhau.
 
+Chủ đề là **đêm trước bình minh trên mặt titan sần**, ánh ló rạng màu **xanh
+da trời** (không phải nắng vàng, cũng không phải xanh đèn LED). Nền có chroma rất
+thấp và luôn phủ lớp hạt `pv-grain` — bỏ lớp hạt là mất chất liệu.
+
+Site chỉ có một chế độ — không còn nền sáng, không còn `.tone-dark`.
+Mỗi section khai một nấc trời qua prop `sky` (`void` → `night` → `deep` →
+`rise` → `dawn`) và nấc chỉ được đi lên trong một trang. Section cao trọn một
+màn hình theo mặc định. Bảng nấc và cơ chế chân trời: `docs/DESIGN-TOKENS.md`
+mục *Thang sky*.
+
 Chữ gọi theo vai trò (`text-body`, `text-title`, `text-eyebrow`…), không gọi
 theo cỡ (`text-sm`, `text-lg`, `text-[11px]`). Mỗi vai trò đã mang sẵn cỡ,
 line-height và tracking, nên không viết thêm `leading-*` hay `tracking-*`.

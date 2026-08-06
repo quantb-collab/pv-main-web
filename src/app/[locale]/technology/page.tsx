@@ -32,7 +32,7 @@ export default async function TechnologyPage({
 
   return (
     <>
-      <Section tone="dark" className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <SectionHeader
           as="h1"
           eyebrow={t("hero.eyebrow")}
@@ -41,7 +41,7 @@ export default async function TechnologyPage({
         />
       </Section>
 
-      <Section>
+      <Section sky="night">
         <div className="grid gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
           <div>
             <SectionHeader title={t("layers.title")} />
@@ -55,7 +55,7 @@ export default async function TechnologyPage({
         </div>
       </Section>
 
-      <Section tone="surface">
+      <Section sky="deep">
         <div className="grid gap-14 md:grid-cols-2 lg:gap-20">
           <div>
             <SectionHeader as="h3" title={t("integration.title")} lead={t("integration.lead")} />
@@ -98,7 +98,7 @@ export default async function TechnologyPage({
         </div>
       </Section>
 
-      <Section>
+      <Section sky="deep">
         <SectionHeader title={t("deployment.title")} />
         <PillRow
           className="mt-8"
@@ -106,7 +106,7 @@ export default async function TechnologyPage({
         />
       </Section>
 
-      <Section tone="surface">
+      <Section sky="rise">
         <SectionHeader title={t("hardware.title")} lead={t("hardware.lead")} />
         <div className="mt-12 overflow-hidden rounded-xl border">
           <CardGrid cols={3}>

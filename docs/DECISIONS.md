@@ -239,3 +239,234 @@ dữ liệu pháp nhân thật thay cho ô chờ — mọi thay đổi sau này 
 không phụ thuộc brand kit, giữ thêm chỉ làm trang trông dở dang lâu hơn.
 **Đổi lại thì phải sửa:** khối `footer.office` trong `messages/vi.json` và
 `src/components/layout/site-footer.tsx`.
+
+## 2026-08-05 — Chủ đề "đêm trước bình minh", ánh ló rạng màu LED xanh
+**Bối cảnh:** Site đang chạy nhịp sáng/tối cổ điển — thân bài nền sáng, hero và
+dải CTA nền tối. Người dùng chốt hướng thị giác mới: cả site là ban đêm, cụ thể
+là khoảng trời tối ngay trước bình minh, và thứ ló rạng không phải nắng vàng mà
+là ánh LED xanh của thiết bị đang chạy.
+**Chọn:** Bỏ hẳn chế độ sáng. LỚP 2 còn một bảng màu duy nhất; `.tone-dark` bị
+xoá; `<html>` mang cố định class `dark` để biến thể `dark:` của shadcn khớp với
+nền thật. Thang `sky` năm nấc (`void` → `night` → `deep` → `rise` → `dawn`) thay
+cho ba `tone` cũ, mỗi nấc remap cả nền lẫn chữ.
+**Vì:** Nhịp sáng/tối là hai trạng thái lặp lại; nó không kể được một mạch. Năm
+nấc đi một chiều thì bản thân việc cuộn trang trở thành một lần trời sáng, và
+mỗi trang có một mở đầu và một kết thúc thị giác thay vì một chuỗi khối xen kẽ.
+**Đã cân nhắc và bỏ:** giữ cả hai bảng màu và chỉ đổi giá trị bảng tối (còn một
+chế độ sáng chết mà không trang nào dùng, chắc chắn sẽ trôi); đánh số nấc
+(`sky={3}`) thay vì đặt tên (con số không nói được vì sao nấc đó đúng).
+**Ràng buộc kéo theo:** nấc chỉ được đi lên trong một trang. `CtaBand` tự đặt
+`dawn` nên mọi trang đều kết thúc ở cùng một chỗ sáng nhất; footer lùi về
+`sky-deep` để dải CTA vẫn là điểm sáng cuối mắt dừng lại.
+**Đổi lại thì phải sửa:** LỚP 1 (`--pv-brand-*`, `--pv-night-*`) và khối
+`.sky-*` ở LỚP 2. Component không phải đụng.
+
+## 2026-08-05 — Ranh giới giữa hai section là ánh sáng, không phải màu nền
+**Bối cảnh:** Yêu cầu kèm theo là nền phải giúp phân biệt rõ các section liên
+tiếp. Cách hiển nhiên — mỗi section một màu nền khác nhau — không dùng được:
+mười một section trên trang chủ mà chỉ có năm nấc trời, và hai nền đêm cách
+nhau 3% độ sáng thì mắt đọc ra là lỗi render chứ không phải ranh giới.
+**Chọn:** Tách làm hai kênh. Nấc trời lo mạch dài của trang (thô, đi một
+chiều). Ranh giới do `<Section>` tự vẽ: `pv-horizon` — vạch 1px ở mép trên,
+sáng nhất ở giữa — cộng `pv-skyglow` — quầng LED dâng từ mép dưới. Cả hai đọc
+một biến cường độ duy nhất `--sky-light` do `.sky-*` đặt.
+**Vì:** Nhịp *mép trên tối → mép dưới có quầng → vạch sáng* đọc ra ranh giới
+kể cả khi hai section cùng một nấc. Nhờ vậy nấc trời được tự do đi chậm theo
+mạch nội dung thay vì phải nhảy chỉ để hai khối trông khác nhau.
+**Giới hạn đã biết:** quầng có sàn 0.07 nên không nấc nào tắt hẳn — cố ý; đêm
+không còn ánh sáng nào là đêm chết chứ không phải trước bình minh.
+**Đổi lại thì phải sửa:** hai `@utility` ở LỚP 5 và cột `--sky-light` trong
+khối `.sky-*`.
+
+## 2026-08-05 — Section cao trọn một màn hình theo mặc định
+**Bối cảnh:** Người dùng yêu cầu không còn khối nào nhỏ và chật.
+**Chọn:** `<Section full>` mặc định bật — `min-h-dvh`, nội dung căn giữa hai
+trục. `full={false}` chỉ dành cho trang công cụ nội bộ; hiện chỉ `/track` dùng.
+**Vì:** `min-h` chứ không phải `h`: nội dung dài hơn thì section cao lên, không
+cắt. Căn giữa xoá hết dải trống không ai kiểm soát ở hai mép — chính vấn đề đã
+xử lý riêng cho hero ngày 2026-08-05, giờ thành luật chung.
+**Đánh đổi đã chấp nhận:** trang dài hơn hẳn. Ngân sách "trang chủ trong khoảng
+10 màn hình cuộn" trong skill `pv-ui` giờ là ràng buộc chặt chứ không còn dư
+địa, và luật mật độ (một section, một ý) trở thành thứ giữ cho trang không phình.
+**Đổi lại thì phải sửa:** mặc định của prop `full` trong
+`src/components/pv/section.tsx`.
+
+## 2026-08-05 — Ánh bình minh đổi từ LED xanh sang ngọc bích, nền thành titan sần
+**Bối cảnh:** Bản LED xanh (hue 205→260, chroma tới 0.152) bị người dùng đánh
+giá là "quê mùa". Yêu cầu thay bằng xanh ngọc bích đậm, và chất liệu màu của
+dự án phải như titan sần.
+**Chọn:** Brand ramp chuyển sang hue 167–176 với đỉnh chroma 0.128 nằm ở khúc
+giữa thang (400–500) rồi tụt về hai đầu. Thang trời `--pv-night-*` hạ chroma
+xuống 0.008–0.022 và trôi hue 240 → 174. Thêm `@utility pv-grain` — nhiễu
+fractal SVG, hoà `overlay` — phủ lên mọi section, footer và hero.
+**Vì:** Ba chỗ tạo ra cảm giác "quê" của bản cũ, sửa cả ba:
+1. Chroma kịch trần ở đầu sáng — đó là màu của đèn báo nguồn. Đá quý sẫm nhất
+   ở thân và nhạt dần ở chỗ ánh sáng xuyên qua, nên đỉnh chroma phải nằm giữa.
+2. Nền đêm tự nó đã xanh (chroma 0.062) nên quầng bình minh chìm vào một nền
+   cùng màu, không còn là ánh sáng chạm vào vật gì. Titan là kim loại xám —
+   màu chỉ hiện ra ở chỗ ánh sáng chạm tới.
+3. Bề mặt phẳng tuyệt đối đọc ra là màu tô, không phải vật liệu.
+**Ràng buộc kéo theo:** chroma nền thấp và lớp hạt là MỘT quyết định, không
+tách được. Gỡ `pv-grain` thì bộ số mới tụt xuống thành nền xám phẳng, tệ hơn
+cả bản LED.
+**Núm chỉnh duy nhất:** `opacity` của `pv-grain`. Không đổi `baseFrequency` —
+nó quyết định cỡ hạt, và cỡ hạt phân biệt "kim loại nhám" với "ảnh nhiễu".
+**Thay thế mục:** 2026-08-05 "Chủ đề đêm trước bình minh…" về phần màu; phần
+cấu trúc thang `sky` của mục đó giữ nguyên.
+
+## 2026-08-05 — Hero đổi sang định vị đối tác, bỏ eyebrow, CTA còn một
+**Bối cảnh:** Người dùng viết lại toàn bộ chữ của first view.
+**Chọn:** Bỏ eyebrow "Từ quy trình đến hạ tầng". Tiêu đề thành "Đối tác đồng
+hành cùng chiến lược doanh nghiệp chuyển đổi số và ứng dụng công nghệ mới và
+mạnh mẽ". Câu dẫn thành slogan "Công cụ không thay thế được con người, nhưng
+những con người tốt nhất luôn biết lựa chọn và sở hữu những công cụ ổn định và
+hiệu năng cao nhất." Nhãn `cta.assessment` đổi thành "Liên hệ" và đích đổi từ
+`/ai-assessment` sang `/contact`.
+**Vì:** Nút ghi "Liên hệ" mà mở ra trang đánh giá là nói dối chính nhãn của nó,
+và để hai khoá cùng nhãn "Liên hệ" trỏ hai nơi thì sớm muộn cũng lệch.
+**Hệ quả chưa xử lý:** tiêu đề mới không còn chữ "AI" nên `<Highlight>` không
+bắt được gì — first view giờ không có từ khoá phát sáng nào, đúng màn hình mà
+cả hệ quầng sáng được dựng ra để phục vụ. Cần chốt: chọn từ khác để tô (nới
+`TERMS` trong `highlight.tsx`) hay chấp nhận hero chữ trắng trên nền tối.
+**Đảo mục:** 2026-08-05 "Hero chỉ nhắc AI đúng một lần" — tiêu đề đó đã bị thay.
+**Đổi lại thì phải sửa:** khối `home.hero` và `cta` trong `messages/vi.json`,
+`HREF.assessment` trong `cta-band.tsx`, ba href ở hero + header.
+
+## 2026-08-05 — Link phụ của hero thành gợi ý cuộn, không còn là link trang
+**Bối cảnh:** Yêu cầu chuyển "Cách triển khai" xuống giữa gần đáy hero, kèm
+mũi kép chỉ xuống, nhãn "Khám phá thêm".
+**Chọn:** `ExploreCue` — anchor `#van-de` neo ở đáy hero, hai chevron chồng
+lệch, animation `--animate-nudge`. Không còn trỏ sang `/how-we-deliver`.
+**Vì:** Mũi kép chỉ xuống nằm ở mép dưới màn hình là một cử chỉ ai cũng đọc
+được: "còn nữa ở phía dưới". Cho nó dẫn sang trang khác là nói dối cử chỉ đó.
+`/how-we-deliver` vẫn có mặt ở menu chính.
+**Đổi lại thì phải sửa:** `ExploreCue` trong `src/components/home/hero.tsx`.
+
+## 2026-08-05 — Ánh bình minh chốt ở xanh da trời
+**Bối cảnh:** Người dùng bác cả hai bản trước — xanh LED ("quê mùa") và ngọc
+bích ("không ổn") — và chốt xanh da trời.
+**Chọn:** Brand ramp hue 234–255, đỉnh chroma 0.122 ở nấc 500–600. Thang trời
+`--pv-night-*` trôi 265 (than ngả chàm) → 238 (xanh da trời), chroma giữ
+0.008–0.023 như cũ.
+**Vì:** Ba thứ được rút ra từ hai lần hỏng trước và giữ nguyên ở bản này:
+1. **Đỉnh chroma nằm giữa thang, không ở đầu sáng.** Bản LED gắt nhất đúng ở
+   chỗ sáng nhất nên đọc ra là bóng đèn.
+2. **Trần chroma 0.122, không 0.152.** Lam kịch chroma trên nền tối là màu của
+   link chưa ghé thăm.
+3. **Hue chỉ trôi 21 độ trên cả thang.** Bản LED trôi 55 độ nên đầu sáng ra
+   cyan còn đầu tối ra chàm — không đọc ra là một màu.
+Cộng với chroma nền cực thấp và lớp hạt titan (giữ nguyên từ mục trước), kết
+quả là lam trầm trên kim loại nhám, không phải lam điện tử trên nền lam.
+**Thay thế mục:** hai mục màu trước đó (LED xanh, và ngọc bích).
+**Đổi lại thì phải sửa:** `--pv-brand-*` và `--pv-night-*` ở LỚP 1.
+
+## 2026-08-05 — Tiêu đề dài trên ~60 ký tự dùng `text-headline`, vẫn là h1
+**Bối cảnh:** Tiêu đề hero 97 ký tự ở vai trò `display` (72px tại 1440px) ra
+bốn dòng cao hơn 300px — người dùng đánh giá là quá to và tốn diện tích.
+**Chọn:** h1 của hero dùng `text-headline` (32→52px). Thẻ vẫn là `<h1>`.
+**Vì:** Thang chữ chọn theo vai trò, nhưng `display` được cân cho tiêu đề dưới
+50–60 ký tự; quá ngưỡng đó thì cùng một vai trò cho ra một khối chữ khác hẳn về
+diện tích. Đây là ngoại lệ về ĐỘ DÀI, không phải về cấp tiêu đề — nên đổi cỡ
+chứ không đổi thẻ, và cấu trúc heading của trang không suy suyển.
+**Đã cân nhắc và bỏ:** thêm vai trò thứ mười hai `display-long` (một trường hợp
+không đáng một vai trò mới, và `headline` đã đúng cỡ cần dùng); rút ngắn tiêu đề
+(chữ là quyết định của người dùng, không phải của hệ thị giác).
+**Đổi lại thì phải sửa:** class của `<motion.h1>` trong `hero.tsx`.
+
+## 2026-08-05 — Câu dẫn hero rút thành slogan hai vế
+**Bối cảnh:** Bản người dùng đưa dài 143 ký tự, đọc như một đoạn văn.
+**Chọn:** "Công cụ không thay thế con người. Nhưng người giỏi nhất luôn chọn
+công cụ mạnh và ổn định nhất." — 95 ký tự.
+**Vì:** Giữ nguyên phép đối "công cụ ↔ con người" và giữ cả hai tính chất
+(mạnh, ổn định), nhưng cắt hai mệnh đề lồng để câu nhớ được. Slogan phải đọc
+xong trong một hơi.
+**Đổi lại thì phải sửa:** `home.hero.lead` trong `messages/vi.json`.
+
+## 2026-08-05 — Nhãn CTA chính là "Đặt lịch khảo sát", đích về `/ai-assessment`
+**Chọn:** `cta.assessment` = "Đặt lịch khảo sát", `HREF.assessment` =
+`/ai-assessment`, ba href ở hero + header theo cùng.
+**Vì:** Đích phải khớp nhãn. Vòng trước nhãn là "Liên hệ" nên đích đã tạm chuyển
+sang `/contact`; nhãn quay lại nói về khảo sát thì đích quay lại trang có form.
+**Đảo mục:** phần đích của mục "Hero đổi sang định vị đối tác…" cùng ngày.
+
+## 2026-08-05 — Hero chốt ở định vị "doanh nghiệp số tự vận hành"
+**Chọn:** Tiêu đề "Pebble Vina — đồng hành cùng bạn xây dựng doanh nghiệp số tự
+vận hành" (69 ký tự, vẫn ở `text-headline` theo luật trên 60 ký tự). Slogan hạ
+từ `text-lead` xuống `text-body`. Thêm nút phụ "Xem hồ sơ năng lực" →
+`/about`, variant `secondary`, không mũi tên.
+**Vì nút phụ dùng `secondary` chứ không `outline`:** §23 cấm hai lời mời ngang
+hàng. Nút viền đứng cạnh nút đặc vẫn đọc ra là hai lựa chọn cùng cấp; nút nền
+đặc mờ thì đọc ra là hàng hai. Mũi tên là động từ của nút chính, nút phụ không
+được mượn.
+**Vì slogan hạ một nấc:** ở `text-lead` (21px) nó chỉ nhỏ hơn tiêu đề 2,5 lần
+nên hai khối tranh nhau. Ở 17,5px khoảng cách thành 3 lần, mắt đọc ra thứ tự
+ngay mà chữ vẫn trên ngưỡng thân bài.
+**Nhịp dọc:** `gap-5` giữa tiêu đề và slogan (một ý, phải dính nhau), `mt-8`
+trước hàng nút (≈1,6×). Ba khoảng bằng nhau thì ba khối đọc ra là một danh
+sách, không phải một lời chào rồi một lời mời.
+**Nợ đã biết:** "Hồ sơ năng lực" trong B2B Việt Nam thường là một file PDF.
+`/about` là chỗ gần nhất hiện có. Khi Pebble Vina có hồ sơ thật thì nút này nên
+trỏ vào file, không phải vào trang giới thiệu.
+**Đổi lại thì phải sửa:** khối `home.hero` + `cta.profile` trong
+`messages/vi.json`, và khối nút trong `hero.tsx`.
+
+## 2026-08-05 — `tự vận hành` vào bộ từ khoá phát sáng
+**Bối cảnh:** Từ khi tiêu đề hero bỏ chữ "AI", first view không còn từ nào
+phát sáng — đúng màn hình mà cả hệ quầng sáng được dựng ra để phục vụ. Người
+dùng yêu cầu tô các nội dung chính.
+**Chọn:** `TERMS` trong `highlight.tsx` thành `/(\bAI\b|tự vận hành)/g`.
+**Vì:** Đếm trước khi thêm. `tự vận hành` xuất hiện ĐÚNG MỘT LẦN trên toàn bộ
+`messages` — nên thêm nó tô đúng một chỗ, chính là định vị ở tiêu đề hero. Đối
+chiếu đã loại: `vận hành` 15 chỗ, `Pebble Vina` 19 chỗ — tô những từ đó thì cả
+site phát sáng và không chỗ nào còn là điểm nhấn.
+**Ràng buộc kéo theo:** `<Led>` là `inline-block` nên cụm từ khoá KHÔNG xuống
+dòng được. Ba từ là trần; cụm dài hơn nằm trong tiêu đề ở khổ 375px sẽ tràn
+ngang. Đã ghi thành luật ngay trong `highlight.tsx`.
+**Đổi lại thì phải sửa:** `TERMS` và `IS_TERM` trong `highlight.tsx` — hai
+biểu thức phải khớp nhau (`/g/` mang `lastIndex` nên không dùng chung được).
+
+## 2026-08-05 — Trang trí là một hình biến tấu, không phải một bộ hoạ tiết
+**Bối cảnh:** Người dùng yêu cầu thêm decorator ở từng section và một vector
+đẹp cho trang chính.
+**Chọn:** Đúng MỘT ý hình học, dùng ở hai cấp độ — `HorizonArc` (cung chân
+trời ở đáy mọi section, độ đậm đọc `--sky-light`) và `DawnRings` (các vòng
+đồng tâm toả lên từ đúng điểm `pv-skyglow` đặt nguồn sáng, chỉ ở hero trang
+chủ). Cả hai ở `src/components/pv/decor.tsx`.
+**Vì:** Mỗi section một hoạ tiết khác là mười thứ tiếng nói — đúng thứ luật 3
+của repo cấm ở tầng layout, không có lý do gì cho phép ở tầng đồ hoạ. Một hình
+biến tấu theo nấc trời thì trang có nhịp mà người đọc vẫn nhận ra mình đang
+xem cùng một bầu trời từ đầu tới cuối.
+**Vòng đồng tâm giải quyết một vấn đề có thật:** quầng `pv-skyglow` trước đó là
+một vệt sáng không rõ từ đâu ra. Đặt các vòng đúng tâm quầng thì ánh sáng có
+nguồn gốc nhìn thấy được.
+**Ràng buộc kéo theo:** cung phải nhạt hơn quầng. Nó là đường viền của ánh
+sáng; rõ hơn chính ánh sáng thì thành hình vẽ dán lên nền.
+**Đổi lại thì phải sửa:** `decor.tsx` cho hình, `pv-arc` / `pv-rings` ở LỚP 5
+cho khung và độ đậm.
+
+## 2026-08-05 — Nút phụ hero dùng viền sáng, không dùng `secondary`
+**Bối cảnh:** Bản `secondary` bị đánh giá là mờ nhạt, trùng nền.
+**Nguyên nhân thật:** nền của `secondary` là `--surface-2`, mà thang sky định
+nghĩa bề mặt = nấc trời kế tiếp. Ở hero (`sky-void`) hai màu đó gần trùng nhau.
+Đây là ĐẶC TÍNH của thang sky, không phải lỗi variant — `secondary` vẫn đúng ở
+các nấc sáng hơn.
+**Chọn:** `variant="outline"` + nền trong suốt + viền `foreground/35`, icon
+`FileText` ở đầu nhãn. Hover chỉ nhấc viền, không đổ nền: nút phụ được thấy,
+không được mời.
+**Bẫy đã gặp:** `<html>` mang class `dark` cố định nên `dark:border-input` và
+`dark:bg-input/30` của variant vẫn sống. tailwind-merge chỉ gộp class cùng
+biến thể, nên override không có `dark:` bị biến thể `dark:` sinh sau đè lại —
+im lặng, `pnpm verify` vẫn sạch. Phải khai đủ cặp `dark:` cho từng override.
+**Đổi lại thì phải sửa:** khối nút phụ trong `hero.tsx`.
+
+## 2026-08-05 — Khối hero nới lên `max-w-5xl`, slogan bỏ giới hạn đo
+**Chọn:** `max-w-4xl` (896px) → `max-w-5xl` (1024px). Slogan bỏ `max-w-[58ch]`.
+**Vì:** Ở 4xl tiêu đề 69 ký tự rơi xuống ba dòng và slogan 95 ký tự thành hai.
+Nới 128px là đủ để tiêu đề nằm hai dòng và slogan nằm trọn một dòng từ khổ
+laptop trở lên.
+**Ngoại lệ đã cân nhắc:** 95 ký tự một dòng vượt đo đọc chuẩn (`58ch` cho câu
+dẫn). Chấp nhận vì slogan không phải văn bản chạy — nó là một câu đọc trong một
+hơi, cắt đôi thì mất phép đối "công cụ ↔ con người". Ngoại lệ CHỈ cho hero;
+mọi câu dẫn khác giữ `58ch`. `text-balance` lo khổ hẹp.
+**Còn để ngỏ:** `--container-max` vẫn 1280px. Muốn cả site rộng ra thì đó là
+núm riêng, sửa ở LỚP 3.

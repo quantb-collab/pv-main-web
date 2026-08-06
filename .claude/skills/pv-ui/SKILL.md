@@ -17,7 +17,7 @@ token (`bg-surface`, `text-muted-foreground`, `text-brand`…), chữ qua vai tr
 
 Sai: `className="bg-slate-900 text-white"` · `text-lg leading-relaxed`
 · `transition={{duration: 0.5}}`
-Đúng: `<Section tone="dark">` · `text-lead`
+Đúng: `<Section sky="deep">` · `text-lead`
 · `transition={{duration: DUR.slow, ease: EASE.out}}`
 
 **2. Ghép từ block có sẵn.**
@@ -46,7 +46,7 @@ section bị bỏ qua.
 
 | Cần gì | Dùng |
 |---|---|
-| Khung một section | `<Section tone id flush bleed>` |
+| Khung một section | `<Section sky id full flush bleed>` |
 | Tiêu đề + eyebrow + lead | `<SectionHeader as eyebrow title lead align>` |
 | Lưới thẻ | `<CardGrid cols>` + `<Card index title>` |
 | Danh sách khẳng định | `<StatementList items>` |
@@ -56,6 +56,7 @@ section bị bỏ qua.
 | So sánh trước / sau | `<BeforeAfter>` |
 | Ảnh | `<MediaFrame ratio need src alt>` |
 | Ô chờ nội dung | `<Gap kind>` / `<GapChip kind>` |
+| Đồ hoạ trang trí | `<HorizonArc>` (Section tự gắn) · `<DawnRings>` (hero, 1 lần/site) |
 | Dải CTA đóng trang | `<CtaBand cta items>` |
 | Trang solution / use case | `<SolutionTemplate>` / `<UseCaseTemplate>` |
 | Trang V2 chưa tới lượt | `<StubPage>` |
@@ -69,8 +70,8 @@ Chọn theo **việc chữ đang làm**, không theo cỡ. Thang Tailwind mặc 
 
 | Chữ đang làm gì | Dùng | Weight |
 |---|---|---|
-| h1, mỗi trang một cái | `text-display` | `font-semibold` |
-| h2 mở section | `text-headline` | `font-semibold` |
+| h1 dưới ~60 ký tự | `text-display` | `font-semibold` |
+| h2 mở section · **h1 dài trên ~60 ký tự** | `text-headline` | `font-semibold` |
 | h3, tiêu đề khối trong section | `text-subhead` | `font-semibold` |
 | Tiêu đề thẻ, bước, tầng | `text-title` | `font-semibold` |
 | Câu dẫn dưới tiêu đề | `text-lead` | — |
@@ -114,16 +115,53 @@ Biên độ:
 Chuyển động để dẫn hướng đọc, không để giải trí. Hiệu ứng làm chậm việc đọc là
 hiệu ứng sai.
 
-## Nhịp sáng / tối
+## Nấc trời — đêm trước bình minh
 
-Thân bài sáng, hero và dải CTA tối. Đặt `tone="dark"` lên `<Section>` —
-`.tone-dark` remap token, component con tự đổi màu. Không tự bôi màu nền.
+Chủ đề: cả site là một bầu trời dọc, đỉnh trang tối nhất, càng xuống chân trời
+càng sáng, và thứ ló rạng là **xanh da trời** chứ không phải nắng vàng.
+Chất liệu nền là **titan sần**: chroma rất thấp cộng lớp hạt `pv-grain` —
+`<Section>` tự phủ, đừng gỡ.
+Không có chế độ sáng. Không còn `.tone-dark`.
 
-Mẫu bố cục của một trang trong:
-`Hero (dark)` → nội dung sáng, xen `tone="surface"` để tạo nhịp → `CtaBand (dark)`
-→ Footer (dark).
+Mỗi `<Section>` khai một nấc qua `sky`:
+`void` (hero) → `night` → `deep` → `rise` (ngay trước CTA) → `dawn` (CtaBand tự đặt).
 
-Hai section `tone="surface"` không được đứng liền nhau.
+**Nấc chỉ đi lên trong một trang.** Sáng rồi tối lại là gãy mạch — đó là lỗi
+duy nhất không được phép ở đây.
+
+Hai section **cùng nấc đứng liền nhau là hợp lệ**: ranh giới không nằm ở màu
+nền mà ở vạch chân trời + quầng sáng do `<Section>` tự vẽ. Đừng bù bằng cách
+nhảy nấc chỉ để "cho khác nhau".
+
+Muốn một chỗ sáng hơn → đổi nấc. Không chỉnh opacity hay bôi màu tại chỗ.
+
+## Chiều cao section
+
+Mặc định cao trọn một viewport, nội dung căn giữa. Không tự đặt `min-h-*`.
+`full={false}` chỉ dành cho trang công cụ nội bộ (`/track`).
+
+Hệ quả: mỗi section chỉ còn chỗ cho **một ý**. Nhồi hai ý vào một màn hình thì
+khối chữ tụt xuống nhỏ và chật đúng thứ mà chiều cao này sinh ra để tránh.
+
+## Trang trí
+
+MỘT ý duy nhất, biến tấu theo nấc trời — không phải một bộ hoạ tiết.
+`<Section>` **tự** gắn cung chân trời, không phải khai gì. `<DawnRings>` là
+vector chính của trang chủ, chỉ dùng **một lần trên toàn site**.
+
+Cần trang trí mới thì hỏi trước: nó có phải cùng một bầu trời không? Nếu là
+một hình khác hẳn thì đó là thứ tiếng nói thứ hai, và câu trả lời là không.
+
+## Ghi đè class cho component `ui/`
+
+`<html>` mang class `dark` cố định, nên mọi biến thể `dark:` trong
+`src/components/ui/` đều đang chạy. tailwind-merge chỉ gộp class **cùng biến
+thể** — `border-foreground/35` không đẩy được `dark:border-input` ra, và ở tầng
+CSS biến thể `dark:` sinh sau nên nó thắng.
+
+**Ghi đè cái gì thì khai luôn cặp `dark:` của nó.** Thiếu một cặp là override
+im lặng không có tác dụng và `pnpm verify` vẫn sạch. Xem nút phụ trong
+`hero.tsx` làm mẫu.
 
 ## Ảnh
 
@@ -148,7 +186,8 @@ lý do ngay trên chỗ sửa, vì lần `add` sau sẽ ghi đè.
 - [ ] Không tự viết `leading-*`, `tracking-*` hay bậc breakpoint cho cỡ chữ?
 - [ ] Không có chuỗi tiếng Việt nằm trong JSX?
 - [ ] Section dùng `<Section>`, không tự đặt padding dọc?
-- [ ] Nhịp sáng/tối đúng, không hai `surface` liền nhau?
+- [ ] Nấc `sky` chỉ đi lên, hero `void`, section trước CTA `rise`?
+- [ ] Section cao trọn một màn hình và nội dung không bị chật?
 - [ ] Ảnh đi qua `MediaFrame` và có `need` hoặc `alt`?
 - [ ] Chỉ một `<h1>` mỗi trang?
 - [ ] Đã thử ở 375px, 768px, 1440px?

@@ -3,18 +3,94 @@
 Nguồn: `src/app/globals.css` (CSS) và `src/lib/motion.ts` (JS).
 **Hai file phải khớp nhau.** Đổi easing hay thời lượng thì sửa cả hai.
 
+## Chủ đề: đêm trước bình minh
+
+Cả site là **một bầu trời dọc**. Đỉnh trang là giờ tối nhất; càng cuộn xuống
+chân trời càng sáng. Thứ ló rạng **không phải nắng vàng** — là **xanh da trời**,
+đúng màu của bầu trời lúc rạng, không phải màu của đèn.
+
+Chất liệu là **titan sần**: nền không phải mặt phẳng nhẵn mà là kim loại nhám.
+
+Ba hệ quả, áp cho mọi trang:
+
+1. **Không có chế độ sáng.** Bảng màu ở LỚP 2 là bảng duy nhất. Không còn cặp
+   `tone="default"` / `tone="surface"` / `tone="dark"`, không còn class
+   `.tone-dark`.
+2. **Mọi ánh sáng dẫn xuất từ `--brand`.** Màu ấm duy nhất còn lại là
+   `--warning` của ô chờ, và nó chỉ hiện lúc dev/review.
+3. **Nấc trời chỉ đi lên trong một trang.** Mạch của trang là một lần trời
+   sáng, không phải sáng rồi tối lại.
+
 ## Năm lớp trong globals.css
 
 | Lớp | Nội dung | Khi nào sửa |
 |---|---|---|
-| 1 | Brand ramp `--pv-brand-*`, `--pv-ink-*`, `--pv-signal-*` | Khi chốt brand kit. Sửa **chỉ ở đây**. |
-| 2 | Semantic token: `--background`, `--foreground`, `--surface`, `--primary`, `--brand`… | Khi đổi cách dùng màu, không phải khi đổi màu |
+| 1 | Brand ramp `--pv-brand-*`, `--pv-ink-*`, thang trời `--pv-night-*`, `--pv-signal-*` | Khi chốt brand kit. Sửa **chỉ ở đây**. |
+| 2 | Semantic token + thang sky `.sky-*`: `--background`, `--foreground`, `--surface`, `--brand`, `--sky-light`… | Khi đổi cách dùng màu, không phải khi đổi màu |
 | 3 | Motion, layout & chữ: `--ease-*`, `--dur-*`, `--section-y`, `--container-max`, `--pv-text-*` | Khi đổi nhịp hoặc thang chữ toàn site |
 | 4 | Đăng ký với Tailwind (`@theme inline`) | Khi thêm token mới cần utility |
-| 5 | Utility dùng chung: `pv-container`, `pv-section`, `pv-grid-bg`… | Khi thêm mẫu bố cục dùng lại nhiều nơi |
+| 5 | Utility dùng chung: `pv-container`, `pv-section`, `pv-horizon`, `pv-skyglow`… | Khi thêm mẫu bố cục dùng lại nhiều nơi |
 
-> ⚠️ Giá trị màu ở LỚP 1 hiện là **placeholder trung tính**, chưa phải màu
-> brand thật. Khi có brand kit, thay toàn bộ khối đó — component không cần đụng.
+> ⚠️ **Hướng** màu ở LỚP 1 (xanh da trời trên titan sần) đã chốt. **Giá trị** cụ thể
+> vẫn là placeholder, chưa phải brand kit chính thức. Khi có brand kit, thay
+> toàn bộ khối đó — component không cần đụng.
+
+## Thang sky — nấc trời của một section
+
+Mỗi `<Section>` khai đúng một nấc qua prop `sky`. Nấc quyết định cả nền lẫn
+chữ, và cả cường độ ánh sáng ở chân trời.
+
+| `sky` | Khoảnh khắc | Dùng ở |
+|---|---|---|
+| `void` | giờ tối nhất, chưa có gì | hero, section mở trang |
+| `night` | nền đêm mặc định | thân bài |
+| `deep` | trời đã nhạt hơn một nấc | thân bài, đoạn giữa trang |
+| `rise` | chân trời bắt đầu ăn sáng | section ngay trước CTA |
+| `dawn` | ánh sáng đã lên | dải CTA đóng trang (`CtaBand` tự đặt) |
+
+Mẫu của một trang: `void` → `night` → `deep` → `rise` → `dawn` → footer
+(`sky-deep`, lùi một nấc để dải CTA vẫn là điểm sáng cuối mắt dừng lại).
+
+**Nấc không phải là thứ tách hai section liền nhau.** Hai nền đêm cách nhau 3%
+độ sáng thì mắt đọc ra là lỗi render. Ranh giới là ánh sáng, do `<Section>` tự
+vẽ, không trang nào phải lo:
+
+- `pv-horizon` — vạch 1px ở mép **trên**, sáng nhất ở giữa, tắt dần ra hai mép.
+- `pv-skyglow` — quầng xanh da trời dâng từ mép **dưới**.
+
+Ở boundary, quầng của section trên và vạch của section dưới chồng lên nhau
+thành một dải sáng. Nhịp *mép trên tối → mép dưới có quầng → vạch* đọc ra ranh
+giới **kể cả khi hai section cùng một nấc trời** — nên hai section cùng nấc
+đứng liền nhau là hợp lệ.
+
+Cả hai utility đọc `--sky-light` (0 → 1), và `.sky-*` là nơi duy nhất đặt biến
+đó. Muốn một section sáng hơn thì đổi nấc, **không** chỉnh opacity tại chỗ.
+
+## Trang trí — `pv-arc` và `pv-rings`
+
+Hình nằm ở `src/components/pv/decor.tsx`, khung và độ đậm ở LỚP 5.
+
+| Utility | Hình | Ở đâu |
+|---|---|---|
+| `pv-arc` | cung chân trời ở đáy section | `<Section>` tự gắn, mọi trang |
+| `pv-rings` | vòng đồng tâm toả từ nguồn sáng | hero trang chủ, **một lần/site** |
+
+`pv-arc` đọc `--sky-light` nên trang trí cũng sáng dần theo mạch trời. `pv-rings`
+thì không — hero ở nấc `void` (`--sky-light: 0`) nên đọc biến đó là nó tắt hẳn,
+mà đây lại là vector chính của trang.
+
+Cung nhạt hơn hẳn quầng sáng: cung là **đường viền** của ánh sáng. Thấy nó rõ
+hơn chính ánh sáng thì nó thành hình vẽ chứ không thành chân trời.
+
+## Chiều cao section
+
+Mặc định mỗi section cao trọn một viewport, nội dung căn giữa —
+`min-h-dvh` chứ không phải `h-dvh`, nội dung dài hơn thì section cao lên chứ
+không cắt. Tắt bằng `full={false}`, và chỉ tắt cho trang công cụ nội bộ như
+`/track`.
+
+Đánh đổi đã chấp nhận: trang dài hơn. Vì vậy luật mật độ trong skill `pv-ui`
+càng phải giữ — **một section, một ý**.
 
 ## Thang bề mặt và chữ
 
@@ -22,6 +98,14 @@ Ba nấc nền: `bg-background` → `bg-surface` → `bg-surface-2`
 Ba nấc chữ: `text-foreground` → `text-muted-foreground` → `text-subtle-foreground`
 
 Dùng đúng nấc, đừng pha `opacity` để làm chữ nhạt hơn.
+
+Bất biến của thang nền: **một bề mặt nổi lên = một nấc trời sáng hơn**. Vì vậy
+`bg-surface` trong section `sky-deep` và trong section `sky-rise` ra hai màu
+khác nhau — đúng như mong muốn, component không phải biết mình đang ở đâu.
+
+Thang chữ cũng dịch theo nấc trời: ở `sky-dawn` nền đã đủ sáng để kéo tụt chữ
+phụ, nên `--muted-foreground` và `--subtle-foreground` tự nhích lên một nấc để
+giữ 4.5:1. Đây là lý do **không** được viết `text-white/60` thay cho nấc chữ.
 
 ## Thang chữ
 
@@ -31,8 +115,8 @@ Chọn theo **vai trò của chữ**, không theo cỡ. Không dùng `text-sm`, 
 
 | Vai trò | Cỡ (375 → 1440) | Weight | Dùng ở |
 |---|---|---|---|
-| `text-display` | 40 → 72 | 600 | h1, mỗi trang một cái |
-| `text-headline` | 32 → 52 | 600 | h2 mở section |
+| `text-display` | 40 → 72 | 600 | h1 **dưới ~60 ký tự** |
+| `text-headline` | 32 → 52 | 600 | h2 mở section, **và h1 dài trên ~60 ký tự** |
 | `text-subhead` | 24 → 34 | 600 | h3, tiêu đề khối trong section |
 | `text-title` | 19 → 21 | 600 | tiêu đề thẻ, bước, tầng |
 | `text-lead` | 18 → 21 | 400 | câu dẫn dưới tiêu đề |
@@ -46,6 +130,11 @@ Chọn theo **vai trò của chữ**, không theo cỡ. Không dùng `text-sm`, 
 Mỗi utility mang sẵn **cỡ + line-height + tracking**. Viết `text-body` là đủ,
 không kèm `leading-relaxed` hay `tracking-tight` nữa. Cần khác thì `leading-*`
 và `tracking-*` vẫn đè lên được.
+
+**Ngoại lệ về độ dài, không phải về cấp.** Vai trò `display` được cân cho tiêu
+đề dưới khoảng 50–60 ký tự. Dài hơn thế thì ở 72px nó thành bốn dòng và nuốt
+gần hết một màn hình, nên h1 đó dùng `text-headline`. Nó vẫn là `<h1>` —
+đổi cỡ chứ không đổi cấp tiêu đề. Đang áp dụng ở hero trang chủ.
 
 Ba điều đã cân trong token:
 
@@ -64,15 +153,15 @@ file tải riêng.
 Độ dài dòng: câu dẫn `max-w-[58ch]`, thân bài `max-w-[68ch]`. Đừng để `max-w-3xl`
 tự quyết — ở cỡ chữ mới nó thành 85–90 ký tự một dòng, mắt mất đầu dòng kế tiếp.
 
-## Nhịp sáng / tối
+## Vì sao component chỉ được dùng token
 
-Thân bài nền sáng. Hero, dải CTA và footer nền tối.
+Class `.sky-*` remap toàn bộ semantic token trên chính `<section>`, rồi mọi
+component con **tự** đổi màu vì chúng gọi `bg-surface`, `text-muted-foreground`
+chứ không gọi màu. Đó là toàn bộ cơ chế: một prop trên section đổi được cả
+section mà không component nào phải biết chuyện gì đang xảy ra.
 
-Cách làm: đặt `tone="dark"` cho `<Section>`. Class `.tone-dark` remap toàn bộ
-semantic token, mọi component con tự đổi màu. Đây là lý do component **chỉ được
-dùng token** — nhờ vậy `.tone-dark` mới có tác dụng.
-
-Không tự viết `bg-slate-900 text-white` cho một section.
+Viết `bg-slate-900 text-white` cho một section là cắt đứt chính cơ chế đó —
+khối đó sẽ đứng yên một màu trong khi cả trang sáng dần quanh nó.
 
 ## Control — nút, input, select
 
@@ -88,8 +177,11 @@ Control có bo góc và đổ bóng **riêng**, không dùng chung với thẻ v
 kéo theo thẻ.
 
 Đổ bóng là **ngoại lệ có ranh giới**: hệ này dùng viền tóc cho khối lớn, bóng
-chỉ để nút đọc ra là bấm được. `ghost` và `link` không có bóng. Trên `.tone-dark`
-token tự đổi sang vạch sáng inset ở cạnh trên — component không phải đụng.
+chỉ để nút đọc ra là bấm được. `ghost` và `link` không có bóng.
+
+Trên nền đêm bóng đen vô hình, nên `--shadow-control` không phải là bóng đổ mà
+là **vạch sáng inset ở cạnh trên** cộng một lớp tối sâu bên dưới — nút đọc ra
+là một bề mặt đang hứng ánh sáng từ trên xuống. Component không phải đụng.
 
 Thang cao: `sm` 36px · `default` 40px · `lg` 44px. `lg` cho hero và dải CTA,
 `sm` cho header, `default` cho mọi chỗ còn lại.
@@ -106,9 +198,10 @@ sáng. Hiện chỉ áp cho **"AI"**, viết hoa và đứng thành từ riêng.
 | `--highlight-halo-opacity` · `--highlight-halo-blur` | quầng rộng — ánh toả ra nền |
 | `--highlight-rim-opacity` · `--highlight-rim-blur` | quầng sát viền — giữ nét chữ |
 
-Nền sáng dùng ramp đậm (`brand-600→700`) và quầng gần như tắt; `.tone-dark`
-đảo sang ramp sáng có lõi gần trắng và quầng mạnh. Đổi brand kit ở LỚP 1 thì
-gradient tự đổi theo, không đụng component.
+Lõi ngả gần trắng (`brand-100`) và quầng mạnh: chữ phải đọc ra là **nguồn**
+phát sáng, không phải chữ được tô xanh. Đây cũng là cùng một thứ ánh sáng với
+chân trời ở `pv-skyglow` — cả hai đọc `--pv-brand-*`, nên đổi brand kit ở LỚP 1
+là cả từ khoá lẫn bình minh đổi theo, không đụng component.
 
 Dùng qua `<Highlight>` (`src/components/pv/highlight.tsx`), đã gắn sẵn vào
 `SectionHeader` (title + lead), `Card` (title + body), `StatementList` và hero.
@@ -116,6 +209,15 @@ Trang mới ghép từ những block đó thì không phải làm gì thêm.
 
 Không áp cho eyebrow mono, chip `PillRow`, nhãn nút và chữ nhỏ — chữ phát sáng
 ở cỡ 11px là nhiễu, không phải điểm nhấn.
+
+**Thêm từ khoá thì đếm trước.** Một từ xuất hiện 15 chỗ trong `messages` thì 15
+chỗ cùng phát sáng. Chỉ thêm từ HIẾM và mang định vị: `tự vận hành` được chọn
+vì nó xuất hiện đúng một lần trên toàn site — chính là tiêu đề hero. Đã loại
+`vận hành` (15 chỗ) và `Pebble Vina` (19 chỗ).
+
+**Và giữ từ khoá ngắn.** `<Led>` là `inline-block` nên cụm bên trong không
+xuống dòng được; cụm dài nằm trong tiêu đề ở khổ mobile sẽ tràn ngang. Ba từ
+là trần.
 
 Nhận diện từ khoá phân biệt hoa thường và có biên từ: bắt "AI", không bắt đại
 từ "ai", cũng không bắt đuôi của HAI / MAI / OpenAI.
