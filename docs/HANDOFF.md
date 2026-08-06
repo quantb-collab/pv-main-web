@@ -32,7 +32,19 @@ cao chưa soi lại ở 375/1024; hàng panel 3 ma trận lệch ~30px do scale-
 
 ## Bước tiếp theo
 
-1. Brainstorm + dựng section 5 — đang bàn với chủ dự án (xem cuối phiên).
+1. Dựng section 5 **"Ba cách để bắt đầu"** — kết quả brainstorm cuối phiên:
+   ba card mở đầu bằng câu khách tự nói ("Chưa biết bắt đầu từ đâu" /
+   "Muốn làm, chưa rõ phạm vi" / "Đã có bài toán cụ thể" — chính là ba
+   offer của blueprint), MỘT nút "Đặt lịch khảo sát" duy nhất (blueprint
+   cấm nhiều CTA ngang hàng). Thay cho `StartHere` hiện tại. Kèm theo:
+   **rút Identity còn 2 hàng** — bỏ hàng "Cách làm" vì trùng ý với section
+   5 (chủ dự án đã chỉ ra chỗ trùng và đồng ý tách vai: section 2 nói về
+   Pebble, section 5 nói về bước tiếp theo của người đọc).
+2. Tiếp bản đồ 9 section đã qua hai vòng phản biện (CHƯA chốt toàn bộ —
+   xác nhận từng nhát với chủ dự án): Deliver rút về 3 pha + nhận ghi chú
+   con người (nuốt Maturity); Enterprise và FullStack giữ section riêng;
+   RÚT Why và Proof khỏi trang chủ — bốn khoảng trống của Proof vẫn nằm
+   trong /track, có bằng chứng thật thì trả lại.
 2. Sửa hydration `src/components/motion/parallax.tsx` (reduced-motion:
    server thiếu div bọc transform — chính là "1 Issue" trên overlay dev).
 3. Mở `/vi` cả trang ở 375/768/1440 — nửa dưới và nấc `rise`/`dawn` chưa ai nhìn.
