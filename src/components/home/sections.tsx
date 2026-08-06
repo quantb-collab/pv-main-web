@@ -2,6 +2,8 @@ import { getTranslations } from "next-intl/server";
 import { MediaFrame } from "@/components/motion/media-frame";
 import { Reveal } from "@/components/motion/reveal";
 import {
+  BentoGrid,
+  BentoTile,
   Card,
   CardGrid,
   DefinitionList,
@@ -9,10 +11,12 @@ import {
   PillRow,
   StageMatrix,
   StatementList,
+  StatTile,
   StepRail,
 } from "@/components/pv/blocks";
 import { CtaButton } from "@/components/pv/cta-button";
 import { Gap } from "@/components/pv/gap";
+import { Highlight } from "@/components/pv/highlight";
 import { Section, SectionHeader } from "@/components/pv/section";
 
 /**
@@ -89,6 +93,73 @@ export async function Contrast() {
           items: [1, 2, 3, 4].map((n) => t(`r${n}s${s}`)),
         }))}
       />
+    </Section>
+  );
+}
+
+/**
+ * Section 4 — Bento chỉ số (chèn theo yêu cầu chủ dự án 2026-08-06, ngoài
+ * danh sách §9 gốc): "section 3 không nói suông" — bốn con số nối 1:1 với
+ * bốn hàng của ma trận (tag lấy THẲNG từ home.contrast để không lệch chữ).
+ * Bốn nấc bento xuống dần theo đúng thứ tự bốn hàng của ma trận, nên đọc
+ * trái→phải, trên→dưới là ra 1-2-3-4 mà không cần đánh số: Tra cứu (pain số
+ * một) ở nấc `hero`, Chứng từ ở nấc `wide`, hai hàng còn lại ở nấc `stat`.
+ * Tag mono lấy THẲNG từ home.contrast — cùng chữ thì mắt tự nối được ô số với
+ * hàng của nó. "Cách đo" đứng ở nấc `note`, một vạch trần dưới cùng: nó là
+ * chú thích cho cả bốn ô chứ không phải chỉ số thứ năm.
+ *
+ * SỐ TRÊN LƯỚI LÀ SỐ MINH HOẠ (quyết định chủ dự án 2026-08-06: mặt khách
+ * xem sạch cảnh báo — không GapChip, không ô chờ vàng). Ba chốt an toàn để
+ * không bao giờ phát hành nhầm số bịa: (1) mỗi con số mang data-gap="proof"
+ * vô hình qua prop `placeholder` — QA và /track vẫn đếm; (2) ô note "Cách
+ * đo" nói thẳng trên trang: số minh hoạ, sẽ thay bằng số đo từng dự án;
+ * (3) ô ảnh MediaFrame đã RÚT khỏi lưới vì khung chờ ảnh cũng là một cảnh
+ * báo — có ảnh sản phẩm thật thì trả lại (sơ đồ cũ trong git). Có số xác
+ * minh kèm điều kiện đo: thay value, bỏ `placeholder`, xong.
+ */
+export async function Stats() {
+  const t = await getTranslations("home.stats");
+  const tc = await getTranslations("home.contrast");
+
+  return (
+    <Section id="con-so" sky="night">
+      <SectionHeader title={t("title")} align="center" />
+      <BentoGrid className="mt-14">
+        <StatTile
+          tier="hero"
+          placeholder
+          tag={tc("r1Tag")}
+          value={t("s1Value")}
+          label={t("s1Label")}
+        />
+        {/* Ô tuyên ngôn: thông điệp trung tâm của blueprint, lần duy nhất
+            trên trang chủ — tầng chữ đứng chung lưới với tầng số. */}
+        <BentoTile span="2x1">
+          <p className="max-w-[24ch] font-display text-title font-semibold text-balance">
+            <Highlight>{t("statement")}</Highlight>
+          </p>
+        </BentoTile>
+        <StatTile
+          tier="wide"
+          placeholder
+          tag={tc("r2Tag")}
+          value={t("s2Value")}
+          label={t("s2Label")}
+        />
+        <StatTile
+          placeholder
+          tag={tc("r3Tag")}
+          value={t("s3Value")}
+          label={t("s3Label")}
+        />
+        <StatTile
+          placeholder
+          tag={tc("r4Tag")}
+          value={t("s4Value")}
+          label={t("s4Label")}
+        />
+        <StatTile tier="note" tag={t("mTag")} label={t("mBody")} />
+      </BentoGrid>
     </Section>
   );
 }

@@ -54,6 +54,8 @@ section bị bỏ qua.
 | Quy trình / lộ trình có số bước | `<StepRail steps>` |
 | Sơ đồ chồng tầng | `<LayerStack layers>` |
 | So sánh trước / sau | `<BeforeAfter>` |
+| Ma trận nấc tiến hoá (nhấn theo vị trí cột) | `<StageMatrix stages rows>` |
+| Bento chỉ số (số chưa xác minh thì để slot chờ) | `<BentoGrid>` + `<StatTile hero tag value label gap>` |
 | Ảnh | `<MediaFrame ratio need src alt>` |
 | Ô chờ nội dung | `<Gap kind>` / `<GapChip kind>` |
 | Đồ hoạ trang trí | `<HorizonArc>` (Section tự gắn) · `<DawnRings>` (hero, 1 lần/site) |

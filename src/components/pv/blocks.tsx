@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { GapChip } from "@/components/pv/gap";
 import { Highlight } from "@/components/pv/highlight";
 import { cn } from "@/lib/utils";
 
@@ -318,6 +319,319 @@ export function BeforeAfter({
         </ul>
       </Reveal>
     </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Bento chỉ số — lưới ô lệch cỡ cho các con số đo                             */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Lưới bento cho MỘT bộ chỉ số + các ô tư liệu đi kèm (tuyên ngôn, ảnh khi
+ * có thật) — "đa tầng kiến thức": số, chữ, hình chung một khối. Sơ đồ do
+ * span của từng ô quyết định; bản trang chủ lấp kín 4×3, note là ô trần
+ * cuối lưới:
+ *
+ *   lg — 4 cột                    md — 2 cột        375 — 1 cột
+ *   ┌───────┬───────────┐         hero              (xếp dọc theo
+ *   │       │ statement │         statement          thứ tự DOM)
+ *   │ hero  ├───────────┤         wide
+ *   │       │   wide    │         stat · stat
+ *   ├───┬───┼───────────┤         note
+ *   │st │st │   note    │
+ *   └───┴───┴───────────┘
+ *
+ * Cả khối phải nằm GỌN dưới một màn hình cùng tiêu đề section — thêm ô là
+ * phải bớt ô khác, không nống thêm hàng. Ô ảnh (khi có ảnh THẬT) đi thẳng
+ * bằng `MediaFrame` + class span; ô chữ tự do đi qua `BentoTile`.
+ */
+export function BentoGrid({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <RevealGroup
+      className={cn("grid gap-4 md:grid-cols-2 lg:grid-cols-4", className)}
+    >
+      {children}
+    </RevealGroup>
+  );
+}
+
+/**
+ * Ô tự do trong BentoGrid cho nội dung KHÔNG phải chỉ số — tuyên ngôn, đoạn
+ * dẫn, nhóm chip. Chrome lấy đúng hai nấc giữa/thấp của StatTile để lưới vẫn
+ * đọc ra một hệ; nội dung căn giữa theo trục dọc vì ô chữ đứng cạnh ô số
+ * cao hơn nó.
+ */
+export function BentoTile({
+  span = "1x1",
+  chrome = "mid",
+  children,
+  className,
+}: {
+  span?: "1x1" | "2x1";
+  chrome?: "mid" | "low";
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <RevealItem
+      className={cn(
+        "relative isolate flex flex-col justify-center rounded-xl p-6 lg:p-7",
+        span === "2x1" && "md:col-span-2",
+        className,
+      )}
+    >
+      <span
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute inset-0 -z-10 rounded-[inherit] bg-surface bg-linear-to-t via-transparent to-transparent",
+          chrome === "mid" ? "from-brand/10" : "from-brand/5",
+        )}
+      />
+      <span
+        aria-hidden
+        className={cn(
+          "pv-edge bg-linear-to-t",
+          chrome === "mid"
+            ? "from-brand/45 via-brand/15 to-border"
+            : "from-brand/20 to-border",
+        )}
+      />
+      {children}
+    </RevealItem>
+  );
+}
+
+/** Bốn nấc của một ô bento. Bảng đặc tả ở docstring của `StatTile`. */
+export type StatTier = "hero" | "wide" | "stat" | "note";
+
+/**
+ * Đặc tả một nấc: chỗ trong lưới, hình hộp, và bậc cỡ của ba tầng chữ.
+ * Gom vào một bảng để đọc dọc theo cột là thấy ngay thang có đủ bậc chưa.
+ */
+const TIER: Record<
+  Exclude<StatTier, "note">,
+  { box: string; stack: string; tag: string; value: string; label: string }
+> = {
+  hero: {
+    box: "rounded-2xl p-6 md:col-span-2 lg:row-span-2 lg:p-8",
+    stack: "gap-4",
+    tag: "text-brand",
+    value: "text-display",
+    label: "max-w-[26ch] text-lead",
+  },
+  wide: {
+    box: "rounded-xl p-6 md:col-span-2 lg:p-7",
+    stack: "gap-3",
+    tag: "text-foreground",
+    value: "text-headline",
+    label: "max-w-[36ch] text-body",
+  },
+  stat: {
+    box: "rounded-xl p-5 lg:p-6",
+    stack: "gap-2.5",
+    tag: "text-subtle-foreground",
+    value: "text-subhead",
+    label: "text-body-sm text-muted-foreground",
+  },
+};
+
+/**
+ * Một ô trong BentoGrid.
+ *
+ * MỘT prop `tier` điều khiển CẢ BA trục cùng lúc — chỗ trong lưới, số lớp thị
+ * giác, bậc cỡ chữ. Cố ý không tách thành ba prop: tách ra là mở đường cho ô
+ * to mà nhạt hoặc ô nhỏ mà chói, và lúc đó lưới hết cấp bậc.
+ *
+ *          span (lg)  lớp thị giác                                value     label
+ *   hero   2×2        quầng thở → mặt brand-soft + ánh dâng → viền  display   lead
+ *   wide   2×1        mặt surface + ánh dâng → viền nửa sáng        headline  body
+ *   stat   1×1        mặt surface → viền mờ                         subhead   body-sm
+ *   note   4×1        không mặt, chỉ một vạch trên                  —         body-sm
+ *
+ * Hai thang chạy CÙNG chiều — ô to hơn thì cũng nhiều lớp hơn và chữ to hơn —
+ * nên liếc một cái là ra thứ tự đọc, không phải đọc chữ mới biết cái nào chính.
+ * Bộ lớp và thứ tự dựng lấy nguyên của `StageMatrix` (quầng -z-20 → mặt -z-10
+ * → nội dung → vòng `pv-edge`) để bento và ma trận đứng liền nhau vẫn đọc ra
+ * là một hệ. Góc vuốt `tr-[2.25rem]` thì không lấy — đó là chữ ký riêng của
+ * panel ma trận.
+ *
+ * Tag mono giữ NGUYÊN một cỡ (`text-eyebrow`) ở cả ba nấc số, chỉ đổi màu: nó
+ * là hằng số của lưới, nhờ vậy mắt nối được ô số với đúng hàng của ma trận
+ * đứng trên. `note` không ứng với hàng nào nên tag của nó tụt về `text-micro`
+ * — lệch cỡ chính là cách nói "cái này không nằm trong bộ bốn".
+ *
+ * Ba trạng thái của phần số, suy từ prop:
+ *   - `value` có thật  → con số lớn. Chữ số PROPORTIONAL, không tabular-nums:
+ *     số đứng một mình mà ép mono-width thì chữ số 1 bị hở hai bên.
+ *   - chưa có `value` nhưng có `gap` → vạch dài giữ chỗ + GapChip proof.
+ *     Layout là bản chốt: có số xác minh chỉ việc điền `value`, khung không
+ *     đổi. KHÔNG điền số khi chưa có case study kèm điều kiện đo.
+ *   - không `value` không `gap` → chỉ còn tag và câu chữ (dùng cho `note`).
+ */
+export function StatTile({
+  tag,
+  value,
+  label,
+  gap,
+  placeholder = false,
+  tier = "stat",
+  className,
+}: {
+  tag?: string;
+  /** Con số đã xác minh — hoặc số minh hoạ nếu kèm `placeholder`. */
+  value?: ReactNode;
+  label: ReactNode;
+  /** Nội dung GapChip khi chưa có số — nêu rõ số sẽ lấy từ đâu. */
+  gap?: ReactNode;
+  /**
+   * `value` là SỐ MINH HOẠ, chưa xác minh (quyết định chủ dự án 2026-08-06:
+   * mặt khách xem sạch cảnh báo). Cắm data-gap="proof" VÔ HÌNH lên con số —
+   * không đổi hình thức, nhưng QA và /track vẫn đếm nó là khoảng trống, nên
+   * release gate vẫn chặn nếu quên thay số thật. Đi kèm bắt buộc: một ô
+   * `note` trong cùng lưới nói rõ "số liệu minh hoạ".
+   */
+  placeholder?: boolean;
+  tier?: StatTier;
+  className?: string;
+}) {
+  /* Nấc trần nhất: không mặt, không viền vòng, chỉ một vạch ngăn với lưới số
+     bên trên. Nhịp nhãn-trái / chữ-phải mượn của `DefinitionList` để dòng chú
+     thích này đọc ra là cùng một giọng với phần dữ kiện ở các section khác. */
+  if (tier === "note") {
+    /* Ô trần: không mặt, không viền — một chú thích lặng đứng trong lưới.
+       Nó là nơi khai báo tình trạng số liệu (minh hoạ / đã xác minh), nên
+       không được mang bất kỳ chrome cảnh báo nào: cảnh báo cho NGƯỜI LÀM
+       nằm ở data-gap (QA đếm), không nằm trên mặt khách xem. */
+    return (
+      <RevealItem
+        className={cn(
+          "flex flex-col justify-center gap-2 p-5 md:col-span-2 lg:col-span-2 lg:p-6",
+          className,
+        )}
+      >
+        {tag ? (
+          <span className="font-mono text-micro font-medium text-subtle-foreground uppercase">
+            {tag}
+          </span>
+        ) : null}
+        <p className="max-w-[46ch] text-body-sm text-muted-foreground">
+          <Highlight>{label}</Highlight>
+        </p>
+      </RevealItem>
+    );
+  }
+
+  const t = TIER[tier];
+  const hero = tier === "hero";
+
+  return (
+    <RevealItem className={cn("relative isolate flex flex-col", t.box, className)}>
+      {/* Quầng bình minh sau lưng — chỉ nấc cao nhất được, và nó là thứ duy
+          nhất trong lưới có ánh sáng RIÊNG. Nở dọc nhiều hơn ngang để không
+          chạm vai ô bên cạnh; nhịp thở tái dùng keyframe của hero, người bật
+          giảm chuyển động thì @media trong globals.css tắt ngay. */}
+      {hero ? (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -inset-x-3 -inset-y-4 -z-20 animate-dawn-pulse rounded-3xl bg-linear-to-t from-brand/35 via-brand/12 to-transparent blur-2xl"
+        />
+      ) : null}
+
+      {/* Mặt panel. Cả ba nấc đều có ánh dâng từ đáy, cùng chiều với
+          `pv-skyglow` của section — khác nhau ở cường độ, không ở kiểu. */}
+      <span
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute inset-0 -z-10 rounded-[inherit] bg-linear-to-t via-transparent to-transparent",
+          hero && "bg-brand-soft from-brand/22",
+          tier === "wide" && "bg-surface from-brand/10",
+          tier === "stat" && "bg-surface from-brand/5",
+        )}
+      />
+
+      {/* Vòng viền gradient, đậm dần theo nấc: brand trọn vòng → nửa sáng →
+          gần như hairline. Đây là nét mảnh nhất nhưng cũng là thứ đọc ra cấp
+          bậc nhanh nhất khi liếc qua cả lưới. */}
+      <span
+        aria-hidden
+        className={cn(
+          "pv-edge bg-linear-to-t",
+          hero && "from-brand via-brand/45 to-brand/25",
+          tier === "wide" && "from-brand/45 via-brand/15 to-border",
+          tier === "stat" && "from-brand/20 to-border",
+        )}
+      />
+
+      {tag ? (
+        <span
+          className={cn(
+            "font-mono text-eyebrow font-medium uppercase",
+            t.tag,
+          )}
+        >
+          {tag}
+        </span>
+      ) : null}
+
+      {/* Nấc hero đẩy cả cụm số xuống ĐÁY ô: ánh sáng dâng từ dưới lên, nên
+          con số đặt ngay trên chân trời chứ không treo giữa khoảng trống.
+          Hai nấc kia kéo dài hết ô (`flex-1`) để chip chờ của các ô cùng hàng
+          bám chung một đường đáy dù nhãn dài ngắn khác nhau. */}
+      <div
+        className={cn(
+          "flex flex-col",
+          t.stack,
+          /* hero: `mt-auto` KHÔNG kèm `flex-1` — cụm số bị đẩy trọn xuống đáy
+             và đọc ra là MỘT khối. Cho `flex-1` vào thì `mt-auto` của chip lại
+             ăn hết chỗ trống, chip tụt xuống đáy còn vạch với nhãn ở lại giữa
+             — đúng cái lỗ giữa ô của bản trước. */
+          hero ? "mt-auto pt-6 lg:pt-8" : "flex-1",
+        )}
+      >
+        {value != null ? (
+          <span
+            {...(placeholder ? { "data-gap": "proof" } : {})}
+            className={cn("font-display font-semibold", t.value)}
+          >
+            {value}
+          </span>
+        ) : gap ? (
+          /* Vạch chờ được VẼ, không dùng ký tự "—". Em-dash chỉ dày 0.05em
+             nhưng vẫn chiếm trọn hộp dòng cỡ display, nên ở nấc hero nó thành
+             một nét con con lạc giữa 78px khoảng trắng — chính chỗ trông
+             "thủng" của bản trước. Vạch vẽ dài 1.1em, `align-middle` nên nằm
+             đúng chỗ em-dash sẽ nằm; và vì nó là inline-block trong một span
+             vẫn mang vai trò cỡ của nấc, hộp dòng KHÔNG đổi — điền `value`
+             thật vào thì khung giữ nguyên từng pixel. */
+          <span
+            aria-hidden
+            className={cn(
+              "font-display font-semibold",
+              t.value,
+              hero ? "text-brand/70" : "text-subtle-foreground",
+            )}
+          >
+            <span className="inline-block h-[0.055em] w-[1.1em] rounded-full bg-current align-middle" />
+          </span>
+        ) : null}
+
+        <p className={t.label}>
+          <Highlight>{label}</Highlight>
+        </p>
+
+        {value == null && gap ? (
+          <GapChip kind="proof" className="mt-auto self-start">
+            {gap}
+          </GapChip>
+        ) : null}
+      </div>
+    </RevealItem>
   );
 }
 

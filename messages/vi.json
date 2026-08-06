@@ -99,6 +99,20 @@
       "r4s2": "Có luồng duyệt điện tử, nhưng soạn hồ sơ và nhắc tiến độ vẫn là người.",
       "r4s3": "Hồ sơ tự soạn đủ căn cứ, trình đúng người — quyết định vẫn của con người."
     },
+    "stats": {
+      "title": "Mức cải thiện đo được sau triển khai",
+      "s1Value": "−72%",
+      "s1Label": "thời gian tìm đúng một thông tin nội bộ",
+      "s2Value": "−58%",
+      "s2Label": "thời gian xử lý một bộ chứng từ",
+      "s3Value": "−64%",
+      "s3Label": "giờ công cho một kỳ báo cáo",
+      "s4Value": "−45%",
+      "s4Label": "thời gian một vòng phê duyệt",
+      "statement": "Biến AI thành năng lực vận hành của doanh nghiệp.",
+      "mTag": "Cách đo",
+      "mBody": "Đo trước và sau trên cùng một việc, kèm điều kiện đo. Số trên trang là số minh hoạ — sẽ thay bằng số đo của từng dự án."
+    },
     "startHere": {
       "eyebrow": "Điểm bắt đầu",
       "title": "Bắt đầu từ một việc có thật, đủ nhỏ để đo được",

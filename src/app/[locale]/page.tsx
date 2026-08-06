@@ -10,6 +10,7 @@ import {
   Maturity,
   Proof,
   StartHere,
+  Stats,
   Why,
 } from "@/components/home/sections";
 import { CtaBand } from "@/components/pv/cta-band";
@@ -25,13 +26,15 @@ export async function generateMetadata({
 }
 
 /**
- * Trang chủ — 11 section: §9 blueprint + Identity ở vị trí 2 (quyết định
+ * Trang chủ — 12 section: §9 blueprint + Identity ở vị trí 2 (quyết định
  * chủ dự án 2026-08-06 — hook giữ thuần cảm xúc, phần "là ai / làm gì" dồn
- * về một section riêng ngay dưới), và §9 Section 2+3 gộp thành Contrast
- * (quyết định 2026-08-06 — vấn đề đối ứng kết quả từng hàng).
+ * về một section riêng ngay dưới), §9 Section 2+3 gộp thành Contrast
+ * (ma trận ba nấc), và Stats chèn ngay sau (bento bốn chỉ số cam kết đo —
+ * cả hai theo chuỗi quyết định chủ dự án 2026-08-06).
  * Thứ tự còn lại là thứ tự thuyết phục, không sắp xếp lại tuỳ ý:
- * biết là ai → nhận ra vấn đề và thấy nó tốt lên → biết bắt đầu ở đâu
- * → tin cách làm → tin năng lực → thấy bằng chứng → biết bước tiếp theo.
+ * biết là ai → nhận ra vấn đề và thấy nó tốt lên → thấy con số sẽ đo
+ * → biết bắt đầu ở đâu → tin cách làm → tin năng lực → thấy bằng chứng
+ * → biết bước tiếp theo.
  */
 export default async function HomePage({
   params,
@@ -48,6 +51,7 @@ export default async function HomePage({
       <Hero />
       <Identity />
       <Contrast />
+      <Stats />
       <StartHere />
       <Maturity />
       <Why />
