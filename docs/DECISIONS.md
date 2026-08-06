@@ -513,3 +513,25 @@ bóng đen); tím hue ~300 (quyết định cấp brand kit, chưa chốt); cộ
 `1.15fr` thay scale (giữ làm đường lui nếu chê lệch hàng ~30 px của scale).
 **Đổi lại thì phải sửa:** `pv-edge` ở `globals.css` LỚP 5 + mục tương ứng
 trong `DESIGN-TOKENS.md`, khối panel trong `StageMatrix`.
+
+## 2026-08-06 — Section 4: bento bốn nấc, số minh hoạ thay ô chờ vàng
+**Bối cảnh:** Chủ dự án muốn "stat cards chứng minh section 3 không nói
+suông" theo phong cách bento đa tầng (số + ảnh + chữ), nhưng công ty chưa có
+case study xác minh. Các bản đầu đầy GapChip vàng và khung chờ ảnh — bị chê
+("xoá hết warning đi"), và section tràn quá một màn hình vì ô ảnh 16:9.
+**Chọn:** Bento 4 nấc qua MỘT prop `tier` (span + số lớp + bậc chữ đi cùng
+nhau, không tách); trên mặt khách là SỐ MINH HOẠ sạch cảnh báo. Ba chốt an
+toàn: `data-gap="proof"` vô hình trên từng số (QA và /track vẫn đếm — release
+gate còn răng), ô note "Cách đo" ghi thẳng "số minh hoạ" trên trang, comment
+cảnh báo trong `sections.tsx`. Ô ảnh MediaFrame rút khỏi lưới tới khi có ảnh
+sản phẩm thật. Kèm fix `cn()`: `extendTailwindMerge` dạy thang chữ vai trò —
+trước đó `text-display` bị coi là class màu và bị `text-brand/70` đè mất cỡ.
+**Vì:** Chủ dự án sở hữu quyết định "mặt khách xem phải trông hoàn thiện";
+luật "không bịa số" được giữ bằng tracking vô hình + công bố minh hoạ công
+khai thay vì chrome cảnh báo.
+**Đã cân nhắc và bỏ:** GapChip vàng từng ô và Gap block dưới lưới (chê xấu);
+khung chờ ảnh need-box (bản chất là một cảnh báo nữa); vẽ chart/sparkline
+trang trí (dashboard giả — cấm tuyệt đối); số thật (chưa tồn tại).
+**Đổi lại thì phải sửa:** `StatTile`/`BentoGrid`/`BentoTile` trong
+`blocks.tsx`, `Stats` trong `home/sections.tsx`, khoá `home.stats` trong
+`vi.json`, `TEXT_ROLES` trong `src/lib/utils.ts`.
