@@ -66,6 +66,13 @@ giới **kể cả khi hai section cùng một nấc trời** — nên hai secti
 Cả hai utility đọc `--sky-light` (0 → 1), và `.sky-*` là nơi duy nhất đặt biến
 đó. Muốn một section sáng hơn thì đổi nấc, **không** chỉnh opacity tại chỗ.
 
+Ranh giới còn **sống** theo cuộn: khi nó đi vào khung nhìn, quầng của section
+trên dâng sáng dần và vạch của section dưới tự vẽ ra từ tâm — hai section trao
+ánh sáng cho nhau. Phần chuyển động nằm ở `BoundaryHorizon` / `BoundaryGlow`
+(`src/components/motion/sky-boundary.tsx`, `<Section>` tự gắn); chúng chỉ nhân
+hệ số `--pv-boundary` (mặc định 1) lên opacity CSS đã cân, nên chỗ dùng span
+tĩnh (footer, hero) và người bật giảm chuyển động vẫn thấy đúng bản tĩnh.
+
 ## Trang trí — `pv-arc` và `pv-rings`
 
 Hình nằm ở `src/components/pv/decor.tsx`, khung và độ đậm ở LỚP 5.
@@ -91,6 +98,22 @@ không cắt. Tắt bằng `full={false}`, và chỉ tắt cho trang công cụ 
 
 Đánh đổi đã chấp nhận: trang dài hơn. Vì vậy luật mật độ trong skill `pv-ui`
 càng phải giữ — **một section, một ý**.
+
+**Cuộn có snap** — hai tầng, cơ chế ở `smooth-scroll.tsx`, token ở `SNAP`
+(`src/lib/motion.ts`):
+
+1. **Trượt ngay khi cuộn qua nửa section kế bên.** Xuống: mép trên của section
+   dưới vượt quá giữa màn hình là trượt cho nó khớp khung, khoá cuộn trong lúc
+   trượt. Lên: đối xứng — section cao hơn một màn hình thì khớp *màn cuối* của
+   nó, không nhảy vọt lên đầu.
+2. **Lưới an toàn khi ngừng cuộn**: còn đứng cách một điểm dừng dưới nửa màn
+   hình thì gom về đó. Đứng giữa một section cao (mobile) thì không điểm dừng
+   nào trong ngưỡng → để yên cho người ta đọc.
+
+Điểm dừng là mọi phần tử mang `data-snap`: `<Section full>` và hero tự gắn
+(mép trên), footer gắn `data-snap="end"` để cuối trang là một điểm dừng hợp lệ.
+Tắt cùng Lenis khi người dùng bật giảm chuyển động; trên cảm ứng giữ nguyên
+cuộn native.
 
 ## Thang bề mặt và chữ
 

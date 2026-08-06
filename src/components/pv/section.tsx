@@ -1,5 +1,9 @@
 import type { ReactNode } from "react";
 import { Reveal } from "@/components/motion/reveal";
+import {
+  BoundaryGlow,
+  BoundaryHorizon,
+} from "@/components/motion/sky-boundary";
 import { HorizonArc } from "@/components/pv/decor";
 import { Highlight } from "@/components/pv/highlight";
 import { cn } from "@/lib/utils";
@@ -20,10 +24,17 @@ import { cn } from "@/lib/utils";
  * và mắt luôn có đủ chỗ trống quanh khối chữ. Cái mất là trang dài hơn — nên
  * luật mật độ trong skill `pv-ui` càng phải giữ: một section, một ý.
  *
+ * SNAP. Section `full` mang `data-snap`: cuộn qua nửa section kế bên là trang
+ * trượt ngay cho section đó khớp khung nhìn (cơ chế ở smooth-scroll.tsx,
+ * token ở SNAP trong lib/motion.ts). Vì vậy trạng thái NGHỈ của một section
+ * là trọn màn hình — thiết kế section cứ nhắm vào khung đó.
+ *
  * NẤC TRỜI. `sky` chọn một nấc trong thang đêm → bình minh (globals.css LỚP 2).
  * Nấc chỉ đi lên trong một trang. Ranh giới giữa hai section không phải là
  * chênh lệch màu nền — nó là vạch chân trời + quầng sáng do chính component
- * này vẽ, nên không section nào phải tự lo phần đó.
+ * này vẽ, nên không section nào phải tự lo phần đó. Ranh giới còn SỐNG theo
+ * cuộn: quầng dâng sáng và vạch tự vẽ ra khi nó đi vào khung nhìn
+ * (sky-boundary.tsx) — hai section nối nhau bằng một cú trao ánh sáng.
  * ============================================================================
  */
 
@@ -69,6 +80,7 @@ export function Section({
   return (
     <section
       id={id}
+      data-snap={full ? "" : undefined}
       className={cn(
         /* Không đặt overflow-hidden ở đây: hai lớp nền bên dưới đều nằm gọn
            trong khung section, còn `overflow` lại biến section thành scroll
@@ -86,9 +98,9 @@ export function Section({
           Thứ tự dựng cảnh: hạt titan (vật liệu) → quầng bình minh (ánh sáng)
           → cung chân trời (đường mà ánh sáng chạm vào) → vạch ranh giới. */}
       <span aria-hidden className="pv-grain -z-10" />
-      <span aria-hidden className="pv-skyglow -z-10" />
+      <BoundaryGlow className="-z-10" />
       <HorizonArc className="-z-10" />
-      <span aria-hidden className="pv-horizon -z-10" />
+      <BoundaryHorizon className="-z-10" />
 
       {bleed ? children : <div className={cn("pv-container", containerClassName)}>{children}</div>}
     </section>

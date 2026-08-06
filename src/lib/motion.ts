@@ -41,6 +41,20 @@ export const SCROLL = {
   touchMultiplier: 1.6,
 } as const;
 
+/**
+ * Snap section vào khung nhìn (cơ chế ở smooth-scroll.tsx).
+ * Cuộn QUA nửa section kế bên là trượt ngay cho section đó khớp khung —
+ * không chờ ngừng cuộn. Section cao hơn một màn hình vẫn đọc được phần giữa.
+ */
+export const SNAP = {
+  /** Ngưỡng kích hoạt — phần màn hình mà section kế bên phải chiếm được. */
+  distance: 0.5,
+  /** ms sau cử chỉ cuộn cuối cùng mới chạy lưới an toàn (gom về điểm dừng). */
+  debounce: 500,
+  /** Cú trượt khớp màn hình đi cùng nhịp với cuộn mượt. */
+  duration: SCROLL.duration,
+} as const;
+
 /** Độ trễ giữa các phần tử trong một nhóm */
 export const STAGGER = 0.07;
 

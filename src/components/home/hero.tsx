@@ -51,7 +51,10 @@ export function Hero() {
       };
 
   return (
-    <section className="sky-void relative isolate flex min-h-dvh flex-col overflow-hidden">
+    <section
+      data-snap=""
+      className="sky-void relative isolate flex min-h-dvh flex-col overflow-hidden"
+    >
       <HeroBackdrop />
 
       <div className="relative flex flex-1 flex-col">

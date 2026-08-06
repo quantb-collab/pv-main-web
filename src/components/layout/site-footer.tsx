@@ -36,7 +36,9 @@ export async function SiteFooter() {
   const legal = footerPages("legal");
 
   return (
-    <footer className="sky-deep relative isolate">
+    /* data-snap="end": đáy footer khớp đáy màn hình = đúng cuối trang. Thiếu
+       điểm dừng này thì đứng ở footer sẽ bị snap hút ngược lên CtaBand. */
+    <footer data-snap="end" className="sky-deep relative isolate">
       <span aria-hidden className="pv-grain -z-10" />
       <span aria-hidden className="pv-horizon -z-10" />
 

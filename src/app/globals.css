@@ -652,6 +652,11 @@
 
    Cả hai đọc `--sky-light` nên cường độ tự tăng dần theo mạch của trang;
    component không truyền tham số nào.
+
+   `--pv-boundary` là hệ số CHUYỂN ĐỘNG (mặc định 1 — bản tĩnh). Hai component
+   BoundaryHorizon / BoundaryGlow (src/components/motion/sky-boundary.tsx)
+   nhân nó theo tiến trình cuộn: ranh giới sáng dần khi đi vào khung nhìn.
+   Chỗ dùng span tĩnh (footer, hero) không phải làm gì — var rơi về 1.
    -------------------------------------------------------------------------- */
 @utility pv-horizon {
   pointer-events: none;
@@ -667,7 +672,7 @@
     var(--border) 86%,
     transparent 100%
   );
-  opacity: calc(0.4 + 0.6 * var(--sky-light, 0.2));
+  opacity: calc((0.4 + 0.6 * var(--sky-light, 0.2)) * var(--pv-boundary, 1));
 }
 
 @utility pv-skyglow {
@@ -691,7 +696,7 @@
      Sàn 0.07 cũng là thứ tách hai section cùng nấc trời: mép trên tối, mép
      dưới có quầng, rồi vạch chân trời — nhịp đó đọc ra ranh giới ngay cả khi
      hai nền giống hệt nhau. */
-  opacity: calc(0.07 + 0.23 * var(--sky-light, 0.2));
+  opacity: calc((0.07 + 0.23 * var(--sky-light, 0.2)) * var(--pv-boundary, 1));
 }
 
 /* Hero nằm ở nấc tối nhất nhưng là khung DUY NHẤT có trọn một màn hình bầu
