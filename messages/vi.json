@@ -69,7 +69,7 @@
       "mediaNeed": "Ảnh nền toàn khung cho first view. BẮT BUỘC: khổ ngang tối thiểu 2560px; một phần ba giữa khung phải trống và ít chi tiết vì tiêu đề đè lên đó; ảnh nằm dưới lớp phủ tối 50–100% nên chỉ giữ lại bố cục và mảng sáng, mọi chi tiết nhỏ sẽ mất. ÁNH SÁNG: một nguồn sáng lạnh duy nhất, đặt thấp hoặc từ một bên, phần còn lại chìm về đen. Không đèn trần đều, không ánh vàng — cả hệ màu của site không có màu ấm nào. CHỦ THỂ: môi trường làm việc thật của Pebble Vina lúc sớm hoặc đêm — phòng vận hành, lối đi giữa hàng tủ máy, xưởng trước ca, hoặc một người ngồi làm việc nhìn từ phía sau và chiếm phần nhỏ trong khung. Có dấu vết con người nhưng không phải ảnh chân dung. BỐ CỤC: một đường ngang mạnh nằm thấp trong khung (mép bàn, dãy tủ, đường chân trời) để khớp với dải sáng chân trời của site. KỸ THUẬT: nhiễu ở vùng tối càng thấp càng tốt — site đã có lớp hạt riêng, ảnh nhiễu sẵn thì cộng dồn thành vỡ hạt. CẤM: robot, não phát sáng, tay chạm màn hình, cyberpunk, neon, dashboard dựng giả, ảnh bắt tay, ảnh stock nói chung."
     },
     "who": {
-      "title": "Hành trình — định vị doanh nghiệp",
+      "title": "Định vị doanh nghiệp",
       "r1Label": "Khởi phát",
       "r1Text": "2026 tại Hà Nội, Pebble Vina ra đời. Mục tiêu tối quan trọng được xác định ngay: tạo giá trị năng lực sản xuất và vận hành cho doanh nghiệp.",
       "r2Label": "Trọng tâm",
