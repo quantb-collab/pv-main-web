@@ -470,3 +470,46 @@ hơi, cắt đôi thì mất phép đối "công cụ ↔ con người". Ngoại
 mọi câu dẫn khác giữ `58ch`. `text-balance` lo khổ hẹp.
 **Còn để ngỏ:** `--container-max` vẫn 1280px. Muốn cả site rộng ra thì đó là
 núm riêng, sửa ở LỚP 3.
+
+## 2026-08-06 — Trang chủ: gộp Problem + Outcomes thành ma trận ba nấc
+**Bối cảnh:** Chủ dự án muốn section 3 "đưa ra giá trị khách muốn thấy ngay".
+Đi qua bốn vòng: card đối ứng từng hàng → hai panel trước/sau → ba nấc tăng
+tiến → chốt bản premium. Trang chủ đồng thời đang vượt ngân sách ~10 màn cuộn.
+**Chọn:** MỘT section `Contrast` (`#ket-qua`) thay cả §9 S2 lẫn S3, dựng bằng
+block `StageMatrix`: 4 hàng × 3 nấc (cổ điển → đã số hoá → tự hành cùng AI).
+Hàng = 4 pain Layer A: Tra cứu · Chứng từ · Báo cáo · Phê duyệt. Nấc giữa cố ý
+viết "được một nửa" — đa số khách Enterprise đứng ở đó, nhận ra mình thì nấc 3
+mới có lý do. Tiêu đề một câu hỏi căn giữa "Doanh nghiệp bạn đang ở nấc nào?";
+vế "option của chúng ta" để panel 3 tự nói bằng thị giác.
+**Vì:** trình tự thuyết phục của blueprint mở đầu bằng "khách muốn đạt kết quả
+gì"; gộp tiết kiệm một màn cuộn; ba nấc kể được cả vấn đề lẫn đích đến trong
+một khung nhìn.
+**Đã cân nhắc và bỏ:** bảng ghép đối ứng từng hàng (pairs — bị chê giống nhau);
+hai panel trước/sau; GapChip "chờ đo" từng hàng và Gap proof dưới bảng (gỡ —
+section không còn trưng khẳng định cần bằng chứng; muốn thêm số % thì phải có
+case study kèm điều kiện đo); hàng "Tri thức" (trùng trục với Tra cứu — thay
+bằng Phê duyệt, mục "quy trình nhiều bước" của Layer A); tiêu đề dài hai vế
+(gãy 3 dòng text-headline, lệch layout).
+**Đổi lại thì phải sửa:** `StageMatrix` trong `blocks.tsx`, `Contrast` trong
+`home/sections.tsx`, khoá `home.contrast` trong `vi.json`, thứ tự `page.tsx`.
+
+## 2026-08-06 — Viền gradient dùng `pv-edge`; premium panel = scale-110
+**Bối cảnh:** viền gradient làm bằng trick `p-px` bị vỡ ở bốn góc bo; chủ dự
+án yêu cầu panel 3 thành "extreme premium": hào quang tím, to hơn 10%, bo góc
+nghệ thuật hơn.
+**Chọn:** utility `pv-edge` (globals LỚP 5) — overlay absolute vẽ vòng viền
+bằng mask ring, không chiếm slot subgrid. "Tím" = `brand-soft` (đáy ramp brand,
+oklch hue 255) — không thêm hue mới ngoài ramp. Panel 3: quầng gradient
+đậm-đáy-nhạt-đỉnh blur rộng thở theo `dawn-pulse` sẵn có, `lg:scale-110` +
+`z-10`, `rounded-2xl` + góc trên-phải `2.25rem`. Nấc 1 bỏ nền cho `pv-grain`
+xuyên qua — kéo giãn khoảng cách nấc 1↔3.
+**Vì:** nguyên nhân viền vỡ đo được ở zoom 18×: ô con góc vuông đè lên chính
+vòng viền trong vùng bo của hộp `overflow-hidden` — không phải lỗi subgrid.
+Scale 1.06 đã thử và đọc thành "lệch" chứ không phải "to hơn" nên chốt 1.10.
+Quầng nở dọc nhiều hơn ngang vì bản `-inset-4` đều làm tràn `scrollWidth`
+1–3 px ở 1152/1280.
+**Đã cân nhắc và bỏ:** box-shadow thường (hệ dùng viền tóc + ánh sáng, không
+bóng đen); tím hue ~300 (quyết định cấp brand kit, chưa chốt); cột rộng
+`1.15fr` thay scale (giữ làm đường lui nếu chê lệch hàng ~30 px của scale).
+**Đổi lại thì phải sửa:** `pv-edge` ở `globals.css` LỚP 5 + mục tương ứng
+trong `DESIGN-TOKENS.md`, khối panel trong `StageMatrix`.

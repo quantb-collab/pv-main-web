@@ -639,6 +639,37 @@
 }
 
 /* --------------------------------------------------------------------------
+   Vòng viền gradient — một nét 1px chạy hết chu vi, kể cả bốn góc
+   --------------------------------------------------------------------------
+   Cách quen thuộc (`p-px` trên hộp bo góc + con mang nền đặc) VỠ Ở GÓC: con có
+   góc VUÔNG, nên trong vùng bo tròn nó trùm ra ngoài đường cong trong và đè
+   mất chính vòng viền — mắt đọc ra bốn vết khuyết đối xứng. Nếu hộp đó còn là
+   `grid-rows-subgrid` thì 1px padding kia còn bị trừ vào track đầu và cuối,
+   kéo hàng lệch so với panel không có padding.
+
+   Ở đây vòng viền là MỘT phần tử phủ, `position: absolute` nên không chiếm ô
+   nào trong lưới: nền gradient trải kín rồi bị khoét ruột bằng mask. Cả
+   `content-box` lẫn `border-box` đều được bo theo bán kính của chính phần tử,
+   nên dải còn lại dày đều tuyệt đối — góc cũng như cạnh.
+
+   Dùng: đặt trong một phần tử `relative` có border-radius, gradient lấy từ
+   token qua class Tailwind:
+     <span aria-hidden className="pv-edge bg-linear-to-t from-brand to-border" />
+   -------------------------------------------------------------------------- */
+@utility pv-edge {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  mask-clip: content-box, border-box;
+  mask-composite: exclude;
+  /* Safari cũ chỉ hiểu bản -webkit-; `xor` là tên cũ của `exclude`. */
+  -webkit-mask-composite: xor;
+}
+
+/* --------------------------------------------------------------------------
    Chân trời — thứ tách hai section liền nhau
    --------------------------------------------------------------------------
    Hai nền đêm cách nhau 3% độ sáng thì mắt đọc ra là lỗi render, không phải

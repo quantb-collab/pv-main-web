@@ -7,6 +7,7 @@ import {
   DefinitionList,
   LayerStack,
   PillRow,
+  StageMatrix,
   StatementList,
   StepRail,
 } from "@/components/pv/blocks";
@@ -55,47 +56,39 @@ export async function Identity() {
   );
 }
 
-/* §9 Section 2 — Problem Recognition */
-export async function Problem() {
-  const t = await getTranslations("home.problem");
-
-  return (
-    <Section id="van-de" sky="night">
-      {/* Không lead: tiêu đề đã nói trọn ý, ba thẻ bên dưới là phần triển khai. */}
-      <SectionHeader eyebrow={t("eyebrow")} title={t("title")} />
-      {/* Ba mục. Không mở rộng: người mua Enterprise quét, không đọc hết danh sách. */}
-      <div className="mt-14 overflow-hidden rounded-xl border">
-        <CardGrid cols={3}>
-          {[1, 2, 3].map((n) => (
-            <Card key={n} index={n} title={t(`i${n}Title`)}>
-              {t(`i${n}Body`)}
-            </Card>
-          ))}
-        </CardGrid>
-      </div>
-    </Section>
-  );
-}
-
-/* §9 Section 3 — Business Outcomes */
-export async function Outcomes() {
-  const t = await getTranslations("home.outcomes");
+/**
+ * §9 Section 2 + 3 — Problem Recognition GỘP với Business Outcomes.
+ * Bố cục theo ý tưởng chủ dự án 2026-08-06 (lần chỉnh 3): BA NẤC tăng tiến
+ * "vận hành cổ điển → đã số hoá → số hoá tự hành cùng AI" — KHÔNG eyebrow,
+ * KHÔNG lead. Cột tăng độ nhấn theo đúng thang sáng của site (StageMatrix
+ * tự lo); mỗi HÀNG là cùng một việc tiến hoá qua ba nấc, tag hàng lặp ở cả
+ * ba cột để dõi được. Nấc giữa cố ý là tấm gương của đa số khách Enterprise:
+ * đã có phần mềm nhưng con người vẫn là keo dán giữa các hệ thống — nhận ra
+ * mình ở nấc 2 thì nấc 3 mới có lý do. Giải pháp ở nấc 3 giữ MỨC TỔNG QUÁT,
+ * chi tiết thuộc /use-cases và các section phía dưới.
+ *
+ * Tiêu đề là MỘT câu hỏi ngắn, căn giữa: bản dài hai vế trước đó gãy 3 dòng
+ * text-headline và lệch hẳn so với bảng full-width (chủ dự án chê
+ * 2026-08-06). Câu hỏi chỉ lo vế điểm đau — người đọc tự định vị vào nấc
+ * 1–2; vế "option của chúng ta" KHÔNG nói bằng chữ mà để panel 3 phát sáng
+ * tự trả lời. KHÔNG có Gap proof ở đây (chủ dự án gỡ 2026-08-06): section
+ * không trưng con số hay khẳng định cần bằng chứng — nếu sau này thêm số %,
+ * quay lại luật cũ: chỉ điền khi có case study kèm điều kiện đo.
+ */
+export async function Contrast() {
+  const t = await getTranslations("home.contrast");
 
   return (
     <Section id="ket-qua" sky="night">
-      <SectionHeader eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
-      <div className="mt-14 overflow-hidden rounded-xl border">
-        <CardGrid cols={4}>
-          {[1, 2, 3, 4].map((n) => (
-            <Card key={n} title={t(`o${n}Title`)}>
-              {t(`o${n}Body`)}
-            </Card>
-          ))}
-        </CardGrid>
-      </div>
-      <Reveal className="mt-8 max-w-2xl">
-        <Gap kind="proof">{t("numbersGap")}</Gap>
-      </Reveal>
+      <SectionHeader title={t("title")} align="center" />
+      <StageMatrix
+        className="mt-14"
+        rows={[1, 2, 3, 4].map((n) => t(`r${n}Tag`))}
+        stages={[1, 2, 3].map((s) => ({
+          label: t(`s${s}`),
+          items: [1, 2, 3, 4].map((n) => t(`r${n}s${s}`)),
+        }))}
+      />
     </Section>
   );
 }

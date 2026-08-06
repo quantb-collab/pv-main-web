@@ -320,3 +320,198 @@ export function BeforeAfter({
     </div>
   );
 }
+
+/* -------------------------------------------------------------------------- */
+/* Ma trận nấc tiến hoá — các cột là các nấc, các hàng là cùng một việc        */
+/* -------------------------------------------------------------------------- */
+
+export interface MatrixStage {
+  /** Tên nấc, hiện ở đầu cột. */
+  label: string;
+  /** Một ô mỗi hàng. Các nấc phải có cùng số ô, cùng thứ tự hàng. */
+  items: ReactNode[];
+}
+
+/**
+ * Thang sáng của site đặt NẰM NGANG, mức nhấn suy ra từ VỊ TRÍ cột — tăng
+ * tiến là ngữ nghĩa của block, không cấu hình được, cũng như nấc sky chỉ
+ * được đi lên. Sáu thứ cùng leo một lượt, để liếc qua là thấy cấp bậc:
+ *
+ *            nấc đầu            nấc giữa           nấc cuối
+ *   nền      không có gì        surface            brand-soft + ánh dâng
+ *   viền     hairline xám       gradient nửa sáng  gradient brand trọn vòng
+ *   sáng     —                  —                  quầng brand thở sau lưng
+ *   hình     rounded-xl         rounded-xl         2xl + một góc vuốt rộng
+ *   cỡ       1                  1                  1.10 (chỉ từ lg)
+ *   lớp      —                  —                  z-10, nằm trên hai nấc kia
+ *
+ * Nấc đầu CỐ Ý không có nền riêng: lớp hạt và quầng sáng của section chạy
+ * thẳng qua nó. "Chưa ai chạm vào" thì không nên có bề mặt.
+ *
+ * BA LỚP PHỦ, không lớp nào là ô trong lưới (`absolute` → ngoài dòng, nên
+ * subgrid không mất track nào):
+ *   quầng (-z-20) → mặt panel (-z-10) → nội dung → vòng viền `pv-edge`.
+ * Vì mặt panel nằm ở lớp phủ chứ không phải nền của các ô, các ô con KHÔNG
+ * được mang nền: ô con có góc vuông, đặt nền lên nó thì góc bo của panel bị
+ * ăn mất. Cũng vì vậy panel không cần `overflow-hidden` — và không có nó thì
+ * quầng sáng mới toả ra ngoài được.
+ *
+ * Hàng giữa các panel thẳng nhau bằng subgrid: các panel rời nhau nhưng
+ * chia chung track hàng của lưới cha, và không panel nào có padding/border
+ * riêng để làm lệch track đầu–cuối. Nấc cuối phóng 1.10 quanh tâm nên hàng của
+ * nó lệch dần ra hai đầu (tối đa ~30px ở mép trên và mép dưới, 0 ở giữa) —
+ * đổi lấy hiệu ứng "nổi lên", chủ dự án đã chọn (2026-08-06).
+ * Nhãn hàng (`rows`) đứng MỘT lần ở rail trái trên desktop; dưới lg rail ẩn
+ * đi và nhãn hiện lại trong từng ô để panel xếp dọc vẫn tự đọc được.
+ */
+export function StageMatrix({
+  stages,
+  rows,
+  className,
+}: {
+  stages: MatrixStage[];
+  /** Nhãn hàng ngắn (1–2 chữ). */
+  rows?: string[];
+  className?: string;
+}) {
+  const last = stages.length - 1;
+  const rowCount = Math.max(...stages.map((s) => s.items.length));
+  const span = { gridRow: `span ${rowCount + 1}` };
+
+  return (
+    <RevealGroup
+      className={cn(
+        /* Rãnh ngang rộng hơn từ lg: nấc cuối phóng 110% và mang quầng sáng,
+           mỗi bên nở thêm ~13px — thiếu chỗ thì nó chạm vai panel bên cạnh. */
+        "grid gap-x-5 gap-y-5 lg:gap-x-8 lg:gap-y-0",
+        stages.length === 2
+          ? rows
+            ? "lg:grid-cols-[auto_1fr_1fr]"
+            : "lg:grid-cols-2"
+          : rows
+            ? "lg:grid-cols-[auto_1fr_1fr_1fr]"
+            : "lg:grid-cols-3",
+        className,
+      )}
+      // Khai track hàng tường minh để subgrid của rail và các panel có chỗ bám.
+      style={{ gridTemplateRows: `repeat(${rowCount + 1}, auto)` }}
+    >
+      {rows ? (
+        <div className="hidden lg:grid lg:grid-rows-subgrid" style={span}>
+          {/* ô rỗng chiếm hàng tiêu đề cột */}
+          <div />
+          {rows.map((label) => (
+            <div key={label} className="flex items-start justify-end py-5 lg:py-6">
+              <span className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      {stages.map((stage, s) => {
+        const dim = s === 0;
+        const high = s === last;
+        const mid = !dim && !high;
+        return (
+          <RevealItem
+            key={s}
+            className={cn(
+              "relative isolate rounded-xl lg:grid lg:grid-rows-subgrid",
+              /* Góc vuốt rộng ở phía trên–ngoài: cùng một đường cong với cung
+                 chân trời của site, đặt đúng chỗ mạch đọc đi ra khỏi bảng.
+                 Chỉ nấc cuối được phép — hai nấc kia giữ hộp vuông vức. */
+              high &&
+                "rounded-2xl rounded-tr-[2.25rem] lg:z-10 lg:origin-center lg:scale-110",
+            )}
+            style={span}
+          >
+            {/* Quầng bình minh sau lưng panel — panel nổi bằng ÁNH SÁNG chứ
+                không bằng bóng đen, đúng chất đêm rạng dần. Đậm ở đáy nhạt ở
+                đỉnh, cùng chiều với `pv-skyglow` của section. Nở theo chiều
+                DỌC nhiều hơn chiều ngang: bề ngang còn phải chừa chỗ cho panel
+                bên cạnh và cho mép container ở khổ 1024–1344. Nhịp thở tái
+                dùng keyframe của hero; người bật giảm chuyển động thì @media
+                trong globals.css tắt nó ngay. */}
+            {high ? (
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -inset-x-2 -inset-y-5 -z-20 animate-dawn-pulse rounded-3xl bg-linear-to-t from-brand/35 via-brand/20 to-brand/5 blur-2xl lg:-inset-x-3 lg:-inset-y-8 lg:rounded-[2.5rem]"
+              />
+            ) : null}
+
+            {/* Mặt panel. Nấc cuối có thêm ánh dâng từ đáy — cùng hướng sáng
+                với `pv-skyglow` của section. */}
+            <span
+              aria-hidden
+              className={cn(
+                "pointer-events-none absolute inset-0 -z-10 rounded-[inherit]",
+                dim && "border",
+                mid && "bg-surface",
+                high &&
+                  "bg-brand-soft bg-linear-to-t from-brand/15 via-transparent to-transparent",
+              )}
+            />
+
+            {/* Vòng viền gradient. Nấc đầu không có — nó chỉ là một nét
+                hairline, và đó chính là khác biệt phải thấy ngay. */}
+            {dim ? null : (
+              <span
+                aria-hidden
+                className={cn(
+                  "pv-edge bg-linear-to-t",
+                  mid && "from-brand/45 via-brand/15 to-border",
+                  high && "from-brand via-brand/45 to-brand/25",
+                )}
+              />
+            )}
+
+            <div className="flex items-baseline gap-3 p-5 lg:p-6">
+              <span
+                className={cn(
+                  "font-mono text-micro font-medium tabular-nums",
+                  dim ? "text-subtle-foreground" : "text-brand",
+                )}
+              >
+                {String(s + 1).padStart(2, "0")}
+              </span>
+              <h3
+                className={cn(
+                  "font-mono text-eyebrow font-medium uppercase",
+                  dim && "text-subtle-foreground",
+                  mid && "text-foreground",
+                  high && "text-brand",
+                )}
+              >
+                {stage.label}
+              </h3>
+            </div>
+            {stage.items.map((item, r) => (
+              <div
+                key={r}
+                className={cn(
+                  "flex flex-col gap-1.5 border-t p-5 lg:p-6",
+                  high && "border-brand/15",
+                )}
+              >
+                {rows?.[r] ? (
+                  <span
+                    className={cn(
+                      "font-mono text-micro font-medium uppercase lg:hidden",
+                      high ? "text-brand" : "text-subtle-foreground",
+                    )}
+                  >
+                    {rows[r]}
+                  </span>
+                ) : null}
+                <p className={cn("text-body-sm", dim && "text-muted-foreground")}>
+                  <Highlight>{item}</Highlight>
+                </p>
+              </div>
+            ))}
+          </RevealItem>
+        );
+      })}
+    </RevealGroup>
+  );
+}

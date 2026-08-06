@@ -89,6 +89,28 @@ mà đây lại là vector chính của trang.
 Cung nhạt hơn hẳn quầng sáng: cung là **đường viền** của ánh sáng. Thấy nó rõ
 hơn chính ánh sáng thì nó thành hình vẽ chứ không thành chân trời.
 
+## Viền gradient — `pv-edge`
+
+Một nét 1px chạy trọn chu vi một hộp bo góc, màu lấy từ gradient brand.
+
+```jsx
+<div className="relative rounded-xl">
+  <span aria-hidden className="pv-edge bg-linear-to-t from-brand to-border" />
+  …
+</div>
+```
+
+**Không dùng cách `p-px` + con mang nền đặc.** Con có góc vuông, nên trong vùng
+bo tròn nó trùm ra ngoài đường cong trong và đè mất chính vòng viền — mắt đọc
+ra bốn vết khuyết đối xứng ở bốn góc. Nếu hộp đó còn là `grid-rows-subgrid`
+thì 1px padding kia bị trừ vào track đầu và cuối, kéo hàng lệch so với panel
+không có padding.
+
+`pv-edge` là phần tử phủ `position: absolute` — không chiếm ô nào trong lưới,
+và không cần `overflow-hidden` nên quầng sáng đặt sau lưng hộp vẫn toả ra
+được. Ruột được khoét bằng mask; cả `content-box` lẫn `border-box` đều bo theo
+bán kính của chính phần tử nên dải còn lại dày đều tuyệt đối.
+
 ## Chiều cao section
 
 Mặc định mỗi section cao trọn một viewport, nội dung căn giữa —
