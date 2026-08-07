@@ -386,8 +386,13 @@ export const PAGES: PageEntry[] = [
     status: "wireframe",
     objective:
       "Biến quy trình triển khai thành bằng chứng về độ tin cậy và giảm rủi ro mua hàng.",
-    audiencePrimary: "procurement",
-    audienceSecondary: ["ceo", "coo", "cio"],
+    // Đổi từ `procurement` sang `ceo` 2026-08-07 theo yêu cầu chủ dự án: content
+    // phải nói thứ C-level muốn nghe. Kéo theo cả giọng trang — mỗi bước kể
+    // "bạn được gì", nhãn trường ở ngôi thứ hai, và tiêu chí chuyển bước đọc
+    // thành quyền dừng của bên mua chứ không phải kỷ luật của bên bán.
+    // Procurement vẫn đọc được trang này, nhưng không còn là người được nhắm.
+    audiencePrimary: "ceo",
+    audienceSecondary: ["coo", "cio", "procurement"],
     funnel: "validation",
     cta: "assessment",
     questions: [

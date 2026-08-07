@@ -38,9 +38,7 @@ export default async function HowWeDeliverPage({
     title: ts(`s${n}Title`),
     body: ts(`s${n}Objective`),
     meta: [
-      { label: ts("input"), value: ts(`s${n}Input`) },
       { label: ts("output"), value: ts(`s${n}Output`) },
-      { label: ts("people"), value: ts(`s${n}People`) },
       { label: ts("exit"), value: ts(`s${n}Exit`) },
     ],
   }));
@@ -60,7 +58,7 @@ export default async function HowWeDeliverPage({
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeader title={t("principles.title")} />
           <StatementList
-            items={[1, 2, 3, 4, 5].map((n) => t(`principles.p${n}`))}
+            items={[1, 2, 3].map((n) => t(`principles.p${n}`))}
           />
         </div>
       </Section>
