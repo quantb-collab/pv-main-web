@@ -1,0 +1,575 @@
+"use client";
+
+import { useInView, useReducedMotion } from "motion/react";
+import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { MediaFrame } from "@/components/motion/media-frame";
+import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SHELF } from "@/lib/motion";
+import { cn } from "@/lib/utils";
+
+/**
+ * ============================================================================
+ * KỆ SẢN PHẨM — phần cứng theo đối tác
+ * ----------------------------------------------------------------------------
+ * Đây là chỗ DUY NHẤT trên site trưng sản phẩm vật lý, nên nó được phép trông
+ * khác thân bài — nhưng vẫn bằng đúng vật liệu của site: viền tóc, vòng viền
+ * gradient `pv-edge`, không đổ bóng, không màu ngoài token.
+ *
+ * NGÂN SÁCH CHIỀU CAO là ràng buộc đầu tiên, không phải thứ tính sau. Section
+ * cao trọn một màn hình, mà `--section-y` ở desktop là 8.5rem mỗi đầu — nên
+ * trong màn 900px chỉ còn ~628px cho toàn bộ section. Phép tính hiện tại:
+ *   hàng tiêu đề + tab   ~125px   (một hàng, tab nằm bên phải chứ không xuống dòng)
+ *   khe                   ~24px
+ *   ba tầng kệ           ~573px   (mỗi tầng 159px card + 2×12px đệm, khe 12px)
+ * Cộng lại ~722px: ở ĐÚNG 1440×900 section tràn ~94px, tức khoảng 1,1 màn
+ * hình; từ 1000px chiều cao trở lên thì vừa. Phần tràn đó là giá của card ảnh
+ * đọc được cộng khoảng thở quanh vật thể — cả hai đều do chủ dự án chốt.
+ * Nới bất kỳ con số nào cũng phải trừ vào con số khác, không được cộng thêm.
+ *
+ * BỐN quyết định hình:
+ *
+ * 1. MỖI DÒNG CHIP LÀ MỘT TẦNG KỆ. Vòng `pv-edge` chạy hết chu vi với gradient
+ *    sáng ở MÉP DƯỚI: ánh sáng hắt lên từ dưới tầng kệ, cùng một nguồn sáng
+ *    với chân trời của cả trang. Dùng `pv-edge` chứ không `p-px`+
+ *    `overflow-hidden` vì cách kia vỡ ở bốn góc bo (xem chú thích globals.css).
+ *
+ * 2. ẢNH VÀ TÊN THIẾT BỊ NẰM TRONG CÙNG MỘT CARD (đổi 2026-08-07).
+ *    Bản trước tách đôi: ảnh vuông 112px, tên thiết bị là một dòng chữ riêng
+ *    bên dưới. Hai cái sai: dòng chữ đó ăn 18px của MỌI tầng nên ảnh phải nhỏ
+ *    lại đúng bằng phần nó lấy, và ảnh rời khỏi nhãn thì mắt phải tự nối lại.
+ *    Nay một card = ảnh 16:9 + nhãn ngay dưới trong cùng khung viền, nên tên
+ *    thiết bị KHÔNG tốn thêm dòng nào của tầng. Ảnh rộng 198px thay cho 112px
+ *    vuông — gấp 1,75 lần diện tích.
+ *    ⟹ Ảnh cần giao: 16:9, 1920×1080, cùng một góc máy và một nguồn sáng lạnh
+ *      cho cả 15 tấm. Lệch góc máy thì kệ đọc ra là ảnh gom từ 15 nơi.
+ *
+ * 3. BĂNG TỰ TRÔI THEO BƯỚC, và người dùng luôn giành được quyền lái.
+ *    Bản đầu dùng `animate-marquee` trôi liên tục 40s một vòng — bỏ vì nó
+ *    không sống chung được với `snap` và hai nút trôi. Nay là khung cuộn ngang
+ *    thật, tự đi MỘT CARD mỗi `SHELF.auto`, hết băng thì về đầu. Được cả hai:
+ *    kệ hàng tự sống, mà vuốt tay / trackpad / bàn phím / hai nút đều ăn ngay.
+ *    Bốn điều kiện dừng, thiếu một cái là hiệu ứng thành phiền:
+ *      · con trỏ đang ở trong băng, hoặc bàn phím đang focus trong băng
+ *      · băng chưa vào khung nhìn (không chạy nền cho tốn pin)
+ *      · `prefers-reduced-motion` — tắt hẳn, không chỉ giảm
+ *    Ba tầng lệch pha `SHELF.stagger`: trôi cùng nhịp thì đọc ra là một cái
+ *    bảng điện tử, lệch pha thì đọc ra là ba kệ hàng sống độc lập.
+ *
+ * 4. MỖI DÒNG CHIP MỘT MÀU LẤY TỪ CHÍNH CÁI TÊN — bạc hà, đu đủ, cà phê.
+ *    Màu chỉ xuất hiện ở HAI chỗ: tên chip và mép sáng dưới chân tầng kệ. Đủ
+ *    để ba dòng không lẫn nhau, không đủ để cãi nhau với ánh bình minh của
+ *    trang. Ba giá trị nằm ở LỚP 1 globals.css kèm lý do vì sao chúng là ngoại
+ *    lệ duy nhất của luật "mọi ánh sáng dẫn xuất từ --brand".
+ *
+ * TAB LÀ ĐỐI TÁC, không phải nhóm sản phẩm. Hiện chỉ một, và một tab trông vẫn
+ * đúng vì nó đọc ra là nhãn đối tác đang xem. Thêm đối tác = thêm một phần tử
+ * vào mảng `partners` ở `sections.tsx`, không phải sửa file này.
+ * ============================================================================
+ */
+
+/**
+ * Bề ngang card. 200px ⟹ card cao 159:
+ *   10 đệm trên + 111 ảnh (198 × 9/16) + 8 khe + 20 nhãn + 10 đệm dưới
+ *
+ * Con số này KHÔNG còn vừa ngân sách chiều cao, và đó là lựa chọn có chủ ý:
+ *   628 (khoang nội dung) − 125 (hàng tiêu đề, ĐÃ gộp tab) − 24 (khe) = 479
+ *   (479 − 2×12 khe) / 3 = 151 mỗi tầng · − 2×12 đệm ⟹ card ≤ 127 ⟹ ảnh ≤ 93
+ * 93px ảnh thì card mới chỉ hơn ô vuông 112px cũ đúng 1,2 lần — đổi mà như
+ * không đổi. Nên card giữ 159 và section tràn ~94px ở 1440×900.
+ *
+ * Đây là chỗ ĐẦU TIÊN phải cắt nếu chủ dự án nhìn thấy chật, theo thứ tự:
+ *   `py-2.5` của card → `py-2` (−12px cả section)
+ *   200 → 176 (−27px)  ·  200 → 152 (−54px)
+ * Cắt cả ba mới về đúng một màn hình, và lúc đó ảnh còn 150×84.
+ */
+const CARD = "w-[12.5rem]";
+/** Khe giữa hai card. Phải khớp `gap-3` của track — `scrollByCard` cộng tay. */
+const GAP_PX = 12;
+
+/**
+ * Màu ba dòng chip. Bảng nằm ở đây chứ không ở `sections.tsx` vì đây là quyết
+ * định HÌNH, không phải nội dung; và Tailwind chỉ sinh class khi thấy chuỗi
+ * đầy đủ trong mã nguồn, nên ba cặp này phải viết thẳng, không ghép chuỗi.
+ */
+const ACCENT = {
+  mint: { name: "text-chip-mint", edge: "from-chip-mint/40" },
+  papaya: { name: "text-chip-papaya", edge: "from-chip-papaya/40" },
+  espresso: { name: "text-chip-espresso", edge: "from-chip-espresso/40" },
+} as const;
+
+export type ChipAccent = keyof typeof ACCENT;
+
+export interface ShelfProduct {
+  /** Bỏ trống = hiện ô chờ câm kèm `need` ở `title` + `sr-only`. */
+  src?: string;
+  /** Tên thiết bị. LUÔN hiện, kể cả khi chưa có ảnh — nhãn mới là thứ nói
+   *  chip này dùng vào việc gì, ảnh đến sau chỉ bồi thêm. */
+  name: string;
+  need: string;
+}
+
+export interface ShelfLine {
+  name: string;
+  /** Lợi điểm — MỘT câu ngắn, nói việc chip làm được, không nói nó là gì. */
+  edge: string;
+  /** Thông số, một dòng mono, các giá trị ngăn bằng dấu chấm giữa. */
+  spec: string;
+  /** Màu lấy từ tên chip. Xem quyết định 4. */
+  accent: ChipAccent;
+  products: ShelfProduct[];
+  /** Nhãn hai nút trôi băng. Có tên chip trong đó vì mỗi tầng một băng riêng,
+   *  "trước/sau" trần thì trình đọc màn hình nghe ba lần giống hệt nhau. */
+  nav: { prev: string; next: string };
+}
+
+/**
+ * Hồ sơ đối tác, đứng NGAY DƯỚI tab và TRƯỚC danh sách sản phẩm: đến từ đâu →
+ * ai đứng sau → mạnh cỡ nào.
+ *
+ * CHỈ MỘT NGƯỜI (chủ dự án chốt 2026-08-07). Bản trước liệt kê cả bốn lãnh đạo
+ * kèm học vấn và nơi từng làm; bốn hồ sơ ba dòng trên một trang chủ là trang
+ * About của một công ty khác, và mỗi cái tên thật lại kéo theo một sự đồng ý
+ * riêng phải đi xin. Người sáng lập cộng đường link về web đối tác trả lời
+ * đúng câu người đọc đang hỏi — "ai đứng sau chỗ này" — và ai muốn biết sâu
+ * hơn thì đã có chỗ để đi tiếp.
+ */
+export interface ShelfPartnerIntro {
+  /** Đến từ đâu — một cụm ngắn, đứng như tiêu đề nhỏ. */
+  origin: string;
+  /** Làm CỤ THỂ cái gì — nói cơ chế (PIM) chứ không nói tính từ. */
+  does: string;
+  leadLabel: string;
+  lead: { name: string; role: string; bio: string };
+  /** Web đối tác. Bỏ trống `href` = chưa có link thì không hiện gì cả — một
+   *  đường link chết còn tệ hơn không có link. */
+  site?: { href: string; label: string };
+  /** Hai con số của bảng thành tích. */
+  stats: { value: string; label: string }[];
+}
+
+export interface ShelfPartner {
+  id: string;
+  name: string;
+  intro: ShelfPartnerIntro;
+  lines: ShelfLine[];
+}
+
+export function ProductShelf({
+  partners,
+  header,
+  action,
+  motionLabels,
+  className,
+}: {
+  partners: ShelfPartner[];
+  /** Tiêu đề section. Nhận vào đây thay vì đặt bên ngoài để tab đứng ĐƯỢC
+   *  cùng hàng với nó — `TabsList` bắt buộc nằm trong `<Tabs>`, mà một hàng
+   *  tab riêng tốn 44px, đúng phần chiều cao mà card ảnh đang cần. */
+  header?: ReactNode;
+  /** Nút phụ đứng cạnh tab. */
+  action?: ReactNode;
+  /** Nhãn hai trạng thái của nút dừng chuyển động. */
+  motionLabels: { pause: string; play: string };
+  className?: string;
+}) {
+  /**
+   * Băng tự trôi phải DỪNG ĐƯỢC (WCAG 2.2.2, mức A): nội dung tự chuyển động,
+   * chạy quá 5 giây và nằm cạnh chữ cần đọc thì bắt buộc có cách dừng. Dừng
+   * khi rê chuột KHÔNG tính — người dùng bàn phím đang đọc cột chữ bên trái và
+   * người dùng cảm ứng đều không rê được.
+   *
+   * MỘT nút cho cả section chứ không mỗi tầng một nút: ba nút làm cùng một
+   * việc là ba lần hỏi cùng một câu, và chúng sẽ chen vào đúng chỗ chật nhất
+   * của tầng kệ.
+   */
+  const [autoplay, setAutoplay] = useState(true);
+  const reduced = useReducedMotion();
+
+  return (
+    <Tabs defaultValue={partners[0]?.id} className={className}>
+      <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-5">
+        {header}
+        {/* `flex-wrap` + `gap-3`: ở 375px cụm này rộng ~330px trong khung 335px.
+            Không cho xuống dòng thì nó tràn ngay ở màn nhỏ nhất. */}
+        <div className="flex flex-wrap items-center gap-3">
+          <TabsList variant="line" className="h-auto">
+            {partners.map((partner) => (
+              <TabsTrigger
+                key={partner.id}
+                value={partner.id}
+                className="px-3 py-1.5 font-display text-ui font-medium"
+              >
+                {partner.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {/* Không vẽ nút khi hệ điều hành đã khai `prefers-reduced-motion`:
+              lúc đó băng vốn đứng yên, một cái nút "chạy lại" không làm gì là
+              nói dối người dùng. */}
+          {reduced ? null : (
+            <MotionToggle
+              playing={autoplay}
+              labels={motionLabels}
+              onToggle={() => setAutoplay((v) => !v)}
+            />
+          )}
+          {action}
+        </div>
+      </div>
+
+      {partners.map((partner) => (
+        <TabsContent key={partner.id} value={partner.id} className="mt-6">
+          {/*
+            Hồ sơ đối tác đứng CỘT TRÁI, kệ chip cột phải — không xếp chồng
+            dọc. Thứ tự đọc trong DOM vẫn là giới thiệu → sản phẩm, đúng yêu
+            cầu, nhưng nó tiêu chỗ theo chiều NGANG nên không lấy một pixel
+            chiều cao nào của ba tầng kệ. Xếp dọc thì card phải tụt từ 141px
+            xuống ~90px để section còn vừa một màn hình.
+            Dưới lg thì xuống dòng như bình thường.
+          */}
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] lg:gap-12">
+            <PartnerIntro intro={partner.intro} />
+
+            <RevealGroup className="flex flex-col gap-3">
+              {partner.lines.map((line, i) => (
+                <ShelfTier
+                  key={line.name}
+                  line={line}
+                  index={i}
+                  autoplay={autoplay}
+                />
+              ))}
+            </RevealGroup>
+          </div>
+        </TabsContent>
+      ))}
+    </Tabs>
+  );
+}
+
+function PartnerIntro({ intro }: { intro: ShelfPartnerIntro }) {
+  return (
+    <Reveal className="flex flex-col gap-6">
+      <div>
+        <h3 className="font-display text-title font-semibold text-balance">
+          {intro.origin}
+        </h3>
+        <p className="mt-2 text-body-sm text-muted-foreground">{intro.does}</p>
+      </div>
+
+      <div>
+        <p className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
+          {intro.leadLabel}
+        </p>
+        <p className="mt-3 text-body-sm font-medium">{intro.lead.name}</p>
+        {/* Chức danh tô màu thương hiệu: đó là thứ mắt cần bám để biết mình
+            đang đọc hồ sơ của ai, không phải cái tên. */}
+        {/* `brand-ink` chứ không `brand/80`: bản cũ chỉ 3.2:1 — mờ nhất section,
+            mà đây lại là dòng cố ý tô màu để mắt bám vào. */}
+        <p className="text-meta text-brand-ink">{intro.lead.role}</p>
+        <p className="mt-0.5 text-meta text-muted-foreground">
+          {intro.lead.bio}
+        </p>
+
+        {intro.site ? (
+          <a
+            href={intro.site.href}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 inline-block border-b border-border pb-0.5 text-meta text-muted-foreground transition-colors duration-(--dur-fast) hover:border-brand hover:text-brand"
+          >
+            {intro.site.label}
+          </a>
+        ) : null}
+      </div>
+
+      {/* Hai con số nằm ngang nhau, nhãn xuống dòng dưới. Chữ số cỡ `subhead`
+          chứ không `display`: đây là chứng chỉ năng lực của một đối tác, không
+          được to hơn bốn chỉ số kết quả kinh doanh ở section Stats phía trên. */}
+      <dl className="flex gap-8 border-t pt-5">
+        {intro.stats.map((stat) => (
+          <div key={stat.label}>
+            <dt className="sr-only">{stat.label}</dt>
+            <dd className="font-display text-subhead font-semibold tabular-nums">
+              {stat.value}
+            </dd>
+            <p aria-hidden className="mt-0.5 text-meta text-muted-foreground">
+              {stat.label}
+            </p>
+          </div>
+        ))}
+      </dl>
+    </Reveal>
+  );
+}
+
+/**
+ * Thứ tự đọc trong một tầng: TÊN → chip này làm được gì → thông số. Cột chữ
+ * rộng cố định 15rem còn băng card ăn hết phần dư, nên ở 1440px băng thấy 2
+ * card rưỡi và ở 1024px thấy 1 card rưỡi — luôn có một card bị cắt dở, và đó
+ * chính là thứ nói cho người đọc biết còn thứ nữa ở bên phải.
+ */
+function ShelfTier({
+  line,
+  index,
+  autoplay,
+}: {
+  line: ShelfLine;
+  index: number;
+  autoplay: boolean;
+}) {
+  const accent = ACCENT[line.accent];
+
+  return (
+    <RevealItem className="group relative flex flex-col gap-4 rounded-xl bg-background px-5 py-2 transition-colors duration-(--dur-base) hover:bg-surface lg:flex-row lg:items-center lg:gap-6 lg:px-7">
+      {/* Vòng viền 1px. Gradient đi từ dưới lên nên mép sáng nằm ở chân tầng
+          kệ — cùng hướng ánh sáng với `pv-skyglow` của section, chỉ đổi màu
+          theo dòng chip. */}
+      <span
+        aria-hidden
+        className={cn("pv-edge bg-linear-to-t to-border", accent.edge)}
+      />
+
+      <div className="min-w-0 lg:w-[15rem] lg:shrink-0">
+        <h3 className={cn("font-display text-title font-semibold", accent.name)}>
+          {line.name}
+        </h3>
+        <p className="mt-1 text-body-sm text-muted-foreground">{line.edge}</p>
+        {/* Thông số ở dòng riêng, mono và mờ hơn: nó là thứ người kỹ thuật
+            soi, không phải thứ chặn mắt người đọc lướt. Dấu chấm giữa (·)
+            ngăn các giá trị — không dùng gạch đứng, gạch đứng ở cỡ micro
+            trông như lỗi render. */}
+        <p className="mt-1.5 font-mono text-micro text-subtle-foreground">
+          {line.spec}
+        </p>
+      </div>
+
+      <ProductCarousel line={line} index={index} autoplay={autoplay} />
+    </RevealItem>
+  );
+}
+
+/** Nút dừng / chạy lại băng. Đổi NHÃN theo trạng thái chứ không dùng
+ *  `aria-pressed` — với một cặp play/pause thì tên nút phải nói việc bấm vào
+ *  sẽ làm gì, đó là điều trình đọc màn hình đọc ra trước tiên. */
+function MotionToggle({
+  playing,
+  labels,
+  onToggle,
+}: {
+  playing: boolean;
+  labels: { pause: string; play: string };
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={playing ? labels.pause : labels.play}
+      title={playing ? labels.pause : labels.play}
+      className="grid size-8 shrink-0 place-items-center rounded-full border text-muted-foreground transition-colors duration-(--dur-fast) hover:border-brand hover:text-brand"
+    >
+      <svg
+        aria-hidden
+        viewBox="0 0 16 16"
+        fill="currentColor"
+        className="size-3.5"
+      >
+        {playing ? (
+          <path d="M5 3h2.2v10H5zM8.8 3H11v10H8.8z" />
+        ) : (
+          <path d="M5 3.2 12.5 8 5 12.8z" />
+        )}
+      </svg>
+    </button>
+  );
+}
+
+/**
+ * Băng card sản phẩm — một khung cuộn ngang thật, không phải transform giả.
+ * Được cái: vuốt bằng ngón tay, cuộn ngang bằng trackpad, `Tab` vào card và
+ * bàn phím tự cuộn theo — tất cả miễn phí từ trình duyệt. `snap-start` để card
+ * luôn dừng ở mép trái khung chứ không nằm nửa trong nửa ngoài.
+ *
+ * Hai nút chỉ hiện khi rê vào tầng hoặc khi chính nó nhận focus bàn phím —
+ * `opacity-0` chứ không `hidden`, nên nút vẫn nằm trong thứ tự Tab.
+ *
+ * `py-1` ở track KHÔNG phải để cho đẹp: card nhấc lên 4px khi rê chuột, mà
+ * `overflow-x-auto` khiến trục dọc cũng thành `auto` — không chừa 4px đó thì
+ * cú nhấc bị cắt cụt hoặc đẻ ra thanh cuộn dọc. Đổi lại, tầng kệ hạ `py-3`
+ * xuống `py-2` nên tổng chiều cao không đổi một pixel nào.
+ */
+function ProductCarousel({
+  line,
+  index,
+  autoplay,
+}: {
+  line: ShelfLine;
+  index: number;
+  autoplay: boolean;
+}) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  /* Không `once`: băng phải dừng lại khi cuộn ra khỏi khung nhìn, nên cờ này
+     bật tắt hai chiều. */
+  const inView = useInView(trackRef, { amount: 0.4 });
+  /* `ref` chứ không `state`: chuột vào ra băng liên tục, mà mỗi lần đổi state
+     là một lần render lại cả 5 card cho một thứ không hề đổi hình.
+     Hai cờ riêng chứ không một cờ chung: rời focus trong khi chuột vẫn đang
+     nằm trên băng thì băng phải TIẾP TỤC dừng. */
+  const hoverRef = useRef(false);
+  const focusRef = useRef(false);
+
+  const scrollByCard = useCallback(
+    (dir: 1 | -1) => {
+      const track = trackRef.current;
+      const card = track?.firstElementChild;
+      if (!track || !(card instanceof HTMLElement)) return;
+      /* "instant" chứ không "auto": `auto` nghĩa là "theo CSS", mà CSS ở track
+         đang là `scroll-smooth` — nên `auto` vẫn trôi mượt và người bật
+         reduced-motion không được gì. */
+      track.scrollBy({
+        left: dir * (card.offsetWidth + GAP_PX),
+        behavior: reduced ? "instant" : "smooth",
+      });
+    },
+    [reduced],
+  );
+
+  useEffect(() => {
+    if (reduced || !inView || !autoplay) return;
+
+    const step = () => {
+      const track = trackRef.current;
+      if (!track || hoverRef.current || focusRef.current) return;
+      /* Trừ 2px: `scrollWidth` và `scrollLeft` là số thực đã làm tròn, ở một
+         số tỷ lệ zoom hai vế lệch nhau đúng một pixel và băng kẹt ở cuối. */
+      const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+      if (atEnd) track.scrollTo({ left: 0, behavior: "smooth" });
+      else scrollByCard(1);
+    };
+
+    /* Lệch pha bằng một `setTimeout` mở màn, rồi mới vào nhịp đều. */
+    let ticker: ReturnType<typeof setInterval>;
+    const opening = setTimeout(() => {
+      step();
+      ticker = setInterval(step, SHELF.auto);
+    }, index * SHELF.stagger);
+
+    return () => {
+      clearTimeout(opening);
+      clearInterval(ticker);
+    };
+  }, [reduced, inView, autoplay, index, scrollByCard]);
+
+  return (
+    <div
+      className="relative min-w-0 flex-1"
+      /* Dừng băng khi con trỏ hoặc bàn phím đang ở trong. `pointer` chứ không
+         `mouse` để bắt cả ngón tay và bút cảm ứng. */
+      onPointerEnter={() => (hoverRef.current = true)}
+      onPointerLeave={() => (hoverRef.current = false)}
+      onFocusCapture={() => (focusRef.current = true)}
+      onBlurCapture={() => (focusRef.current = false)}
+    >
+      <div
+        ref={trackRef}
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto py-1 scroll-smooth [scrollbar-width:none] motion-reduce:scroll-auto [&::-webkit-scrollbar]:hidden"
+      >
+        {/* Card KHÔNG viền. Nó đã tự tách khỏi tầng kệ bằng nền sáng hơn một
+            nấc; thêm viền nữa là hai lần nói cùng một điều, và 15 khung viền
+            cạnh nhau đọc ra là một cái bảng chứ không phải một kệ hàng.
+
+            THẺ NỔI LÊN bằng ba thứ, không thứ nào là đổ bóng (site này dùng
+            viền và ánh sáng thay bóng):
+              · nền dốc từ tối lên sáng theo chiều DỌC — mặt trên tối hơn mặt
+                dưới, đúng như một vật đứng trong thế giới có ánh sáng dâng từ
+                chân trời. Đây là thứ làm nó ra khối chứ không ra mảng phẳng.
+              · một vệt sáng mảnh ở CHÂN thẻ, mờ dần về hai đầu nên không đọc
+                ra là cạnh viền — đọc ra là ánh sáng lọt xuống dưới đáy thẻ.
+              · rê chuột thì thẻ nhấc lên 4px và vệt sáng chân thẻ ngả sang màu
+                brand. Nhấc bằng `transform` nên không đụng tới bố cục.
+            `py-2.5` để vật thể có khoảng thở trên dưới — ảnh vẫn tràn hết bề
+            ngang card nhưng không chạm mép trên mép dưới. */}
+        {line.products.map((product) => (
+          <article
+            key={product.name}
+            className={cn(
+              CARD,
+              "group/card relative shrink-0 snap-start overflow-hidden rounded-xl bg-linear-to-b from-surface to-surface-2 py-2.5 transition-transform duration-(--dur-base) hover:-translate-y-1",
+            )}
+          >
+            <span
+              aria-hidden
+              className="absolute inset-x-5 bottom-0 h-px bg-linear-to-r from-transparent via-border to-transparent transition-colors duration-(--dur-base) group-hover/card:via-brand/60"
+            />
+            {/* `object-cover` chứ không `contain`: ảnh giao SAI tỷ lệ sẽ bị
+                CẮT chứ không co lại. Ảnh 1:1 đưa vào khung 16:9 mất 44% chiều
+                cao — đệm trong suốt cho đủ 16:9 trước khi giao, đừng sửa ở đây
+                (xem docs/IMAGE-BRIEF.md §2.1). */}
+            <MediaFrame
+              compact
+              ratio="wide"
+              src={product.src}
+              alt={product.name}
+              need={product.need}
+              sizes="200px"
+              /* `bg-transparent` bắt buộc: `MediaFrame` mặc định có nền
+                 `bg-surface`, mà nền đó sẽ phủ một mảng phẳng lên đúng khúc
+                 giữa của gradient thẻ và làm mất hiệu ứng khối. */
+              className="rounded-none border-0 bg-transparent"
+            />
+            {/* `truncate` chứ không cho xuống dòng: nhãn hai dòng làm mọi card
+                cao thêm 20px và ảnh phải tụt lại. Nhãn dài quá một dòng là
+                nhãn viết chưa đủ gọn — sửa chữ, đừng nới card. */}
+            <p className="mt-2 truncate px-2.5 text-center text-meta text-muted-foreground">
+              {product.name}
+            </p>
+          </article>
+        ))}
+      </div>
+
+      <CarouselButton side="left" label={line.nav.prev} onClick={() => scrollByCard(-1)} />
+      <CarouselButton side="right" label={line.nav.next} onClick={() => scrollByCard(1)} />
+    </div>
+  );
+}
+
+function CarouselButton({
+  side,
+  label,
+  onClick,
+}: {
+  side: "left" | "right";
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className={cn(
+        "absolute top-1/2 z-10 grid size-7 -translate-y-1/2 place-items-center rounded-full border bg-background/80 text-muted-foreground opacity-0 backdrop-blur-sm transition-all duration-(--dur-fast) hover:border-brand hover:text-brand focus-visible:opacity-100 group-hover:opacity-100",
+        side === "left" ? "left-1" : "right-1",
+      )}
+    >
+      {/* Mũi tên vẽ bằng SVG chứ không dùng ký tự ‹ › — ký tự đổi hình theo
+          font, mà font chữ của site không phải font biểu tượng. */}
+      <svg
+        aria-hidden
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={cn("size-3.5", side === "left" && "rotate-180")}
+      >
+        <path d="M6 3.5 10.5 8 6 12.5" />
+      </svg>
+    </button>
+  );
+}

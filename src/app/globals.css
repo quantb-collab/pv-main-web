@@ -81,6 +81,12 @@
   --pv-ink-100: oklch(0.948 0.004 250);
   --pv-ink-200: oklch(0.906 0.006 249);
   --pv-ink-300: oklch(0.856 0.008 248);
+  /* Nấc 350 sinh ra vì lý do tiếp cận, không phải vì thiếu nấc: `ink-400` chỉ
+     đạt 3.7:1 trên nấc trời sáng nhất, tức mọi chữ mờ trên site đều trượt AA
+     (cần 4.5). 0.8 là mức thấp nhất còn qua được ở nấc `dawn` mà vẫn mờ hơn
+     `ink-300` thấy rõ — nếu không thì `--subtle-foreground` và
+     `--muted-foreground` thành một, và thang chữ mất một nấc. */
+  --pv-ink-350: oklch(0.8 0.0095 247);
   --pv-ink-400: oklch(0.74 0.011 246);
   --pv-ink-500: oklch(0.604 0.013 244);
   --pv-ink-600: oklch(0.49 0.014 243);
@@ -118,6 +124,22 @@
   --pv-signal-ok: oklch(0.627 0.152 156);
   /* Màu riêng cho hệ placeholder nội dung (chỉ hiện ở môi trường dev/review) */
   --pv-signal-gap: oklch(0.769 0.155 70.1);
+
+  /* Ba dòng chip phần cứng — màu mượn từ chính cái tên: bạc hà · đu đủ · cà
+     phê. Đây là NGOẠI LỆ DUY NHẤT cho luật "mọi ánh sáng trên trang dẫn xuất
+     từ --brand", và nó chỉ được dùng ở kệ phần cứng (`product-shelf.tsx`).
+     Ngoại lệ được phép vì ở đây màu không đóng vai ánh sáng — nó là nhãn phân
+     biệt ba dòng sản phẩm, thứ mà một bảng chỉ có xanh da trời không nói được.
+
+     Chroma cả ba đều THẤP HƠN `--pv-brand-400` (0.104): dòng chip được nhận ra
+     nhưng không được sáng hơn bình minh, nếu không trang có hai nguồn sáng.
+     Đụng vào ba con số này là đụng vào luật đó. */
+  --pv-chip-mint: oklch(0.84 0.062 168);
+  --pv-chip-papaya: oklch(0.8 0.085 52);
+  /* espresso nâng từ 0.74 lên 0.82: ở 0.74 nó chỉ được 3.8:1, sát mép ngưỡng
+     chữ lớn và mờ hơn MINT gấp đôi — ba tên chip đọc ra ba mức quan trọng khác
+     nhau trong khi chúng ngang hàng. 0.82 cho 6.3:1, nằm giữa MINT và PAPAYA. */
+  --pv-chip-espresso: oklch(0.82 0.048 66);
 }
 
 /* ==========================================================================
@@ -152,7 +174,11 @@
   /* Chữ nhị/tam cấp đã dịch lên một nấc so với bản nền sáng: trên nền đêm,
      ink-500 rơi xuống dưới 4.5:1 ngay ở nấc trời tối nhất. */
   --muted-foreground: var(--pv-ink-300);
-  --subtle-foreground: var(--pv-ink-400);
+  /* ink-350 chứ không ink-400: bản cũ chỉ đạt 3.7:1 ở mọi nấc trời, tức eyebrow,
+     nhãn mono và dòng thông số kỹ thuật đều trượt AA (cần 4.5). Nay 5.4–5.5:1
+     ở nấc sáng nhất còn dùng nó (`rise`), và vẫn mờ hơn `muted-foreground`
+     (7.9:1) đủ để thang chữ giữ nguyên ba nấc. */
+  --subtle-foreground: var(--pv-ink-350);
 
   --accent: var(--surface-2);
   --accent-foreground: var(--foreground);
@@ -162,10 +188,20 @@
   --brand: var(--pv-brand-400);
   --brand-soft: var(--pv-brand-950);
   --brand-on: var(--pv-night-0);
+  /* Brand DÙNG LÀM MỰC, không phải làm ánh sáng. `--brand` sinh ra cho đồ hoạ
+     và quầng sáng; đem nó viết chữ cỡ nhỏ thì chỉ được 4.5:1 — vừa đúng ngưỡng,
+     không còn biên nào. Nấc 300 cho 7.1:1 ở MỌI nấc trời. Chữ màu brand phải
+     dùng token này. */
+  --brand-ink: var(--pv-brand-300);
 
   --destructive: var(--pv-signal-danger);
   --warning: var(--pv-signal-warn);
   --success: var(--pv-signal-ok);
+
+  /* Ba dòng chip — chỉ dùng ở kệ phần cứng, xem chú thích ở LỚP 1. */
+  --chip-mint: var(--pv-chip-mint);
+  --chip-papaya: var(--pv-chip-papaya);
+  --chip-espresso: var(--pv-chip-espresso);
 
   /* Viền là ánh sáng bị chặn, không phải mực: dùng trắng trong suốt để một
      đường kẻ giữ đúng độ tương phản trên mọi nấc sky. */
@@ -282,8 +318,9 @@
   --background: var(--pv-night-4);
   --surface: var(--pv-night-5);
   --surface-2: var(--pv-night-6);
-  /* Hai nấc cuối nền đã đủ sáng để kéo tụt chữ phụ — dịch cả thang chữ lên
-     một nấc thay vì chấp nhận 4.2:1 ở eyebrow và dòng meta. */
+  /* Nấc CUỐI (chỉ dawn, không phải rise) nền đủ sáng để kéo tụt chữ phụ — dịch
+     cả thang chữ lên một nấc. Bốn nấc còn lại dùng mặc định ở LỚP 2, và mặc
+     định đó đã là ink-350 nên `rise` không cần override riêng. */
   --muted-foreground: var(--pv-ink-200);
   --subtle-foreground: var(--pv-ink-300);
 }
@@ -428,6 +465,11 @@
   --color-brand: var(--brand);
   --color-brand-soft: var(--brand-soft);
   --color-brand-on: var(--brand-on);
+  --color-brand-ink: var(--brand-ink);
+
+  --color-chip-mint: var(--chip-mint);
+  --color-chip-papaya: var(--chip-papaya);
+  --color-chip-espresso: var(--chip-espresso);
 
   --color-destructive: var(--destructive);
   --color-warning: var(--warning);
@@ -523,7 +565,6 @@
   --ease-in-out-quart: var(--ease-in-out-quart);
   --ease-spring: var(--ease-spring);
 
-  --animate-marquee: marquee 40s linear infinite;
   --animate-shimmer: shimmer 2.4s var(--ease-in-out-quart) infinite;
   --animate-float: float 9s var(--ease-in-out-quart) infinite;
   --animate-pan: pan 18s linear infinite;
@@ -537,14 +578,6 @@
   --animate-dawn-pulse: dawn-pulse 7s var(--ease-in-out-quart) infinite;
   --animate-dawn-twinkle: dawn-twinkle 5.2s var(--ease-in-out-quart) infinite;
 
-  @keyframes marquee {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
-  }
   @keyframes shimmer {
     0%,
     100% {

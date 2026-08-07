@@ -1,7 +1,9 @@
+import { ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { GapChip } from "@/components/pv/gap";
 import { Highlight } from "@/components/pv/highlight";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 /**
@@ -44,16 +46,25 @@ export function CardGrid({
 /**
  * Thẻ nội dung cơ bản. Nền bằng nền trang, cách nhau bằng đường 1px —
  * hệ này dùng viền tóc thay đổ bóng.
+ *
+ * Có `href` thì CẢ THẺ thành vùng bấm, không phải chỉ tiêu đề: link phủ toàn
+ * thẻ bằng `after:absolute after:inset-0`, nên vùng chạm ở mobile là cả ô thay
+ * vì một dòng chữ. Đây cũng là cách tránh đặt một nút "Xem chi tiết" trong mỗi
+ * thẻ — bốn nút cạnh nhau là bốn CTA ngang hàng, thứ §23 blueprint cấm.
+ * Mũi tên chỉ là chỉ báo, `aria-hidden`; tên link chính là tiêu đề thẻ.
  */
 export function Card({
   index,
   title,
+  href,
   children,
   className,
 }: {
   /** Số thứ tự hiển thị mờ ở góc. Bỏ trống nếu thứ tự không có ý nghĩa. */
   index?: number;
   title: ReactNode;
+  /** Có thì cả thẻ thành link. Đường dẫn nội bộ, đi qua `Link` của i18n. */
+  href?: string;
   children?: ReactNode;
   className?: string;
 }) {
@@ -61,6 +72,7 @@ export function Card({
     <RevealItem
       className={cn(
         "group relative flex flex-col gap-3 bg-background p-6 transition-colors duration-300 hover:bg-surface lg:p-8",
+        href && "focus-within:bg-surface",
         className,
       )}
     >
@@ -70,7 +82,20 @@ export function Card({
         </span>
       ) : null}
       <h3 className="font-display text-title font-semibold">
-        <Highlight>{title}</Highlight>
+        {href ? (
+          <Link
+            href={href}
+            className="after:absolute after:inset-0 focus-visible:outline-none"
+          >
+            <Highlight>{title}</Highlight>
+            <ArrowRight
+              aria-hidden
+              className="ml-2 inline size-4 shrink-0 align-baseline text-subtle-foreground transition-transform duration-(--dur-fast) group-hover:translate-x-0.5 group-hover:text-foreground"
+            />
+          </Link>
+        ) : (
+          <Highlight>{title}</Highlight>
+        )}
       </h3>
       {/* body-sm chứ không phải body: thẻ nằm trong lưới 3–4 cột, ở cỡ thân
           bài đầy đủ mỗi dòng chỉ còn khoảng 30 ký tự và đọc thành ngắt quãng. */}

@@ -4,6 +4,7 @@ import { MediaFrame } from "@/components/motion/media-frame";
 import { Reveal } from "@/components/motion/reveal";
 import { StatementList } from "@/components/pv/blocks";
 import { CtaBand } from "@/components/pv/cta-band";
+import { CtaButton } from "@/components/pv/cta-button";
 import { Gap } from "@/components/pv/gap";
 import { Section, SectionHeader } from "@/components/pv/section";
 
@@ -29,6 +30,7 @@ export default async function AboutPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("about");
+  const tc = await getTranslations("cta");
 
   return (
     <>
@@ -50,6 +52,37 @@ export default async function AboutPage({
             ratio="landscape"
             need="Ảnh không gian làm việc hoặc phòng lab thật của Pebble Vina. Có người, chụp tự nhiên, không dàn dựng kiểu ảnh stock."
           />
+        </div>
+      </Section>
+
+      {/*
+        Năng lực xuyên suốt — chuyển từ trang chủ về 2026-08-07, và về ĐÂY chứ
+        không phải /technology. Sơ đồ 5 tầng đi kèm nó đã bị bỏ: /technology có
+        LayerStack 8 tầng, bản 5 tầng chỉ là tập con. Còn lại bốn lợi ích, mà
+        bốn lợi ích đó là lập luận cho CEO và mua hàng (trách nhiệm một đầu
+        mối, bớt phụ thuộc nhiều nhà cung cấp) — /technology tự khai là dành
+        cho CTO/CIO/CISO nên đặt vào đó là sai vai người đọc.
+
+        Đứng ngay dưới `mission` vì nó chứng minh đúng h1 của trang — "Một đối
+        tác đủ sâu để đi đường dài" — câu vốn đang nói suông. Nút dẫn sang
+        /technology cho ai muốn thấy sơ đồ tầng thật.
+      */}
+      <Section sky="night">
+        <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+          <SectionHeader
+            title={t("fullstack.title")}
+            lead={t("fullstack.lead")}
+          />
+          <div>
+            <StatementList
+              items={[1, 2, 3, 4].map((n) => t(`fullstack.b${n}`))}
+            />
+            <Reveal className="mt-8">
+              <CtaButton href="/technology" variant="outline">
+                {tc("technology")}
+              </CtaButton>
+            </Reveal>
+          </div>
         </div>
       </Section>
 

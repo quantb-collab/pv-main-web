@@ -55,6 +55,21 @@ export const SNAP = {
   duration: SCROLL.duration,
 } as const;
 
+/**
+ * Băng sản phẩm ở kệ phần cứng (product-shelf.tsx). Đơn vị ms — đây là nhịp
+ * của `setInterval`, không phải thời lượng một cú chuyển động, nên nó không
+ * nằm trong `DUR`.
+ */
+export const SHELF = {
+  /** Giữa hai lần tự trôi. Đủ lâu để đọc xong một nhãn rồi mới đổi. */
+  auto: 4200,
+  /**
+   * Lệch pha giữa ba tầng kệ. Ba băng trôi cùng một nhịp đọc ra là một cái
+   * bảng điện tử đang chạy; lệch pha thì đọc ra là ba kệ hàng sống độc lập.
+   */
+  stagger: 1300,
+} as const;
+
 /** Độ trễ giữa các phần tử trong một nhóm */
 export const STAGGER = 0.07;
 

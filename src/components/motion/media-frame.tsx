@@ -40,6 +40,22 @@ export interface MediaFrameProps {
   need?: string;
   ratio?: keyof typeof RATIO;
   priority?: boolean;
+  /**
+   * Ô chờ bản CÂM — cho khung thấp dưới ~120px, và cho chỗ có nhiều khung chờ
+   * đứng cạnh nhau (card sản phẩm trên kệ phần cứng: 15 khung một section).
+   * Bản thường cần ~110px chiều cao cho badge + một dòng `need`, và mười lăm
+   * badge vàng cạnh nhau thì đọc ra là một bức tường cảnh báo chứ không ra
+   * mười lăm chỗ thiếu ảnh. Bản câm giữ nguyên nền kẻ chéo (vẫn đọc ra "chưa
+   * có ảnh") nhưng bỏ badge, và đẩy `need` xuống `title` + `sr-only` để người
+   * làm nội dung vẫn lấy được yêu cầu.
+   */
+  compact?: boolean;
+  /**
+   * Bề ngang thật của khung, cho `next/image` chọn đúng bản. Mặc định là khung
+   * lớn (ảnh hero, ảnh trang giải pháp). Khung nhỏ PHẢI khai — để mặc định thì
+   * trình duyệt tải bản 640w cho một ô 200px, nặng gấp ba lần cần thiết.
+   */
+  sizes?: string;
   className?: string;
   /** Lớp phủ đặt lên trên ảnh (nhãn, chú thích…) */
   children?: React.ReactNode;
@@ -51,6 +67,8 @@ export function MediaFrame({
   need,
   ratio = "landscape",
   priority = false,
+  compact = false,
+  sizes = "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 640px",
   className,
   children,
 }: MediaFrameProps) {
@@ -89,13 +107,13 @@ export function MediaFrame({
               alt={alt ?? ""}
               fill
               priority={priority}
-              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 640px"
+              sizes={sizes}
               className="object-cover"
             />
           </motion.div>
         </motion.div>
       ) : (
-        <MediaPending need={need} />
+        <MediaPending need={need} compact={compact} />
       )}
 
       {children}
@@ -103,18 +121,41 @@ export function MediaFrame({
   );
 }
 
-/** Ô chờ ảnh — cố ý trông như bản vẽ kỹ thuật, không giống ảnh thật. */
-function MediaPending({ need }: { need?: string }) {
+const HATCH = {
+  backgroundImage:
+    "repeating-linear-gradient(45deg, var(--border) 0 1px, transparent 1px 12px)",
+} as const;
+
+/**
+ * Ô chờ ảnh — cố ý trông như bản vẽ kỹ thuật, không giống ảnh thật.
+ *
+ * Bản thường cần ~110px chiều cao cho badge + một dòng `need` (đã tính `p-6`).
+ * Khung thấp hơn thế thì dùng `compact`, đừng thu nhỏ badge: badge co lại là
+ * badge không ai đọc, mà thứ duy nhất ô chờ phải làm được là nhắc rằng chỗ này
+ * còn thiếu ảnh.
+ */
+function MediaPending({ need, compact }: { need?: string; compact?: boolean }) {
+  if (compact) {
+    return (
+      <div
+        className="absolute inset-0 flex items-center justify-center"
+        title={need}
+      >
+        <div aria-hidden className="absolute inset-0 opacity-[0.35]" style={HATCH} />
+        <span
+          aria-hidden
+          className="relative font-mono text-micro font-medium text-subtle-foreground"
+        >
+          +
+        </span>
+        {need ? <span className="sr-only">{need}</span> : null}
+      </div>
+    );
+  }
+
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-6 text-center">
-      <div
-        aria-hidden
-        className="absolute inset-0 opacity-[0.35]"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(45deg, var(--border) 0 1px, transparent 1px 12px)",
-        }}
-      />
+      <div aria-hidden className="absolute inset-0 opacity-[0.35]" style={HATCH} />
       <span className="relative rounded-full border border-warning/40 bg-warning/10 px-2.5 py-0.5 font-mono text-micro font-medium text-warning uppercase">
         Cần bổ sung ảnh
       </span>
