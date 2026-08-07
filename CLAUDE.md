@@ -73,6 +73,8 @@ tối đa 900 từ. Liệt kê đến kiệt là cách chắc chắn để khôn
 **5. Thiếu dữ liệu thì để ô chờ.**
 Dùng `<Gap>` / `<GapChip>`. Không bịa số liệu, case study, đối tác, chứng chỉ,
 benchmark hay testimonial. Không lấp bằng văn marketing chung chung.
+Ảnh thiếu thì để `<MediaFrame>` không có `src` kèm `need`. Yêu cầu kỹ thuật cho
+mọi ảnh còn thiếu (cỡ, nền, màu, prompt, cách giữ ổn định): `docs/IMAGE-BRIEF.md`.
 
 ---
 

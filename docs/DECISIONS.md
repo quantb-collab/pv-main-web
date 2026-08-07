@@ -535,3 +535,229 @@ trang trí (dashboard giả — cấm tuyệt đối); số thật (chưa tồn 
 **Đổi lại thì phải sửa:** `StatTile`/`BentoGrid`/`BentoTile` trong
 `blocks.tsx`, `Stats` trong `home/sections.tsx`, khoá `home.stats` trong
 `vi.json`, `TEXT_ROLES` trong `src/lib/utils.ts`.
+
+## 2026-08-07 — Rút Enterprise và FullStack khỏi trang chủ về trang riêng
+**Bối cảnh:** Chủ dự án thấy hai section này thuộc về trang riêng, trang chủ
+chỉ nên giữ nội dung cô đọng và móc khách.
+**Chọn:** `Enterprise` → `/how-we-deliver/governance` (10 nhãn thành khối
+"phạm vi kiểm soát" đặt TRÊN 4 card đi sâu sẵn có). `FullStack` → `/about`,
+KHÔNG phải `/technology`; sơ đồ 5 tầng bỏ hẳn. Trang chủ đền bằng MỘT vế thêm
+vào `home.who.r3Text`: "Phân quyền, nhật ký và điểm phê duyệt của con người là
+mặc định, không phải gói thêm."
+**Vì:** Bằng chứng cả hai là bản tóm tắt của trang khác nằm ngay trong code cũ
+— chúng tự kết bằng nút "xem chi tiết" dẫn đúng sang trang đó. `/technology` đã
+có LayerStack 8 tầng (bản 5 tầng là tập con) và trang đó tự khai dành cho
+CTO/CIO/CISO, trong khi 4 lợi ích full-stack là lập luận cho CEO và mua hàng —
+chúng chứng minh đúng h1 của `/about` vốn đang nói suông. Vế đền ở Identity là
+để giữ luật blueprint "Enterprise là mặc định, không phải một menu riêng" và
+trả câu hỏi số 4 của registry mà không tốn thêm khối nào.
+**Đã cân nhắc và bỏ:** giữ bản rút gọn trên trang chủ (vẫn là mục lục);
+`FullStack` → `/technology` (sai vai người đọc + trùng LayerStack).
+**Đổi lại thì phải sửa:** `home/sections.tsx`, `app/[locale]/page.tsx`,
+`about/page.tsx`, `how-we-deliver/governance/page.tsx`, khoá `deliver
+.governance.scope*`/`e1..e10` và `about.fullstack` trong `vi.json`.
+
+## 2026-08-07 — Phần cứng đứng TRƯỚC phần mềm, dựng thành kệ sản phẩm
+**Bối cảnh:** Chủ dự án chốt phần cứng là mũi nhọn công nghệ cao và phải đứng
+trên phần mềm, trình bày như một kệ hàng có tab đối tác.
+**Chọn:** Hai section tách rời (`Hardware` `deep` → `Software` `rise`). Kệ:
+tab đối tác (Pebble Square, mặc định) → hồ sơ đối tác cột trái → 3 tầng chip
+cột phải, mỗi tầng 5 ứng dụng hiện 3 và trôi vòng.
+**Vì:** Vị trí này đi ngược BA chỗ trong blueprint (cấm lấy chip làm trung
+tâm; registry `home.forbidden` cấm danh sách chip ở đầu trang; lớp C không
+được kéo chú ý khỏi lợi ích kinh doanh). Chủ dự án đã cân nhắc và quyết vì đây
+là tài sản khác biệt nhất. Mâu thuẫn xử bằng KHUNG chứ không bằng vị trí:
+eyebrow là "Phần cứng" chứ không phải tên sản phẩm, lead khai vai của section
+là "lý do phần mềm phía trên chạy được", và khối ngay TRƯỚC CTA vẫn là bốn
+việc bắt đầu được — không phải bốn con chip. Không thông số so sánh, không
+datasheet, không bảng GPU/MCU/Cloud (thuộc `/technology/edge-hardware`).
+**Đã cân nhắc và bỏ:** một lưới 6 thẻ gộp cả hai (lớp C ngang hàng lớp A);
+`private-ai` + `industrial-edge-ai` trên trang chủ (là mô hình triển khai,
+không phải chip — section quay về làm danh mục).
+**Đổi lại thì phải sửa:** `Hardware`/`Software` trong `home/sections.tsx`,
+`product-shelf.tsx`, khoá `home.hardware`/`home.software` trong `vi.json`.
+
+## 2026-08-07 — Hồ sơ đối tác đặt CỘT TRÁI, không xếp dọc trên kệ
+**Bối cảnh:** Chủ dự án muốn dưới tên tab là giới thiệu đối tác (đến từ đâu,
+đội mạnh cỡ nào, sản phẩm tốt ra sao), rồi mới tới danh sách sản phẩm — nhưng
+cũng vừa yêu cầu ô ảnh phải to hơn vì "nhỏ quá không show case tốt được".
+**Chọn:** Hồ sơ nằm cột trái (20rem), ba tầng kệ cột phải. Thứ tự DOM vẫn là
+giới thiệu → sản phẩm. Sau đó dời cả tab lên hàng tiêu đề để lấy thêm 44px.
+**Vì:** Hai yêu cầu xung khắc trong ngân sách ~628px. Cột phải cao ~468px
+trong khi cột trái trước đó chỉ dùng ~220px — đặt hồ sơ vào chỗ đang để không
+thì KHÔNG cộng một pixel chiều cao nào. Xếp dọc thì ảnh phải tụt từ 120px
+xuống ~88px. Khi thêm nhãn ứng dụng (18px/tầng), ảnh chốt ở 112px nhờ 44px lấy
+từ hàng tab.
+**Đã cân nhắc và bỏ:** xếp hồ sơ trên kệ theo chiều dọc (mất kích thước ảnh);
+đưa nguyên 4 hồ sơ kèm ảnh như slide gốc (biến section thành trang About của
+công ty khác).
+**Đổi lại thì phải sửa:** `PartnerIntro`, hằng `ITEM`/`WINDOW` và prop
+`header`/`action` trong `product-shelf.tsx`.
+
+## 2026-08-07 — Nêu họ tên thật 4 lãnh đạo Pebble Square trên trang chủ
+**Bối cảnh:** Chủ dự án yêu cầu ghi rõ tiến sĩ nào, đang làm gì ở đâu, học như
+nào — sau khi bản nén đầu tiên cố ý bỏ tên riêng.
+**Chọn:** Đưa đủ 4 hồ sơ, mỗi người ba dòng (tên · chức danh đang giữ · học ở
+đâu và từng làm ở đâu). Kèm ô chờ `restricted` yêu cầu **sự đồng ý của chính
+bốn cá nhân**, tách khỏi sự đồng ý của Pebble Square.
+**Vì:** Tài liệu là thật và chủ dự án sở hữu quyết định. Nhưng tên thật kèm
+lịch sử việc làm trên trang marketing công khai là dữ liệu cá nhân — Pebble
+Square đưa slide nội bộ KHÔNG đồng nghĩa bốn người kia đã đồng ý lên web. Đánh
+đổi đã chấp nhận: section phồng lên 311 từ (trần 120), 126 từ trong đó là hồ sơ.
+**Đã cân nhắc và bỏ:** chỉ nêu tên bốn nơi họ từng làm (bản nén đầu, chủ dự án
+bác); nêu tên nhưng bỏ nơi từng làm (mất phần thuyết phục nhất).
+**Đổi lại thì phải sửa:** khoá `home.hardware.p1m*` trong `vi.json`,
+`PartnerIntro` trong `product-shelf.tsx`.
+
+## 2026-08-07 — CTA cuối trang mở drawer thay vì điều hướng
+**Bối cảnh:** Chủ dự án muốn nút cuối trang mở drawer trượt từ phải, dùng
+chung cho mọi nút khảo sát trên site.
+**Chọn:** `AssessmentDrawerProvider` bọc ở layout — MỘT bản duy nhất cho cả
+site, `useAssessmentDrawer()` để mở từ bất kỳ đâu. Chỉ `cta="assessment"` mở
+drawer; `architecture`/`poc`/`contact`… vẫn là link. `/ai-assessment` GIỮ
+NGUYÊN form nhúng trong trang.
+**Vì:** Người vừa bị thuyết phục xong không nên phải rời trang để điền form —
+rời trang là chỗ rơi rụng lớn nhất của phễu. Một bản duy nhất vì form là điểm
+chuyển đổi duy nhất của site: hai bản thì sớm muộn lệch nhau và khi nối CRM
+phải nối hai lần. Trang `/ai-assessment` vẫn là đích của link chia sẻ và kết
+quả tìm kiếm nên không được biến thành trang rỗng.
+**Đã cân nhắc và bỏ:** mỗi nút một instance Sheet riêng (không phải "dùng
+chung", nhân đôi chỗ nối CRM); mọi cta đều mở drawer (các cta khác dẫn tới một
+cuộc trao đổi cần đọc thêm, không phải một form).
+**Đổi lại thì phải sửa:** `assessment-drawer.tsx`, `cta-band.tsx`,
+`app/[locale]/layout.tsx`, prop `bare` trong `assessment-form.tsx`.
+
+## 2026-08-07 — Card gộp ảnh + tên thiết bị, băng carousel người dùng cầm lái
+**Bối cảnh:** Chủ dự án soi kệ phần cứng: "ô hiện tại không đủ to để cả ảnh và
+content". Đúng — bố cục cũ cần ~670px trong ngân sách ~628px, ô ảnh bị ép còn
+112px vuông, và tên thiết bị là một dòng chữ RIÊNG bên dưới ăn thêm 18px của
+mọi tầng. Bản sửa đầu tiên (một ảnh 16:9 cho cả dòng chip, ứng dụng thành nhãn
+trần) bị bác: chủ dự án muốn giữ mỗi thiết bị một ảnh.
+**Chọn:** Một card = ảnh 16:9 + tên thiết bị ngay dưới, trong cùng khung viền.
+Năm card mỗi dòng chip nằm trong một băng cuộn ngang có `snap`, hai nút trôi
+hiện khi rê vào tầng. Bỏ `animate-marquee`.
+**Vì:** Nhãn nằm TRONG card thì nó không còn tốn dòng nào của tầng, và phần
+chiều cao đòi lại được đổ hết vào ảnh — 198×111 thay cho 112×112, gấp 1,75 lần
+diện tích. Băng tự trôi bị bỏ vì nó bắt người đọc chờ đúng lúc thứ họ cần đi
+ngang qua, mà dừng-khi-hover thì lại dừng đúng lúc chuột vô tình đi qua. Khung
+cuộn ngang thật cho lại vuốt tay, trackpad và bàn phím miễn phí từ trình duyệt.
+**Đã cân nhắc và bỏ:** tách đôi thành hai section (ảnh được 280×210 nhưng trang
+chủ quay lại 8 khối, đảo quyết định vừa chốt); một ảnh lớn duy nhất cho cả
+section; bỏ hẳn ảnh khỏi trang chủ.
+**Đánh đổi đã chấp nhận:** ~668px so với ngân sách 628px — ở ĐÚNG 1440×900
+section tràn ~40px, màn cao hơn thì vừa. Giữ một màn hình thì card phải tụt
+xuống 176px và ảnh chỉ còn hơn ô cũ 1,2 lần, tức đổi mà như không đổi.
+**Đổi lại thì phải sửa:** `CARD`/`ProductCarousel` trong `product-shelf.tsx`,
+`lines` trong `Hardware` (`home/sections.tsx`).
+
+## 2026-08-07 — Cột trái còn một hồ sơ CEO, bỏ ba hồ sơ còn lại
+**Bối cảnh:** Đảo quyết định "Nêu họ tên thật 4 lãnh đạo Pebble Square" chốt
+sáng cùng ngày. Chủ dự án: "đội ngũ kỹ thuật thì thôi, để info CEO và link web
+là đủ" — hai con số bằng sáng chế và bài báo thì giữ.
+**Chọn:** Cột trái còn: đến từ đâu · làm gì · người sáng lập (tên, chức danh,
+học vấn và nơi từng làm) · link web đối tác · 200+ SCI và 800+ bằng sáng chế.
+**Vì:** Bốn hồ sơ ba dòng trên trang chủ là trang About của một công ty khác —
+126 từ cho một section trần 120 từ. Người đọc chỉ đang hỏi "ai đứng sau chỗ
+này", một cái tên trả lời xong câu đó và link web là chỗ cho ai muốn đi sâu.
+Được thêm: mỗi cái tên thật kéo theo một sự đồng ý phải đi xin, nay còn một.
+**Đã cân nhắc và bỏ:** giữ bốn hồ sơ nhưng rút còn một dòng mỗi người (vẫn là
+một danh sách người trên trang bán hàng, và mất phần thuyết phục nhất là nơi
+từng làm).
+**Đang thiếu:** địa chỉ web chính thức của Pebble Square. `PartnerIntro` không
+vẽ gì khi thiếu `href` — link chết còn tệ hơn không có link — nên chỗ đó đang
+trống và nằm trong `partnerGap`.
+**Đổi lại thì phải sửa:** khoá `home.hardware.p1Ceo*` / `p1LeadLabel` /
+`p1SiteLabel` trong `vi.json`, `PartnerIntro` trong `product-shelf.tsx`.
+
+## 2026-08-07 — Ba dòng chip mang màu lấy từ chính cái tên
+**Bối cảnh:** Chủ dự án: "3 card chip thì để màu liên quan tới tên, ví dụ MINT
+thì màu bạc hà tinh tế".
+**Chọn:** Ba token mới ở LỚP 1 `globals.css` — `--pv-chip-mint` (bạc hà),
+`--pv-chip-papaya` (đu đủ), `--pv-chip-espresso` (cà phê). Màu chỉ xuất hiện ở
+HAI chỗ: tên chip và mép sáng dưới chân tầng kệ.
+**Vì:** Đây là ngoại lệ DUY NHẤT cho luật "mọi ánh sáng trên trang dẫn xuất từ
+--brand", và nó được phép vì ở đây màu không đóng vai ánh sáng — nó là nhãn
+phân biệt ba dòng sản phẩm, thứ mà một bảng chỉ có xanh da trời không nói được.
+Chroma cả ba đặt THẤP HƠN `--pv-brand-400` (0.104) để dòng chip được nhận ra mà
+không sáng hơn bình minh; hai nguồn sáng trên một trang là mất chủ đề.
+**Đã cân nhắc và bỏ:** tô nền cả tầng kệ theo màu chip (ba mảng màu chiếm 500px
+mặt trang, không còn là "tinh tế"); viết màu thẳng trong component (vi phạm
+luật token, và lần đổi brand kit sau sẽ bỏ sót).
+**Đổi lại thì phải sửa:** ba giá trị ở LỚP 1 `globals.css` và bảng `ACCENT`
+trong `product-shelf.tsx`.
+
+## 2026-08-07 — Băng sản phẩm tự trôi trở lại, nhưng theo BƯỚC chứ không liên tục
+**Bối cảnh:** Đảo một phần quyết định "carousel người dùng cầm lái" chốt cùng
+ngày. Chủ dự án: "slides products nên tự động slide".
+**Chọn:** Băng tự đi MỘT card mỗi `SHELF.auto` (4,2s), hết băng thì về đầu.
+Vẫn là khung cuộn ngang thật nên vuốt tay, trackpad, bàn phím và hai nút đều
+ăn ngay. Bốn điều kiện dừng: con trỏ trong băng · bàn phím focus trong băng ·
+băng chưa vào khung nhìn · `prefers-reduced-motion`. Ba tầng lệch pha
+`SHELF.stagger` (1,3s).
+**Vì:** Lời phản đối cũ với `animate-marquee` không phải là "tự trôi thì sai"
+mà là "tự trôi thì người đọc mất quyền lái" — trôi liên tục không sống chung
+được với `snap` và hai nút, và dừng-khi-hover của CSS lại dừng nhầm lúc chuột
+vô tình đi qua. Trôi theo bước giữ nguyên mọi đường vào của người dùng: chạm
+vào là dừng, buông ra là đi tiếp, và cú trôi dùng đúng hàm mà hai nút đang gọi.
+Lệch pha ba tầng vì ba băng trôi cùng nhịp đọc ra là một cái bảng điện tử.
+**Đã cân nhắc và bỏ:** quay lại `animate-marquee` trôi liên tục (mất `snap`,
+mất hai nút, mất cả vuốt tay); tự trôi mà không dừng khi rê chuột (người đọc
+không bao giờ đọc kịp một nhãn).
+**Đổi lại thì phải sửa:** `SHELF` trong `src/lib/motion.ts`, `ProductCarousel`
+trong `product-shelf.tsx`.
+
+## 2026-08-07 — Card sản phẩm nổi lên bằng ánh sáng, không bằng đổ bóng
+**Bối cảnh:** Chủ dự án bỏ viền card, rồi muốn "card nổi lên cho giống một tấm thẻ".
+**Chọn:** Ba thứ, không thứ nào là `box-shadow`. (1) Nền dốc dọc
+`from-surface to-surface-2` — mặt trên tối hơn mặt dưới. (2) Một vệt sáng mảnh
+ở CHÂN thẻ, mờ dần về hai đầu. (3) Rê chuột thì thẻ nhấc 4px và vệt sáng ngả
+sang màu brand.
+**Vì:** Luật của repo là dùng viền và ánh sáng thay đổ bóng, mà đổ bóng trên
+nền `#0C1016` cũng gần như vô hình. Trong thế giới của site này ánh sáng dâng
+từ chân trời, nên vật nổi lên là vật **sáng ở mặt dưới** — cùng logic với mép
+sáng chân tầng kệ và với quầng `pv-skyglow` của section. Vệt sáng mờ dần hai
+đầu nên nó đọc ra là ánh sáng lọt xuống đáy thẻ, không đọc ra là cạnh viền vừa
+bị gỡ. Nhấc bằng `transform` nên không đụng bố cục.
+**Bẫy đi kèm:** `overflow-x-auto` ở track khiến trục dọc cũng thành `auto`, nên
+cú nhấc 4px bị cắt cụt. Track phải có `py-1`, và tầng kệ hạ `py-3` xuống `py-2`
+để bù — tổng chiều cao không đổi một pixel. Ngoài ra `MediaFrame` phải khai
+`bg-transparent`, nếu không nền mặc định `bg-surface` của nó phủ một mảng phẳng
+lên giữa gradient và thẻ lại thành phẳng.
+**Đã cân nhắc và bỏ:** `box-shadow` (trái luật, và vô hình trên nền tối); trả
+lại viền quanh thẻ (chính thứ vừa bị bỏ).
+**Đổi lại thì phải sửa:** `<article>` trong `ProductCarousel`.
+
+## 2026-08-07 — Chữ phụ toàn site nâng lên đạt AA, brand tách làm hai vai
+**Bối cảnh:** Soát tương phản section phần cứng bằng phép tính WCAG trên token
+thật: 4 loại chữ trượt AA — chức danh CEO 3,19:1 · thông số chip 3,72:1 ở 11px
+· eyebrow và nhãn mono 3,72:1. Tên chip ESPRESSO 3,76:1, qua ngưỡng chữ lớn
+nhưng mờ hơn MINT gấp đôi.
+**Chọn:** Sửa ở TẦNG TOKEN chứ không ở component. (1) `--subtle-foreground`
+đổi `ink-400` → `ink-350` mới (`oklch(0.8 0.0095 247)`), 3,7 → 5,4–5,5:1.
+(2) Thêm `--brand-ink` = `pv-brand-300` cho chữ màu brand, 7,1:1 ở mọi nấc
+trời; `--brand` giữ nguyên vai trò ánh sáng và đồ hoạ. (3) `--pv-chip-espresso`
+nâng L 0,74 → 0,82, 3,8 → 6,3:1.
+**Vì:** `--subtle-foreground` sống ở 12+ chỗ trong `blocks.tsx` và
+`section.tsx` — sửa từng component thì vừa sót vừa làm các trang lệch nhau.
+Giá trị chọn theo nấc trời SÁNG NHẤT còn dùng nó (`rise`), nên mọi nấc đều
+đạt. `ink-350` cố ý không nhảy thẳng lên `ink-300`: bằng nhau thì
+`--subtle-foreground` và `--muted-foreground` thành một và thang chữ mất một nấc.
+**Đã cân nhắc và bỏ:** để `--brand` viết chữ (4,5:1 — vừa đúng ngưỡng, không
+còn biên); đổi `text-brand/80` thành `text-brand` tại chỗ (chữa một chỗ, để
+nguyên nguyên nhân).
+**Đổi lại thì phải sửa:** LỚP 1 và LỚP 2 trong `globals.css`. Kiểm lại bằng
+cách tính tương phản trên nền `--pv-night-3` (nấc `rise`).
+
+## 2026-08-07 — Băng sản phẩm có nút dừng, một nút cho cả section
+**Bối cảnh:** Băng tự trôi vi phạm WCAG 2.2.2 mức A — nội dung tự chuyển động
+quá 5 giây, nằm cạnh chữ cần đọc, mà chỉ dừng được bằng cách rê chuột.
+**Chọn:** MỘT nút play/pause đứng cạnh tab, điều khiển cả ba băng. Nhãn đổi
+theo trạng thái (`motionPause` / `motionPlay`) thay vì dùng `aria-pressed`.
+Không vẽ nút khi `prefers-reduced-motion` bật.
+**Vì:** Dừng-khi-rê-chuột không phải là "cách dừng": người dùng bàn phím đang
+đọc cột chữ bên trái và người dùng cảm ứng đều không rê được. Một nút chứ không
+ba vì ba nút làm cùng một việc là ba lần hỏi cùng một câu, và chúng chen vào
+đúng chỗ chật nhất của tầng kệ. Không vẽ nút khi reduced-motion vì lúc đó băng
+vốn đứng yên — một nút "chạy lại" không làm gì là nói dối người dùng.
+**Đổi lại thì phải sửa:** `ProductShelf` / `MotionToggle` trong
+`product-shelf.tsx`, khoá `home.hardware.motion*` trong `vi.json`.
