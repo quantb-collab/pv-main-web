@@ -110,33 +110,69 @@ export function Section({
 interface SectionHeaderProps {
   /** Nhãn ngắn phía trên tiêu đề. Nói chủ đề, không nói khẩu hiệu. */
   eyebrow?: string;
+  /**
+   * Kéo eyebrow vào NẰM CÙNG DÒNG với tiêu đề thay vì đứng riêng một dòng
+   * phía trên. Dùng khi hàng tiêu đề phải gọn đúng một dòng — ví dụ section
+   * phần cứng ở trang chủ, nơi tiêu đề chia hàng với tab đối tác và section
+   * đang chật chiều cao.
+   *
+   * Dấu hai chấm nằm trong CHÍNH chuỗi eyebrow ở messages, không nối trong
+   * JSX: mỗi ngôn ngữ một lối chấm câu, và tiếng Pháp còn chừa khoảng trắng
+   * trước dấu hai chấm.
+   *
+   * Eyebrow lúc này nằm TRONG thẻ tiêu đề nên trình đọc màn hình đọc liền
+   * "Phần cứng: Mũi nhọn công nghệ cao" thành một tiêu đề — đúng ý, vì hai vế
+   * vốn là một câu bị tách làm hai dòng. Nó cũng ăn luôn cỡ chữ, font và
+   * weight của tiêu đề: một dòng chữ có hai cỡ đọc ra là hai thứ, mà đây là
+   * một câu. Phân biệt bằng VIẾT HOA và màu mờ hơn một nấc, không bằng cỡ.
+   */
+  eyebrowInline?: boolean;
   title: ReactNode;
   /** Câu dẫn. Một đoạn, nói lợi ích, không nói tính năng. */
   lead?: ReactNode;
   align?: "left" | "center";
   /** Thẻ tiêu đề. Mỗi trang chỉ có một h1. */
   as?: "h1" | "h2" | "h3";
+  /**
+   * Hạ hoặc nâng CỠ tiêu đề mà không đụng tới CẤP thẻ. Mặc định cỡ đi theo
+   * thẻ (h1→display, h2→headline, h3→subhead) và hầu hết trang nên để nguyên.
+   *
+   * Có prop này vì hai thứ đó là hai việc khác nhau: cấp thẻ là cấu trúc tài
+   * liệu, cỡ chữ là chỗ trống trên màn hình. Section phần cứng ở trang chủ cần
+   * `h2` cho đúng dàn bài nhưng phải vẽ ở cỡ `subhead` thì cụm
+   * "PHẦN CỨNG: Mũi nhọn công nghệ cao" mới đứng gọn một dòng. Cách sai là hạ
+   * thẻ xuống `h3`: dàn bài của trang khi đó khuyết một cấp.
+   */
+  size?: "display" | "headline" | "subhead" | "title";
   className?: string;
   children?: ReactNode;
 }
 
 export function SectionHeader({
   eyebrow,
+  eyebrowInline = false,
   title,
   lead,
   align = "left",
   as: Tag = "h2",
+  size,
   className,
   children,
 }: SectionHeaderProps) {
+  /* Bảng viết THẲNG cả bốn chuỗi: Tailwind chỉ sinh class khi thấy chuỗi đầy
+     đủ trong mã nguồn, nên `text-${size}` ghép tay sẽ ra một class không tồn
+     tại và cỡ chữ rơi im lặng về mặc định. */
+  const SIZES = {
+    display: "text-display",
+    headline: "text-headline",
+    subhead: "text-subhead",
+    title: "text-title",
+  } as const;
+
   /* Một vai trò cho mỗi cấp tiêu đề. Cỡ, line-height và tracking đã nằm trong
      token nên ở đây không còn bậc breakpoint nào để quên đồng bộ. */
-  const size =
-    Tag === "h1"
-      ? "text-display"
-      : Tag === "h2"
-        ? "text-headline"
-        : "text-subhead";
+  const sizeClass =
+    SIZES[size ?? (Tag === "h1" ? "display" : Tag === "h2" ? "headline" : "subhead")];
 
   return (
     <Reveal
@@ -146,13 +182,31 @@ export function SectionHeader({
         className,
       )}
     >
-      {eyebrow ? (
+      {eyebrow && !eyebrowInline ? (
         <span className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
           {eyebrow}
         </span>
       ) : null}
 
-      <Tag className={cn("font-display font-semibold", size)}>
+      <Tag className={cn("font-display font-semibold", sizeClass)}>
+        {/* Nhãn KHÔNG khai cỡ, font hay weight — nó thừa kế hết từ thẻ tiêu đề
+            để cả dòng đọc ra là một câu. Chỉ hai thứ khác: viết hoa, và mờ hơn
+            một nấc để mắt biết đâu là nhãn đâu là tiêu đề.
+
+            Khoảng cách là một DẤU CÁCH THẬT chứ không phải `mr-*`, và nó nằm
+            trong nhánh điều kiện chứ không đứng ngoài:
+            · thật — hai phần tử inline dính liền nhau trong DOM thì trình đọc
+              màn hình đọc ra "…phần cứngMũi nhọn…"; `margin` không cứu được vì
+              nó là chuyện của mắt, không phải của cây nội dung.
+            · nằm trong nhánh — để ngoài thì mọi header KHÔNG dùng inline sẽ
+              lãnh một dấu cách thừa ngay trước chữ đầu tiên.
+            Dấu cách ăn cỡ chữ của thẻ tiêu đề nên nó giãn theo tiêu đề, đúng
+            như khi cả hai vế là một chuỗi liền. */}
+        {eyebrow && eyebrowInline ? (
+          <>
+            <span className="text-subtle-foreground uppercase">{eyebrow}</span>{" "}
+          </>
+        ) : null}
         <Highlight>{title}</Highlight>
       </Tag>
 

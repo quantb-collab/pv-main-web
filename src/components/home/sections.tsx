@@ -311,32 +311,49 @@ export async function Hardware() {
          — Existing AI Hardware Bottlenecks"): đến từ đâu · làm cụ thể cái gì ·
          ai đang làm · mạnh cỡ nào.
 
-         `p1Does` gọi THẲNG TÊN CƠ CHẾ theo yêu cầu chủ dự án — "chip Edge AI
-         chạy PIM" — rồi mới giải thích PIM là gì bằng tiếng người ("phép tính
-         chạy ngay trong ô nhớ"). Đây là ngoại lệ có chủ ý với luật "không lấy
-         tên công nghệ làm lợi ích": PIM là điểm khác biệt kiến trúc thật, và
-         câu ngay sau đã quy nó về lợi ích (điện và độ trễ).
+         `origin` lấy ĐÚNG cách Pebble Square tự định nghĩa trên web của chính
+         họ (pebble-square.com, kiểm 2026-08-07): "a fabless company" chuyên
+         "AI chip design", trụ sở ở Pangyo — Seongnam. Bản cũ ghi "công ty R&D
+         bán dẫn" là mô tả của chúng ta chứ không phải của họ, và R&D thì rộng
+         hơn hẳn cái họ thật sự làm.
 
-         ⚠️ Tài liệu gốc ghi "Digital CIM Processor", trang đang dùng "PIM".
-         Hai chữ gần nghĩa nhưng KHÔNG được để site và datasheet lệch nhau —
-         đã đưa vào `partnerGap` để chốt trước khi phát hành.
+         `tech` thay cho `p1Does` cũ (đổi 2026-08-07). Bản cũ mở bằng tên cơ
+         chế rồi mới tới lợi ích; nay đảo lại đúng luật "benefit trước
+         feature": tiêu đề là ba thứ người mua quan tâm (điện, chi phí, sức
+         tính), thân mới nói vì sao — PIM. Nó cũng chuyển chỗ: đây là lời giải
+         thích cho CẢ BA dòng chip bên phải, nên đứng ở cột trái nơi nó phủ
+         được cả ba, không đứng lẫn trong một tầng kệ.
+
+         ⚠️ Câu "ít điện, chi phí thấp" suy ra từ cơ chế PIM, CHƯA có phép đo
+         đối chứng — đã ghi vào `specGap`. Không nâng lên thành con số.
+
+         Chữ "PIM" nay có chỗ dựa công khai: web Pebble Square viết thẳng
+         "PIM (Processing-In-Memory)". Tài liệu nội bộ ghi "Digital CIM
+         Processor" nhưng dòng thông số mang chữ đó đã rút khỏi trang chủ, nên
+         site và datasheet không còn chỗ nào lệch nhau.
 
          MỘT hồ sơ có họ tên thật (chủ dự án chốt 2026-08-07, rút từ bốn xuống
          một). Tên người thật trên trang công khai cần sự đồng ý của chính họ,
          không phải của Pebble Square — vẫn nằm trong `partnerGap`, chỉ là giờ
          phải đi xin một người thay vì bốn.
 
-         `site` bỏ trống cho tới khi có địa chỉ web chính thức của Pebble
-         Square: `PartnerIntro` không vẽ gì khi thiếu `href`, vì một đường link
-         chết trên trang chủ còn tệ hơn không có link. Điền vào đây là xong. */
+         Học vấn tách thành BA DÒNG rời thay cho một dòng ngăn bằng dấu chấm
+         giữa: đây là hồ sơ một con người, và ba mốc nghề nghiệp dồn vào một
+         dòng chạy dài thì đọc ra là chú thích kỹ thuật. Mỗi mốc một dòng thì
+         mắt dừng được ở từng cái. */
       intro: {
         origin: t("p1Origin"),
-        does: t("p1Does"),
+        site: { href: "https://pebble-square.com", label: t("p1SiteLabel") },
+        tech: {
+          label: t("p1TechLabel"),
+          title: t("p1TechTitle"),
+          body: t("p1TechBody"),
+        },
         leadLabel: t("p1LeadLabel"),
         lead: {
           name: t("p1CeoName"),
           role: t("p1CeoRole"),
-          bio: t("p1CeoBio"),
+          creds: [1, 2, 3].map((c) => t(`p1CeoCred${c}`)),
         },
         stats: [1, 2].map((s) => ({
           value: t(`p1Stat${s}Value`),
@@ -345,13 +362,26 @@ export async function Hardware() {
       },
       lines: [1, 2, 3].map((n) => ({
         name: t(`c${n}Name`),
-        edge: t(`c${n}Edge`),
-        /* Thông số THẬT, chủ dự án cấp 2026-08-07 từ tài liệu Pebble Square.
-           Nhãn "mạng nơ-ron" giữ đúng chữ của tài liệu gốc ("Neural Network:
-           4 million") — không dịch thành "tham số", vì đơn vị chưa rõ và đoán
-           sai một thông số kỹ thuật còn tệ hơn không ghi. Điều kiện đo (peak
-           hay sustained, ở tần số nào) vẫn thiếu — nằm trong `specGap`. */
-        spec: t(`c${n}Spec`),
+        /* Địa hạt ứng dụng, thay cho câu lợi điểm cũ ("Nghe và cảm nhận ngay
+           tại thiết bị") mà chủ dự án gỡ 2026-08-07 vì nó nói lại đúng thứ
+           dòng này đã nói. */
+        fit: t(`c${n}Fit`),
+        /* Thông số lấy NGUYÊN từ trang Pebble Square tự công bố —
+           pebble-square.com/en/page/21, "Pebble Square's AI Chip Family",
+           kiểm 2026-08-07. Nhãn dịch từ chính nhãn của họ:
+             Power Efficiency · Neural Network · Chip Size
+             Advanced Process · Peak Performance · Typical Power
+           Hai điều KHÔNG được tự ý sửa:
+           · "4 triệu" giữ đúng "Neural Network: 4 million" — bản gốc không nêu
+             đơn vị, nên đoán thành "tham số" hay "khớp thần kinh" là bịa.
+           · "~160 TOPS" phải đi kèm nhãn "Hiệu năng đỉnh": bản gốc ghi rõ
+             "Peak Performance", và blueprint cấm benchmark thiếu điều kiện đo.
+           Số nằm ở `Value`, nhãn ở `Label` — tách đôi để cột số canh thẳng
+           hàng được, xem `ShelfTier`. */
+        specs: [1, 2, 3].map((s) => ({
+          value: t(`c${n}s${s}Value`),
+          label: t(`c${n}s${s}Label`),
+        })),
         /* Màu lấy từ chính tên chip. Thứ tự khớp c1/c2/c3 — đổi thứ tự dòng
            chip thì phải đổi cả mảng này, nếu không PAPAYA ra màu bạc hà. */
         accent: (["mint", "papaya", "espresso"] as const)[n - 1],
@@ -394,9 +424,24 @@ export async function Hardware() {
           chúng: một hàng tab riêng tốn 44px, đúng phần chiều cao ô ảnh cần. */}
       <ProductShelf
         partners={partners}
+        /* Eyebrow NẰM CÙNG DÒNG tiêu đề (chủ dự án chốt 2026-08-07): hàng
+           tiêu đề phải gọn đúng MỘT dòng, mà section này đang tràn ~94px ở
+           1440×900 nên không cõng nổi một dòng eyebrow riêng ở trên. Gộp vào
+           trả lại ~30px và vẫn giữ được chữ "Phần cứng".
+
+           `size="subhead"` là cái giá của việc nhãn và tiêu đề CÙNG một cỡ
+           (chủ dự án chốt 2026-08-07). Ở cỡ `headline` cả cụm đo ~920px, quá
+           khoang tiêu đề rộng nhất (~870px) lẫn trần `max-w-3xl` (768px) của
+           SectionHeader — tức là xuống hai dòng. Ở `subhead` còn ~600px nên
+           gọn một dòng. Thẻ vẫn là `h2`: hạ cỡ chữ chứ không hạ cấp thẻ, dàn
+           bài của trang không được khuyết cấp chỉ vì thiếu chỗ.
+           ⚠️ Đây là section DUY NHẤT của trang chủ có tiêu đề nhỏ hơn một nấc
+           so với sáu section còn lại. Có chủ ý, không phải sót. */
         header={
           <SectionHeader
             eyebrow={t("eyebrow")}
+            eyebrowInline
+            size="subhead"
             title={t("title")}
             lead={t("lead")}
           />

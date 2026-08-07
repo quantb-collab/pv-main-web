@@ -111,10 +111,15 @@ export interface ShelfProduct {
 
 export interface ShelfLine {
   name: string;
-  /** Lợi điểm — MỘT câu ngắn, nói việc chip làm được, không nói nó là gì. */
-  edge: string;
-  /** Thông số, một dòng mono, các giá trị ngăn bằng dấu chấm giữa. */
-  spec: string;
+  /** Địa hạt ứng dụng — MỘT câu, nói chip này hợp với loại bài toán nào.
+   *  Đây là câu MÔ TẢ DUY NHẤT của một tầng. Bản trước còn một câu lợi điểm
+   *  đứng trên nó ("Nghe và cảm nhận ngay tại thiết bị"); chủ dự án gỡ
+   *  2026-08-07 vì hai câu nói cùng một điều thì câu thứ hai là chữ thừa. */
+  fit: string;
+  /** Ba thông số, số tách rời nhãn để cột số canh thẳng hàng được.
+   *  Đúng ba dòng cho cả ba chip — bốn dòng thì tầng kệ cao hơn card ảnh và
+   *  cả section đội lên. Nguồn và những chỗ không được sửa: `sections.tsx`. */
+  specs: { value: string; label: string }[];
   /** Màu lấy từ tên chip. Xem quyết định 4. */
   accent: ChipAccent;
   products: ShelfProduct[];
@@ -124,8 +129,10 @@ export interface ShelfLine {
 }
 
 /**
- * Hồ sơ đối tác, đứng NGAY DƯỚI tab và TRƯỚC danh sách sản phẩm: đến từ đâu →
- * ai đứng sau → mạnh cỡ nào.
+ * Hồ sơ đối tác, đứng NGAY DƯỚI tab và TRƯỚC danh sách sản phẩm. Bốn khối, đọc
+ * từ trên xuống là bốn câu hỏi liên tiếp của người mới nghe tên đối tác lần
+ * đầu: đây là ai (kèm chỗ đi tra) → chip của họ hơn ở chỗ nào → ai đứng sau →
+ * mạnh cỡ nào.
  *
  * CHỈ MỘT NGƯỜI (chủ dự án chốt 2026-08-07). Bản trước liệt kê cả bốn lãnh đạo
  * kèm học vấn và nơi từng làm; bốn hồ sơ ba dòng trên một trang chủ là trang
@@ -137,13 +144,17 @@ export interface ShelfLine {
 export interface ShelfPartnerIntro {
   /** Đến từ đâu — một cụm ngắn, đứng như tiêu đề nhỏ. */
   origin: string;
-  /** Làm CỤ THỂ cái gì — nói cơ chế (PIM) chứ không nói tính từ. */
-  does: string;
-  leadLabel: string;
-  lead: { name: string; role: string; bio: string };
   /** Web đối tác. Bỏ trống `href` = chưa có link thì không hiện gì cả — một
    *  đường link chết còn tệ hơn không có link. */
   site?: { href: string; label: string };
+  /** Lợi thế kiến trúc, phủ CẢ BA dòng chip bên phải nên nó đứng ở cột trái.
+   *  `title` là lợi ích, `body` mới là cơ chế — không đảo ngược thứ tự đó. */
+  tech: { label: string; title: string; body: string };
+  leadLabel: string;
+  /** `creds` là các mốc nghề nghiệp, MỖI MỐC MỘT DÒNG. Không nối lại thành
+   *  một chuỗi ngăn bằng dấu chấm giữa: hồ sơ một con người không đọc như một
+   *  dòng thông số. */
+  lead: { name: string; role: string; creds: string[] };
   /** Hai con số của bảng thành tích. */
   stats: { value: string; label: string }[];
 }
@@ -256,33 +267,50 @@ function PartnerIntro({ intro }: { intro: ShelfPartnerIntro }) {
         <h3 className="font-display text-title font-semibold text-balance">
           {intro.origin}
         </h3>
-        <p className="mt-2 text-body-sm text-muted-foreground">{intro.does}</p>
+        {/* Đường link đứng NGAY DƯỚI câu định nghĩa công ty, không nằm cuối
+            khối hồ sơ như bản cũ: người đọc hỏi "đây là ai" thì chỗ đi tra
+            phải ở ngay chỗ vừa trả lời, không phải ba đoạn sau. */}
+        {intro.site ? <PartnerSite site={intro.site} /> : null}
+      </div>
+
+      <div>
+        <p className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
+          {intro.tech.label}
+        </p>
+        <p className="mt-3 text-body-sm font-medium">{intro.tech.title}</p>
+        <p className="mt-1 text-meta text-muted-foreground">{intro.tech.body}</p>
       </div>
 
       <div>
         <p className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
           {intro.leadLabel}
         </p>
-        <p className="mt-3 text-body-sm font-medium">{intro.lead.name}</p>
+        {/* Tên người lên `text-body` + `font-display` (bản cũ `text-body-sm`):
+            trong cột này nó đang là dòng duy nhất chỉ một con người, mà nó lại
+            nhỏ bằng chú thích. Vẫn dưới `text-title` của `origin` nên thứ bậc
+            trong cột không đổi. */}
+        <p className="mt-3 font-display text-body font-medium">
+          {intro.lead.name}
+        </p>
         {/* Chức danh tô màu thương hiệu: đó là thứ mắt cần bám để biết mình
             đang đọc hồ sơ của ai, không phải cái tên. */}
         {/* `brand-ink` chứ không `brand/80`: bản cũ chỉ 3.2:1 — mờ nhất section,
             mà đây lại là dòng cố ý tô màu để mắt bám vào. */}
-        <p className="text-meta text-brand-ink">{intro.lead.role}</p>
-        <p className="mt-0.5 text-meta text-muted-foreground">
-          {intro.lead.bio}
-        </p>
+        <p className="text-ui font-medium text-brand-ink">{intro.lead.role}</p>
 
-        {intro.site ? (
-          <a
-            href={intro.site.href}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-3 inline-block border-b border-border pb-0.5 text-meta text-muted-foreground transition-colors duration-(--dur-fast) hover:border-brand hover:text-brand"
-          >
-            {intro.site.label}
-          </a>
-        ) : null}
+        {/* Ba mốc nghề nghiệp, mỗi mốc một dòng, có chấm đầu dòng.
+            `list-outside` + `pl-4` chứ không `list-inside`: mốc dài xuống dòng
+            thì dòng hai thụt vào thẳng hàng với CHỮ, không chui xuống dưới cái
+            chấm. Đó là khác biệt giữa một hồ sơ và một đoạn văn bị bẻ.
+            Chấm ăn màu `subtle-foreground` — mờ hơn chữ một nấc, đủ để dẫn mắt
+            xuống mà không đếm ngang với nội dung. */}
+        <ul className="mt-2.5 list-disc space-y-1 pl-4 marker:text-subtle-foreground">
+          {intro.lead.creds.map((cred) => (
+            <li key={cred} className="text-meta text-muted-foreground">
+              {cred}
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Hai con số nằm ngang nhau, nhãn xuống dòng dưới. Chữ số cỡ `subhead`
@@ -306,7 +334,46 @@ function PartnerIntro({ intro }: { intro: ShelfPartnerIntro }) {
 }
 
 /**
- * Thứ tự đọc trong một tầng: TÊN → chip này làm được gì → thông số. Cột chữ
+ * Đường về web đối tác. Nhãn là CHÍNH TÊN MIỀN chứ không phải "Xem web
+ * Pebble Square": tên miền tự nói nó dẫn đi đâu, còn một câu mệnh lệnh thì
+ * chiếm hai lần chữ để nói cùng chừng ấy. Mũi tên chéo là dấu quy ước của link
+ * mở tab mới — nó thay luôn phần chữ đã bỏ đi.
+ *
+ * Không gạch chân, không viền dưới như bản cũ: cột này đã có ba khối chữ xếp
+ * dọc, thêm một đường kẻ nữa là thêm một vạch chia không cần thiết. Trạng thái
+ * link nói bằng màu và bằng cú nhích của mũi tên khi rê chuột.
+ */
+function PartnerSite({ site }: { site: { href: string; label: string } }) {
+  return (
+    <a
+      href={site.href}
+      target="_blank"
+      rel="noreferrer"
+      className="group/site mt-2.5 inline-flex items-center gap-1.5 text-meta text-muted-foreground transition-colors duration-(--dur-fast) hover:text-brand"
+    >
+      {site.label}
+      {/* Vẽ bằng SVG chứ không dùng ký tự ↗ — ký tự đổi hình theo font, mà font
+          của site không phải font biểu tượng. */}
+      <svg
+        aria-hidden
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="size-3 transition-transform duration-(--dur-fast) group-hover/site:-translate-y-px group-hover/site:translate-x-px"
+      >
+        <path d="M5.5 10.5 10.5 5.5M6 5.5h4.5V10" />
+      </svg>
+    </a>
+  );
+}
+
+/**
+ * Thứ tự đọc trong một tầng: TÊN → hợp với việc gì → thông số. Lợi ích trước,
+ * con số sau — người quét trang dừng ở dòng thứ hai là đủ hiểu, người soi kỹ
+ * đi tiếp xuống bảng số. Đảo lại thì ai cũng phải bước qua bảng số. Cột chữ
  * rộng cố định 15rem còn băng card ăn hết phần dư, nên ở 1440px băng thấy 2
  * card rưỡi và ở 1024px thấy 1 card rưỡi — luôn có một card bị cắt dở, và đó
  * chính là thứ nói cho người đọc biết còn thứ nữa ở bên phải.
@@ -336,14 +403,43 @@ function ShelfTier({
         <h3 className={cn("font-display text-title font-semibold", accent.name)}>
           {line.name}
         </h3>
-        <p className="mt-1 text-body-sm text-muted-foreground">{line.edge}</p>
-        {/* Thông số ở dòng riêng, mono và mờ hơn: nó là thứ người kỹ thuật
-            soi, không phải thứ chặn mắt người đọc lướt. Dấu chấm giữa (·)
-            ngăn các giá trị — không dùng gạch đứng, gạch đứng ở cỡ micro
-            trông như lỗi render. */}
-        <p className="mt-1.5 font-mono text-micro text-subtle-foreground">
-          {line.spec}
-        </p>
+        {/* Câu ứng dụng ăn màu chữ mặc định chứ không `muted`: nó là câu văn
+            duy nhất của tầng, bản cũ để nó mờ ngang chú thích. */}
+        <p className="mt-1 text-body-sm">{line.fit}</p>
+
+        {/*
+          BẢNG THÔNG SỐ. Bản trước là một dòng mono 11px màu mờ nhất bảng
+          (`17 TOPS/W · mạng nơ-ron 4 triệu · 5×5 mm²`) — ba giá trị khác loại
+          nhau bị nhồi vào một dòng, ngăn bằng dấu chấm giữa, ở cỡ chữ không ai
+          đọc nổi. Nay mỗi thông số một dòng, và số tách khỏi nhãn.
+
+          BA quyết định hình, cả ba đều để cột số đọc như một bảng datasheet
+          chứ không như một câu:
+          · SỐ ĐỨNG TRƯỚC NHÃN. Người soi thông số tìm con số, không tìm chữ.
+          · CỘT SỐ RỘNG CỐ ĐỊNH `5rem` — vừa `~160 TOPS`, chuỗi dài nhất trong
+            ba dòng chip, còn dư một nhịp phòng khi font mono đo khác. Cố định
+            thì ba nhãn thẳng hàng nhau và mắt đi xuống theo một mép; để `auto`
+            thì mỗi dòng lệch một kiểu. Kèm `whitespace-nowrap`: một con số bị
+            bẻ đôi vừa sai nghĩa vừa đội chiều cao cả tầng.
+          · `tabular-nums` để chữ số nào cũng cùng bề ngang, không thì `1` hẹp
+            hơn `0` và cột số trông rung.
+
+          DOM vẫn là `dt` trước `dd` (đúng thứ tự HTML yêu cầu, và trình đọc
+          màn hình nghe ra "Hiệu suất điện — 17 TOPS/W" mới thuận tai); chỉ
+          `order` đảo lại phần NHÌN. Đừng đổi thành `dd` đứng trước trong DOM.
+        */}
+        <dl className="mt-3 space-y-1">
+          {line.specs.map((spec) => (
+            <div key={spec.label} className="flex items-baseline gap-3">
+              <dt className="order-2 min-w-0 text-meta text-muted-foreground">
+                {spec.label}
+              </dt>
+              <dd className="order-1 w-20 shrink-0 font-mono text-meta font-medium whitespace-nowrap tabular-nums">
+                {spec.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
 
       <ProductCarousel line={line} index={index} autoplay={autoplay} />
