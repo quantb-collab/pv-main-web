@@ -113,29 +113,6 @@
       "mTag": "Cách đo",
       "mBody": "Đo trước và sau trên cùng một việc, kèm điều kiện đo. Số trên trang là số minh hoạ — sẽ thay bằng số đo của từng dự án."
     },
-    "startHere": {
-      "eyebrow": "Điểm bắt đầu",
-      "title": "Bắt đầu từ một việc có thật, đủ nhỏ để đo được",
-      "lead": "Giai đoạn đầu chọn bài toán phạm vi rõ, dữ liệu sẵn, kết quả thấy sớm.",
-      "u1": "Kho tri thức nội bộ",
-      "u2": "Trợ lý theo phòng ban",
-      "u3": "Bóc tách chứng từ",
-      "u4": "Báo cáo định kỳ",
-      "u5": "Đối chiếu hợp đồng",
-      "u6": "Quy trình nhiều bước",
-      "priorityGap": "Ba use case mở cửa ưu tiên trong 6–12 tháng tới, để trang chủ nêu đúng ba thay vì liệt kê sáu."
-    },
-    "maturity": {
-      "eyebrow": "Lộ trình",
-      "title": "Không cần thay đổi cả tổ chức để bắt đầu",
-      "lead": "Mỗi nấc có phạm vi riêng; nấc sau chỉ mở khi nấc trước chạy được.",
-      "s1Title": "AI hỗ trợ một công việc",
-      "s2Title": "AI nằm trong một quy trình",
-      "s3Title": "AI vận hành trong một phòng ban",
-      "s4Title": "Nhiều phòng ban dùng chung nền tảng",
-      "s5Title": "AI liên thông toàn doanh nghiệp",
-      "humanNote": "Con người giữ quyết định, phê duyệt, ngoại lệ; AI làm các bước chuẩn hoá, kiểm soát được."
-    },
     "why": {
       "eyebrow": "Vì sao chọn Pebble Vina",
       "title": "Cách làm quyết định kết quả nhiều hơn công cụ",
@@ -147,19 +124,6 @@
       "p3Body": "Cloud, hybrid hoặc hạ tầng riêng, tuỳ mức nhạy cảm của dữ liệu.",
       "p4Title": "Mở rộng được xuyên suốt",
       "p4Body": "Quy mô tăng thì đi tiếp xuống nền tảng, hạ tầng và thiết bị."
-    },
-    "deliver": {
-      "eyebrow": "Cách triển khai",
-      "title": "Tám bước, mỗi bước có tiêu chí để đi tiếp",
-      "lead": "Bên mua luôn biết đang ở đâu, cần gì để sang bước sau, ai chịu trách nhiệm phần nào.",
-      "s1": "Đánh giá hiện trạng",
-      "s2": "Xếp thứ tự ưu tiên",
-      "s3": "Thiết kế giải pháp",
-      "s4": "Dựng PoC",
-      "s5": "Kiểm chứng",
-      "s6": "Tích hợp",
-      "s7": "Triển khai diện rộng",
-      "s8": "Tối ưu"
     },
     "enterprise": {
       "eyebrow": "Chuẩn Enterprise ngay từ thiết kế",

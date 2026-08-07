@@ -1,5 +1,4 @@
 import { getTranslations } from "next-intl/server";
-import { MediaFrame } from "@/components/motion/media-frame";
 import { Reveal } from "@/components/motion/reveal";
 import {
   BentoGrid,
@@ -12,7 +11,6 @@ import {
   StageMatrix,
   StatementList,
   StatTile,
-  StepRail,
 } from "@/components/pv/blocks";
 import { CtaButton } from "@/components/pv/cta-button";
 import { Gap } from "@/components/pv/gap";
@@ -164,68 +162,6 @@ export async function Stats() {
   );
 }
 
-/* §9 Section 4 — Start with a Real Use Case */
-export async function StartHere() {
-  const t = await getTranslations("home.startHere");
-  const tc = await getTranslations("cta");
-
-  return (
-    <Section id="bat-dau" sky="night">
-      <div className="grid gap-14 lg:grid-cols-[1fr_1.05fr] lg:items-center lg:gap-20">
-        <div>
-          <SectionHeader
-            eyebrow={t("eyebrow")}
-            title={t("title")}
-            lead={t("lead")}
-          />
-          <PillRow
-            className="mt-10"
-            items={[1, 2, 3, 4, 5, 6].map((n) => t(`u${n}`))}
-          />
-          <Reveal className="mt-8 max-w-xl">
-            <Gap kind="confirm">{t("priorityGap")}</Gap>
-          </Reveal>
-          <Reveal className="mt-8">
-            <CtaButton href="/use-cases" variant="outline">
-              {tc("more")}
-            </CtaButton>
-          </Reveal>
-        </div>
-
-        <MediaFrame
-          ratio="landscape"
-          need="Ảnh minh hoạ một bài toán cụ thể: màn hình hệ thống thật đang xử lý hồ sơ hoặc tra cứu tài liệu. Chụp màn hình sản phẩm thật, không dựng dashboard giả."
-        />
-      </div>
-    </Section>
-  );
-}
-
-/* §9 Section 5 — AI Maturity Journey */
-export async function Maturity() {
-  const t = await getTranslations("home.maturity");
-
-  return (
-    <Section id="lo-trinh" sky="deep">
-      <SectionHeader eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
-      <div className="mt-14 grid gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
-        {/* Nhãn trần, không mô tả — năm nấc tự kể được câu chuyện (một công
-            việc → toàn doanh nghiệp), phần "con người ở đâu" đã có ghi chú
-            bên cạnh, còn phân quyền/nhật ký thuộc section Enterprise. */}
-        <StepRail
-          steps={[1, 2, 3, 4, 5].map((n) => ({ title: t(`s${n}Title`) }))}
-        />
-        <Reveal
-          direction="left"
-          className="self-start rounded-xl border bg-surface p-6 lg:sticky lg:top-28 lg:p-8"
-        >
-          <p className="text-body text-pretty">{t("humanNote")}</p>
-        </Reveal>
-      </div>
-    </Section>
-  );
-}
-
 /* §9 Section 6 — Why Pebble Vina */
 export async function Why() {
   const t = await getTranslations("home.why");
@@ -241,32 +177,6 @@ export async function Why() {
             </Card>
           ))}
         </CardGrid>
-      </div>
-    </Section>
-  );
-}
-
-/* §9 Section 7 — How We Deliver */
-export async function Deliver() {
-  const t = await getTranslations("home.deliver");
-  const tc = await getTranslations("cta");
-
-  return (
-    <Section id="trien-khai" sky="deep">
-      <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
-        <SectionHeader
-          eyebrow={t("eyebrow")}
-          title={t("title")}
-          lead={t("lead")}
-        >
-          <Reveal className="mt-4">
-            <CtaButton href="/how-we-deliver" variant="outline">
-              {tc("deliver")}
-            </CtaButton>
-          </Reveal>
-        </SectionHeader>
-
-        <StepRail steps={[1, 2, 3, 4, 5, 6, 7, 8].map((n) => ({ title: t(`s${n}`) }))} />
       </div>
     </Section>
   );
