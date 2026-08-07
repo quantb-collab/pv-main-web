@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { AssessmentDrawerButton } from "@/components/pv/assessment-drawer";
 import { CtaButton } from "@/components/pv/cta-button";
 import { Section, SectionHeader } from "@/components/pv/section";
 import type { Cta } from "@/content/registry";
@@ -49,10 +50,26 @@ export async function CtaBand({
           title={title ?? tf("title")}
           lead={lead ?? tf("lead")}
         >
+          {/*
+            `assessment` mở DRAWER thay vì điều hướng (chủ dự án 2026-08-07):
+            người đọc vừa bị thuyết phục xong thì đừng bắt họ rời trang để điền
+            form — rời trang là chỗ rơi rụng lớn nhất của phễu. Các cta còn lại
+            (`architecture`, `poc`, `contact`…) vẫn là link như cũ, vì chúng dẫn
+            tới một cuộc trao đổi cần đọc thêm chứ không phải một form.
+
+            `/ai-assessment` VẪN sống và vẫn là đích của mọi link chia sẻ —
+            drawer chỉ là lối tắt, không thay thế trang.
+          */}
           <Reveal className="mt-4">
-            <CtaButton href={HREF[cta]} size="lg">
-              {t(cta === "none" ? "contact" : cta)}
-            </CtaButton>
+            {cta === "assessment" ? (
+              <AssessmentDrawerButton size="lg">
+                {t("assessment")}
+              </AssessmentDrawerButton>
+            ) : (
+              <CtaButton href={HREF[cta]} size="lg">
+                {t(cta === "none" ? "contact" : cta)}
+              </CtaButton>
+            )}
           </Reveal>
         </SectionHeader>
 

@@ -18,7 +18,14 @@ import { DUR, EASE } from "@/lib/motion";
  *
  * ⚠️ Form hiện CHƯA gửi đi đâu. Cần chốt CRM và endpoint nhận dữ liệu.
  */
-export function AssessmentForm() {
+export function AssessmentForm({
+  /**
+   * Bỏ viền và padding của chính form. Dùng khi form đã nằm trong một khung có
+   * sẵn — cụ thể là drawer khảo sát, nơi `SheetContent` đã là cái khung: giữ
+   * viền ở đây thì thành hai lớp hộp lồng nhau.
+   */
+  bare = false,
+}: { bare?: boolean } = {}) {
   const t = useTranslations("assessment.form");
   const [step, setStep] = useState<1 | 2>(1);
   const [sent, setSent] = useState(false);
@@ -52,7 +59,7 @@ export function AssessmentForm() {
         // TODO: nối vào CRM khi đã chốt endpoint.
         setSent(true);
       }}
-      className="rounded-xl border p-6 lg:p-8"
+      className={bare ? undefined : "rounded-xl border p-6 lg:p-8"}
     >
       <div className="mb-6 flex items-center gap-3">
         <span className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">

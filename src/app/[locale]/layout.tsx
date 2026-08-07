@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { AssessmentDrawerProvider } from "@/components/pv/assessment-drawer";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
@@ -108,18 +109,25 @@ export default async function LocaleLayout({
       </head>
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
-          <SmoothScroll />
-          <a
-            href="#main"
-            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
-          >
-            {t("skipToContent")}
-          </a>
-          <SiteHeader />
-          <main id="main" className="flex-1">
-            {children}
-          </main>
-          <SiteFooter />
+          {/*
+            Provider bọc TOÀN BỘ site, không chỉ trang chủ: drawer khảo sát là
+            một bản duy nhất dùng chung, và mọi nút CTA ở mọi trang đều mở nó.
+            Đặt trong NextIntlClientProvider vì nó đọc `assessment.form.*`.
+          */}
+          <AssessmentDrawerProvider>
+            <SmoothScroll />
+            <a
+              href="#main"
+              className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+            >
+              {t("skipToContent")}
+            </a>
+            <SiteHeader />
+            <main id="main" className="flex-1">
+              {children}
+            </main>
+            <SiteFooter />
+          </AssessmentDrawerProvider>
         </NextIntlClientProvider>
       </body>
     </html>
