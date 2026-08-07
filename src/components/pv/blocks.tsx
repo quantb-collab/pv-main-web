@@ -186,6 +186,18 @@ export interface RailStep {
   meta?: { label: string; value: ReactNode }[];
 }
 
+/**
+ * Thang sáng dâng theo nấc — cùng ý đồ với thang `sky` giữa các section, nhưng
+ * chạy BÊN TRONG một section: nấc đầu là viền tóc mờ, nấc cuối là ánh brand.
+ * Ba bậc chứ không phải mỗi nấc một màu — nhiều bậc hơn thì mắt đọc ra loang
+ * màu chứ không đọc ra tiến trình.
+ */
+const RAIL_LIT = [
+  { num: "text-subtle-foreground", tick: "bg-border" },
+  { num: "text-muted-foreground", tick: "bg-brand/45" },
+  { num: "text-brand", tick: "bg-brand" },
+] as const;
+
 export function StepRail({
   steps,
   className,
@@ -193,45 +205,76 @@ export function StepRail({
   steps: RailStep[];
   className?: string;
 }) {
+  const last = Math.max(steps.length - 1, 1);
+
   return (
     <RevealGroup className={cn("relative", className)} stagger={0.09}>
-      {/* đường dọc nối các bước */}
+      {/*
+        Sợi dọc nối các nấc. Gradient chứ không phải một màu: tối ở nấc đầu,
+        sáng dần xuống nấc cuối. Vị trí trùng tâm khoảng cách giữa cột số và
+        cột nội dung của lưới bên dưới.
+      */}
       <span
         aria-hidden
-        className="absolute top-2 bottom-2 left-[15px] w-px bg-border md:left-[19px]"
+        className="absolute top-2 bottom-2 left-[2.75rem] w-px bg-linear-to-b from-border via-border to-brand md:left-[4.75rem]"
       />
       <ol className="flex flex-col">
-        {steps.map((step, i) => (
-          <RevealItem key={i} as="li" className="relative flex gap-5 pb-10 last:pb-0 md:gap-7">
-            <span className="relative z-10 mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full border bg-background font-mono text-micro font-medium tabular-nums md:size-10 md:text-ui">
-              {i + 1}
-            </span>
-            <div className="flex flex-col gap-2 pt-1">
-              <h3 className="font-display text-title font-semibold">
-                {step.title}
-              </h3>
-              {step.body ? (
-                <p className="max-w-[62ch] text-body text-muted-foreground">
-                  {step.body}
-                </p>
-              ) : null}
-              {step.meta?.length ? (
-                <dl className="mt-2 grid gap-x-8 gap-y-2 sm:grid-cols-2">
-                  {step.meta.map((m) => (
-                    <div key={m.label} className="flex flex-col gap-0.5">
-                      <dt className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
-                        {m.label}
-                      </dt>
-                      <dd className="text-body-sm text-muted-foreground">
-                        {m.value}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              ) : null}
-            </div>
-          </RevealItem>
-        ))}
+        {steps.map((step, i) => {
+          const lit = RAIL_LIT[Math.round((i / last) * (RAIL_LIT.length - 1))];
+
+          return (
+            <RevealItem
+              key={i}
+              as="li"
+              className="grid grid-cols-[2.25rem_1fr] gap-x-4 pb-14 last:pb-0 md:grid-cols-[4rem_1fr] md:gap-x-6"
+            >
+              <span
+                className={cn(
+                  "pt-0.5 text-right font-mono text-title font-medium tabular-nums",
+                  lit.num,
+                )}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
+
+              <div className="relative flex flex-col">
+                {/* mấu nối: một vạch ngang mảnh chạy từ sợi dọc sang tiêu đề —
+                    hệ này dựng bằng viền tóc và ánh sáng, không dùng chấm tròn */}
+                <span
+                  aria-hidden
+                  className={cn(
+                    "absolute top-[0.85rem] -left-2 h-px w-2 md:-left-3 md:w-3",
+                    lit.tick,
+                  )}
+                />
+                <h3 className="font-display text-subhead font-semibold">
+                  {step.title}
+                </h3>
+
+                {step.body ? (
+                  <p className="mt-2 max-w-[62ch] text-body text-muted-foreground">
+                    {step.body}
+                  </p>
+                ) : null}
+
+                {step.meta?.length ? (
+                  <dl className="mt-4 grid gap-x-8 gap-y-2 sm:grid-cols-2">
+                    {step.meta.map((m) => (
+                      <div key={m.label} className="flex flex-col gap-0.5">
+                        <dt className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
+                          {m.label}
+                        </dt>
+                        <dd className="text-body-sm text-muted-foreground">
+                          {m.value}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : null}
+              </div>
+            </RevealItem>
+          );
+        })}
       </ol>
     </RevealGroup>
   );
