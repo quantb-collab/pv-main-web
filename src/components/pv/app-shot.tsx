@@ -41,6 +41,13 @@ import { cn } from "@/lib/utils";
  * và đó cũng là nơi đặt đoạn giải thích dài. Sàn 0,85× của kit §3 áp cho
  * DIALOG, không áp cho poster.
  *
+ * THỨ TỰ DƯỚI ẢNH: TIÊU ĐỀ TRƯỚC, DÒNG CHÚ SAU. Bản đầu đặt dòng chú
+ * (`ONE CORE · DỮ LIỆU MẪU` / `XEM ẢNH LỚN`) ngay dưới ảnh rồi mới tới tên màn,
+ * nên nhãn engine đứng giữa ảnh và tên của chính ảnh đó — mắt đọc ra nó là
+ * chrome của khung ảnh chứ không phải eyebrow của tiêu đề. Tiêu đề nhận qua
+ * prop `heading` để chỗ dùng vẫn giữ được thẻ và vai trò ARIA của riêng nó
+ * (ở kệ phần mềm nó là `h4` nằm trong `tabpanel`).
+ *
  * ĐIỀU HƯỚNG NỔI, ĐẶT DƯỚI ẢNH CHỨ KHÔNG ĐÈ LÊN ẢNH. Kiểu lightbox cổ điển gắn
  * hai mũi tên ‹ › đè lên hai mép ảnh; ở đây làm vậy là che đúng sidebar và cột
  * rail phải — hai chỗ mang lập luận của màn. Cụm điều hướng vì thế là một viên
@@ -59,9 +66,7 @@ import { cn } from "@/lib/utils";
  */
 
 export interface AppShotDetail {
-  /** Tên màn, hiện ở dòng nguồn mono. */
-  screen: string;
-  /** Nhãn engine hoặc tầng license. */
+  /** Nhãn engine hoặc tầng license. Cũng là mẩu giữa của dòng nguồn mono. */
   label: string;
   title: string;
   /** Một câu tóm tắt. Cũng là nguồn của `alt`. */
@@ -97,6 +102,7 @@ export function AppShot({
   onOpenChange,
   ratio = "ultra",
   sizes,
+  heading,
   className,
 }: {
   src: string;
@@ -112,9 +118,14 @@ export function AppShot({
   /** Tỷ lệ khung POSTER. Ảnh gốc luôn là `screen` (16:10). */
   ratio?: "ultra" | "wide" | "screen";
   sizes?: string;
+  /** Tiêu đề của ảnh, đặt giữa khung và dòng chú. Chỗ dùng tự chọn thẻ. */
+  heading?: React.ReactNode;
   className?: string;
 }) {
-  const source = `${product} · ${detail.screen} · ${labels.sample}`;
+  /* Dòng nguồn KHÔNG lặp tên màn: ở bản phóng to, tên màn đã là tiêu đề đứng
+     ngay dưới nó. Hai dòng mono xếp liền nhau mà một dòng nhắc lại dòng kia
+     đọc ra là header bị lặp, không đọc ra hai mẩu thông tin. */
+  const source = `${product} · ${detail.label} · ${labels.sample}`;
 
   /* Phím ← → đi lại giữa các màn ngay trong dialog. Radix đã lo Esc và bẫy
      focus; hai phím này là thứ người ta thử đầu tiên trong một khung xem ảnh. */
@@ -160,7 +171,9 @@ export function AppShot({
           </DialogTrigger>
         </div>
 
-        <div className="mt-2.5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        {heading ? <div className="mt-3">{heading}</div> : null}
+
+        <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <p className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
             {detail.label} · {labels.sample}
           </p>
@@ -191,15 +204,6 @@ export function AppShot({
         onKeyDown={onKeyDown}
         className="flex max-h-[92dvh] flex-col gap-5 overflow-y-auto p-5 sm:max-w-[min(96vw,96rem)] lg:p-6"
       >
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-          <DialogTitle className="font-display text-subhead font-semibold">
-            {detail.title}
-          </DialogTitle>
-          <p className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
-            {source}
-          </p>
-        </div>
-
         {/*
           ẢNH MỘT BÊN, CHỮ MỘT BÊN. Xếp chồng thì chiều cao cộng dồn: ảnh 16:10
           ở 1150px đã cao 719px, thêm đoạn chữ nữa là vượt màn và người đọc phải
@@ -216,26 +220,68 @@ export function AppShot({
           Đó là giá của việc đặt lời giải thích BÊN CẠNH ảnh thay vì bên dưới.
           Đổi lại là không phải cuộn để nối ảnh với đoạn nói về chính nó. Muốn
           lấy lại 0,80× ở 1440 thì phải bỏ cột chữ, không có cách thứ ba.
+
+          TIÊU ĐỀ NẰM TRONG CỘT CHỮ, không đứng thành một hàng header riêng.
+          Bản trước để `DialogTitle` ở góc trái trên và dòng nguồn ở góc phải,
+          nên trên màn 1440 tiêu đề cách đoạn nói về chính nó **1200px** và
+          giữa hai đầu không có gì nối. Gom cả cụm vào một cột thì mắt đọc
+          liền một mạch: nguồn → tên màn → luận điểm → chuyện → câu chốt.
         */}
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
           {/* `quality` 90 chứ không phải 75 mặc định: đây là chỗ DUY NHẤT trên
               site mà người đọc phải đọc chữ nằm BÊN TRONG một tấm ảnh (13px ở
               cỡ thiết kế), và chữ nhỏ là thứ hỏng trước tiên khi nén. Mức 90 đã
               khai ở `images.qualities` trong `next.config.ts` — Next 16 trả HTTP
-              400 cho mọi mức không khai, tức ảnh mất trắng chứ không xấu đi. */}
-          <MediaFrame
-            ratio="screen"
-            src={src}
-            alt={alt}
-            quality={90}
-            sizes="(max-width: 1024px) 92vw, (max-width: 1600px) 62vw, 1100px"
-            className="min-w-0 border-0 bg-transparent"
-          />
+              400 cho mọi mức không khai, tức ảnh mất trắng chứ không xấu đi.
+
+              `sizes` KHÔNG được vượt 1024: ảnh nguồn rộng 2880, mà nấc thiết bị
+              của Next nhảy 2048 → 3840. Khai 1100px thì màn retina cần 2200 và
+              trình duyệt lấy bản 3840 — phóng to quá cả bản gốc, không thêm một
+              chi tiết nào, chỉ thêm một lần mã hoá nguội (lần mở đầu tiên là
+              một hình chữ nhật đen vài giây). 1000px đưa mọi màn về nấc 2048,
+              đúng nhu cầu thật của khung ~994–1148px ở DPR 2. */}
+          <div className="relative min-w-0 rounded-xl">
+            {/* `priority` = `loading="eager"` + `fetchPriority: high`, và nó
+                KHÔNG tốn gì ở lần tải trang: ảnh này chỉ tồn tại sau khi người
+                dùng bấm mở, trước đó dialog chưa render. Đây cũng là ảnh duy
+                nhất trên site mà người dùng ĐÃ chủ động xin xem — để nó xếp
+                hàng sau mọi thứ khác là sai thứ tự ưu tiên.
+                Lý do trực tiếp: đo trong dialog thì sau 6 giây `currentSrc` vẫn
+                rỗng và `naturalWidth` vẫn 0 — trình duyệt còn chưa bắt đầu tải,
+                trong khi poster cùng trang thì đã tải xong. Ép eager là hết
+                ngay. (Phép đo chạy trên Chrome headless nên chưa khẳng định
+                được là hành vi của trình duyệt thật; nhưng eager ở đây đúng
+                bất kể nguyên nhân.) */}
+            <MediaFrame
+              ratio="screen"
+              src={src}
+              alt={alt}
+              quality={90}
+              priority
+              sizes="(max-width: 1024px) 92vw, 1000px"
+              className="border-0 bg-transparent"
+            />
+            {/* Cùng vòng mép với poster ngoài trang. Kit §11: ảnh giao diện tối
+                nằm trên nền tối là chỗ dễ mất mép nhất — và trong dialog thì
+                ảnh to nhất, tức mất mép cũng lộ nhất. */}
+            <span
+              aria-hidden
+              className="pv-edge bg-linear-to-t from-brand/35 to-border"
+            />
+          </div>
 
           <div className="flex flex-col gap-3">
-            <p className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
-              {detail.label}
-            </p>
+            {/* Nhãn và tiêu đề là MỘT cụm — khe 6px, không phải 12px của cột.
+                Eyebrow cách tiêu đề bằng đúng khoảng cách với đoạn kế thì nó
+                thôi làm eyebrow, thành một dòng chữ độc lập. */}
+            <div className="flex flex-col gap-1.5">
+              <p className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
+                {source}
+              </p>
+              <DialogTitle className="font-display text-subhead font-semibold">
+                {detail.title}
+              </DialogTitle>
+            </div>
             <DialogDescription className="text-lead text-foreground">
               {detail.body}
             </DialogDescription>

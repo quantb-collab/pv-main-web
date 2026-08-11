@@ -43,28 +43,51 @@ import type { ReactNode } from "react";
  * focus, người dùng tự bấm một bước (`taken`, chốt một chiều), và bản phóng to
  * đang mở (`zoomed`).
  *
- * NGÂN SÁCH CHIỀU CAO — `--section-y` 8,5rem mỗi đầu nên màn 900px còn ~628px:
- *   tiêu đề (eyebrow gộp dòng, KHÔNG lead)            ~44px
- *   khe                                                 32px
- *   lưới 3 hàng × 10rem + 2 khe 16                     512px
- * Cộng ~588px — vừa một màn hình, dư ~40px. `lead` của section bị BỎ đúng theo
- * `docs/SOFTWARE-KIT.md` §3: câu dẫn và ảnh sản phẩm nói cùng một việc, giữ cả
- * hai là trả 52px để nói hai lần.
+ * NGÂN SÁCH CHIỀU CAO — đo lại trên trình duyệt ở 1440×900, không phải ước
+ * lượng. `--section-y` 8,5rem mỗi đầu (136px) nên section còn 628px:
+ *   tiêu đề (eyebrow gộp dòng, KHÔNG lead)               41px
+ *   khe `mt-8`                                           32px
+ *   lưới 3 hàng × 10,5rem + 2 khe 16                    536px
+ * Cộng 609px trên 628px — vừa một màn hình, dư 19px. `lead` của section bị BỎ
+ * đúng theo `docs/SOFTWARE-KIT.md` §3: câu dẫn và ảnh sản phẩm nói cùng một
+ * việc, giữ cả hai là trả 52px để nói hai lần.
  *
- * Trong ô lớn (3 hàng = 512px, trừ đệm còn ~472px):
- *   tên sản phẩm + nhãn vai, một dòng                    28px
- *   khung ảnh 21:9 ở bề rộng ~560 + hàng chú của AppShot 266px
- *   tên màn của bước                                     28px
- *   dãy năm bước + hai khe 16                            59px
- * Cộng ~395px, dư ~77px. Ảnh là con số to nhất: đổi 21:9 sang 16:9 là +75px và
- * cả section vỡ ngân sách. Tỷ lệ 21:9 cũng chính là tỷ lệ poster chuẩn ở
- * `SOFTWARE-KIT.md` §5.
+ * Trong ô lớn (3 hàng = 536px, trừ đệm 40 còn 496px):
+ *   tên sản phẩm `text-subhead` + nhãn vai, một dòng     41px
+ *   khe                                                  16px
+ *   khung ảnh 16:9 ở bề rộng 560                        315px
+ *   khe 12 + tên màn 28 + khe 8 + dòng chú 17            65px
+ *   khe                                                  16px
+ *   dãy năm bước                                         28px
+ * Cộng 481px, dư 15px.
+ *
+ * ⚠️ BẢN TRƯỚC ĐỂ LẠI MỘT LỖ 91px ĐÚNG GIỮA Ô LỚN. Hàng 10rem cho ô 512px
+ * nhưng nội dung chỉ cần 421px, và vì dãy bước bám đáy bằng `mt-auto` nên toàn
+ * bộ phần dư dồn thành MỘT khoảng trống giữa tên màn và dãy bước — 18% chiều
+ * cao của ô, nằm ngay dưới thứ quan trọng nhất section. Chỗ đó nay trả về cho
+ * ẢNH: khung 16:9 cao hơn 21:9 đúng 75px và tiêu đề to hơn một nấc ăn 13px
+ * nữa. Trước khi thêm bất cứ thứ gì vào ô này, đo lại — đừng cộng nhẩm.
+ *
+ * VÌ SAO 16:9 CHỨ KHÔNG 21:9. Ảnh nguồn là 16:10. Khung 21:9 để lộ 68,6% chiều
+ * cao màn, tức `object-cover` xén mất 31% ở chân ảnh — và nó xén ngang giữa một
+ * hàng bảng, đọc ra là ảnh bị lỗi chứ không ra một cửa sổ. Khung 16:9 để lộ
+ * 90%, phần xén còn 10% và rơi vào dải dưới cùng của màn.
+ * Không xén một pixel nào thì phải `ratio="screen"` (16:10, 350px) — cộng 35px
+ * nữa, tức hàng phải lên 10,92rem và section vượt 900px. Nó nằm ngoài ngân
+ * sách đúng 1px, nên chỉ mở được nếu trả lại chỗ ở một dòng khác.
  *
  * ⚠️ Bản trước đặt cả `sXBody` lẫn `sXQuote` lên thẻ và phải nới hàng lên
  * 11rem, khiến section tràn 8px ở 1440×900. Bỏ hai khối chữ đó thì hàng về
  * được 10rem và hết tràn. Nếu sau này lại thêm chữ vào thẻ thì nhớ: `BentoTile`
  * không có `overflow-hidden`, nên phần vượt track KHÔNG bị cắt mà lòi ra ngoài
- * mặt ô.
+ * mặt ô. Trần của hàng là 10,89rem — trên mức đó section vượt 900px.
+ *
+ * CẤP BẬC CHỮ. Bốn vai trò từng cùng một cỡ 21px: tên sản phẩm số 1, tên một
+ * màn trong stepper, và tên ba sản phẩm ở ba ô nhỏ. Lúc đó cấp bậc chỉ còn màu
+ * và diện tích ô gánh, chữ không gánh gì. Nay `PV One` lên `text-subhead` (34px)
+ * — nó là sản phẩm, ba cái tên kia cũng là sản phẩm nhưng ở ô nhỏ hơn ba lần,
+ * còn tên màn chỉ là nhãn của một tấm ảnh. Đừng nâng tên màn lên theo: hai thứ
+ * bằng nhau là quay lại đúng chỗ cũ.
  *
  * VÌ SAO KHÔNG DÙNG `Tabs` CỦA shadcn. Ngữ nghĩa thì đúng (tablist/tab/
  * tabpanel) nhưng `TabsTrigger` mang sẵn `text-sm`, `flex-1`, gạch chân `after:`
@@ -108,6 +131,9 @@ export interface ShotLabels {
   close: string;
   prev: string;
   next: string;
+  /** Nhãn nút dừng nhịp lướt, và nhãn của chính nút đó khi đang dừng. */
+  pause: string;
+  resume: string;
 }
 
 export interface BentoProduct {
@@ -152,7 +178,7 @@ export function SoftwareBento({
 
       {/* Chiều cao hàng chỉ cố định từ `lg` — dưới đó lưới xuống 1–2 cột và ô
           tự co theo nội dung, ép chiều cao ở khổ hẹp chỉ tạo ra ô rỗng. */}
-      <BentoGrid className="mt-8 lg:auto-rows-[10rem]">
+      <BentoGrid className="mt-8 lg:auto-rows-[10.5rem]">
         <HeroTile hero={hero} stepsLabel={stepsLabel} labels={labels} />
         {products.map((product) => (
           <ProductTile key={product.name} product={product} />
@@ -180,10 +206,14 @@ function HeroTile({
   const [active, setActive] = useState(0);
   const [held, setHeld] = useState(false);
   const [zoomed, setZoomed] = useState(false);
-  /* Chốt một chiều: người dùng đã tự bấm một bước thì thôi lướt, vĩnh viễn.
-     Ở nhịp 1,5s mà vẫn chạy tiếp sau khi người ta chọn thì đúng 1,5 giây sau
-     lựa chọn của họ bị giật mất — và họ sẽ bấm lại, rồi lại mất. */
-  const [taken, setTaken] = useState(false);
+  /* Bấm một bước là dừng lướt — ở nhịp 1,5s mà vẫn chạy tiếp sau khi người ta
+     chọn thì đúng 1,5 giây sau lựa chọn của họ bị giật mất, và họ sẽ bấm lại,
+     rồi lại mất.
+     ⚠️ Đây CŨNG là lối thoát mà WCAG 2.2.2 đòi, nên nó không được là chốt một
+     chiều nữa: một khối tự đổi nội dung vô hạn phải có cách dừng THẤY ĐƯỢC.
+     Rê chuột và focus cũng dừng, nhưng màn cảm ứng không có cả hai. Vì vậy có
+     thêm một nút bấm được, và nó bật lại được. */
+  const [paused, setPaused] = useState(false);
 
   const uid = useId();
   const tabId = (i: number) => `${uid}-tab-${i}`;
@@ -196,7 +226,7 @@ function HeroTile({
      chân trang là bốn lần render mỗi phút cho không ai xem. */
   const inView = useInView(ref, { amount: 0.4 });
 
-  const running = !reduced && !held && !taken && !zoomed && inView && count > 1;
+  const running = !reduced && !held && !paused && !zoomed && inView && count > 1;
 
   useEffect(() => {
     if (!running) return;
@@ -214,7 +244,7 @@ function HeroTile({
     (i: number, focus = false) => {
       const next = ((i % count) + count) % count;
       setActive(next);
-      setTaken(true);
+      setPaused(true);
       if (focus) {
         const el = tabsRef.current?.querySelectorAll("[role=tab]")[next];
         (el as HTMLElement | undefined)?.focus();
@@ -260,7 +290,10 @@ function HeroTile({
         onBlur={() => setHeld(false)}
       >
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h3 className="font-display text-title font-semibold text-brand-ink">
+          {/* Nhãn vai đứng CÙNG DÒNG với tên chứ không nằm trên như ở ba ô nhỏ,
+              và đó là chủ ý: xếp chồng tốn thêm 21px mà ngân sách ô chỉ dư 15.
+              Cấp bậc vẫn đọc được vì cỡ chữ đã chênh hẳn một nấc. */}
+          <h3 className="font-display text-subhead font-semibold text-brand-ink">
             {hero.name}
           </h3>
           <p className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
@@ -270,13 +303,13 @@ function HeroTile({
 
         {/* `bg-transparent`: `MediaFrame` mặc định nền `bg-surface`, mà nền đó
             phủ một mảng phẳng lên đúng khúc giữa gradient của ô và làm mất
-            hiệu ứng khối. Tỷ lệ `ultra` = 21:9, đúng cỡ `shot` của kit. */}
+            hiệu ứng khối. */}
         {step ? (
           <div
             id={panelId}
             role="tabpanel"
             aria-labelledby={tabId(active)}
-            className="flex flex-1 flex-col gap-3.5"
+            className="flex flex-1 flex-col"
           >
             {/* KHÔNG đặt `key={active}` ở đây: đổi `key` là unmount rồi mount
                 lại, mà `Dialog` nằm bên trong `AppShot` — bản phóng to sẽ tự
@@ -287,15 +320,34 @@ function HeroTile({
               <AppShot
                 src={step.src}
                 alt={step.alt}
+                ratio="wide"
                 product={hero.name}
                 detail={{
-                  screen: step.title,
                   label: step.label,
                   title: step.title,
                   body: step.body,
                   story: step.story,
                   quote: step.quote,
                 }}
+                /*
+                  TÊN MÀN ĐI QUA `heading` ĐỂ NẰM NGAY DƯỚI ẢNH, TRÊN DÒNG CHÚ.
+                  Trước đây nó là phần tử anh em đứng SAU `AppShot`, nên dòng
+                  chú (`ONE CORE · DỮ LIỆU MẪU` / `XEM ẢNH LỚN`) chen vào giữa
+                  ảnh và tên của chính ảnh đó — nhãn engine đọc ra là chrome của
+                  khung, không đọc ra eyebrow của tiêu đề.
+
+                  CHỈ CÒN TÊN MÀN TRÊN THẺ. Ở nhịp lướt 1,5s, tốc độ đọc 200
+                  chữ/phút chỉ kịp **5 chữ** — đặt một đoạn văn dưới nhịp đó là
+                  viết chữ cho không ai đọc, và tệ hơn là làm người ta thấy có
+                  chữ rồi cố đọc không kịp. Tên màn 2–4 chữ thì liếc là bắt
+                  được. Toàn bộ phần giải thích nằm ở bản phóng to, nơi người
+                  đọc tự bấm tới lui theo nhịp của mình.
+                */
+                heading={
+                  <h4 className="font-display text-title font-semibold">
+                    {step.title}
+                  </h4>
+                }
                 labels={labels}
                 open={zoomed}
                 onOpenChange={setZoomed}
@@ -310,81 +362,126 @@ function HeroTile({
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px"
               />
             ) : (
-              <MediaFrame
-                key={active}
-                ratio="ultra"
-                need={step.need}
-                className="border-0 bg-transparent"
-              />
+              /* Chưa có ảnh: ô chờ cùng tỷ lệ, và tên màn phải tự đứng ra vì
+                 không có `AppShot` để nhận nó qua `heading`. Khe 12px giữ đúng
+                 bằng khe `mt-3` bên trong `AppShot`. */
+              <>
+                <MediaFrame
+                  key={active}
+                  ratio="wide"
+                  need={step.need}
+                  className="border-0 bg-transparent"
+                />
+                <h4 className="mt-3 font-display text-title font-semibold">
+                  {step.title}
+                </h4>
+              </>
             )}
-
-            {/*
-              CHỈ CÒN TÊN MÀN TRÊN THẺ. Ở nhịp lướt 1,5s, tốc độ đọc 200
-              chữ/phút chỉ kịp **5 chữ** — đặt một đoạn văn dưới nhịp đó là
-              viết chữ cho không ai đọc, và tệ hơn là làm người ta thấy có chữ
-              rồi cố đọc không kịp. Tên màn 2–4 chữ thì liếc là bắt được.
-              Toàn bộ phần giải thích nằm ở bản phóng to, nơi người đọc tự bấm
-              tới lui theo nhịp của mình.
-            */}
-            <h4 className="font-display text-title font-semibold">
-              {step.title}
-            </h4>
           </div>
         ) : null}
 
         {/*
-          DÃY NĂM BƯỚC. Mỗi bước là một vạch ngang cộng một số mono — vạch cho
-          biết đang ở đâu trong năm bước kể cả khi liếc qua, số cho biết bấm
-          được. Chấm tròn thì không nói được "còn mấy bước nữa".
+          DÃY NĂM BƯỚC cộng một nút dừng. Mỗi bước là một vạch ngang cộng một số
+          mono — vạch cho biết đang ở đâu trong năm bước kể cả khi liếc qua, số
+          cho biết bấm được. Chấm tròn thì không nói được "còn mấy bước nữa".
+
+          Nút dừng đứng NGOÀI `tablist`: một nút không phải `role=tab` nằm trong
+          tablist là phá đúng cái mẫu ARIA mà dãy này đang khai.
         */}
-        <div
-          ref={tabsRef}
-          role="tablist"
-          aria-label={stepsLabel}
-          aria-orientation="horizontal"
-          onKeyDown={onKeyDown}
-          /* Một bước thì không có gì để chuyển: `hidden` chứ không bỏ hẳn, để
-             `tabsRef` vẫn có chỗ bám và `aria-controls` không trỏ vào hư vô. */
-          className={cn("mt-auto flex gap-2", count < 2 && "hidden")}
-        >
-          {steps.map((s, i) => {
-            const on = i === active;
-            return (
-              <button
-                key={s.title}
-                type="button"
-                id={tabId(i)}
-                role="tab"
-                aria-selected={on}
-                aria-controls={panelId}
-                tabIndex={on ? 0 : -1}
-                onClick={() => select(i)}
-                className="group/step flex flex-1 cursor-pointer flex-col gap-1.5 rounded-control pt-1 pb-0.5 text-left focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-              >
-                <span
-                  aria-hidden
-                  className={cn(
-                    "h-px w-full transition-colors duration-(--dur-base)",
-                    on
-                      ? "bg-brand"
-                      : "bg-border group-hover/step:bg-brand/40",
-                  )}
-                />
-                <span
-                  className={cn(
-                    "font-mono text-micro font-medium tabular-nums transition-colors duration-(--dur-base)",
-                    on ? "text-brand-ink" : "text-subtle-foreground",
-                  )}
+        <div className="mt-auto flex items-end gap-3">
+          <div
+            ref={tabsRef}
+            role="tablist"
+            aria-label={stepsLabel}
+            aria-orientation="horizontal"
+            onKeyDown={onKeyDown}
+            /* Một bước thì không có gì để chuyển: `hidden` chứ không bỏ hẳn, để
+               `tabsRef` vẫn có chỗ bám và `aria-controls` không trỏ vào hư vô. */
+            className={cn("flex flex-1 gap-2", count < 2 && "hidden")}
+          >
+            {steps.map((s, i) => {
+              const on = i === active;
+              return (
+                <button
+                  key={s.title}
+                  type="button"
+                  id={tabId(i)}
+                  role="tab"
+                  aria-selected={on}
+                  aria-controls={panelId}
+                  tabIndex={on ? 0 : -1}
+                  onClick={() => select(i)}
+                  className="group/step flex flex-1 cursor-pointer flex-col gap-1.5 rounded-control pt-1 pb-0.5 text-left focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="sr-only">{s.title}</span>
-              </button>
-            );
-          })}
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "h-px w-full transition-colors duration-(--dur-base)",
+                      on
+                        ? "bg-brand"
+                        : "bg-border group-hover/step:bg-brand/40",
+                    )}
+                  />
+                  <span
+                    className={cn(
+                      "font-mono text-micro font-medium tabular-nums transition-colors duration-(--dur-base)",
+                      on ? "text-brand-ink" : "text-subtle-foreground",
+                    )}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="sr-only">{s.title}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {count > 1 ? (
+            <PauseButton
+              paused={paused}
+              onToggle={() => setPaused((p) => !p)}
+              label={paused ? labels.resume : labels.pause}
+            />
+          ) : null}
         </div>
       </div>
     </BentoTile>
+  );
+}
+
+/** Nút dừng/chạy nhịp lướt. Chỉ có biểu tượng trên mặt trang — nhãn chữ nằm ở
+ *  `sr-only` vì hai chữ tiếng Việt cạnh dãy năm số mono là thêm một tầng chữ
+ *  vào chỗ đã chật, mà hình hai vạch và hình tam giác thì không cần dịch.
+ *  Vẽ bằng SVG chứ không dùng ký tự ▮▶: ký tự đổi hình theo font. */
+function PauseButton({
+  paused,
+  onToggle,
+  label,
+}: {
+  paused: boolean;
+  onToggle: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-control text-subtle-foreground transition-colors duration-(--dur-fast) hover:bg-surface-2 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+    >
+      <svg
+        aria-hidden
+        viewBox="0 0 16 16"
+        fill="currentColor"
+        className="size-3.5"
+      >
+        {paused ? (
+          <path d="M5 3.2v9.6l7.5-4.8z" />
+        ) : (
+          <path d="M4.5 3h2.2v10H4.5zm4.8 0h2.2v10H9.3z" />
+        )}
+      </svg>
+      <span className="sr-only">{label}</span>
+    </button>
   );
 }
 
@@ -404,11 +501,21 @@ function ProductTile({ product }: { product: BentoProduct }) {
       {/* CẢ THẺ LÀ LINK: thẻ đã có ảnh, tên và một câu — thêm một nhãn "xem
           thêm" nữa là tốn một dòng cho thứ hình thù cái thẻ đã nói. Ô lớn thì
           KHÔNG phải link vì bên trong nó đã có năm nút bước. */}
+      {/* CĂN TRÁI Ở CẢ HAI HÌNH HỘP. Bản trước để ô đứng căn giữa còn ô nằm căn
+          trái, nên ba ô đứng cạnh nhau trong cùng một lưới nói hai thứ tiếng.
+          Hình hộp đã đủ để phân biệt điện thoại với máy bàn; đổi thêm cách căn
+          là đổi thứ không mang thông tin gì.
+
+          Ô nằm XUỐNG CHỒNG dưới `sm`: ở 375 thì ảnh 150px cộng khe chỉ chừa
+          129px cho cột chữ — tên xuống hai dòng và câu dẫn thành bốn dòng 16 ký
+          tự, hẹp hơn mọi ngưỡng đọc được. */}
       <Link
         href={product.href}
         className={cn(
           "group/tile flex h-full gap-4 rounded-[inherit] p-5 transition-transform duration-(--dur-base) hover:-translate-y-1",
-          phone ? "flex-col items-center text-center" : "flex-row items-center",
+          phone
+            ? "flex-col items-start"
+            : "flex-col justify-center sm:flex-row sm:items-center",
         )}
       >
         {/* Ô chờ bản CÂM ở đây: bốn khung chờ đứng cạnh nhau mà cái nào cũng
@@ -426,7 +533,7 @@ function ProductTile({ product }: { product: BentoProduct }) {
           )}
         />
 
-        <div className={cn("flex flex-col gap-1", phone && "items-center")}>
+        <div className="flex flex-col gap-1">
           <p className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
             {product.label}
           </p>

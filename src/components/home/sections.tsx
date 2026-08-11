@@ -321,6 +321,8 @@ export async function Software() {
           close: tc("closeDrawer"),
           prev: t("prevLabel"),
           next: t("nextLabel"),
+          pause: t("pauseLabel"),
+          resume: t("resumeLabel"),
         }}
         hero={{
           label: t("oneLabel"),

@@ -150,6 +150,8 @@
       "zoomLabel": "Xem ảnh lớn",
       "prevLabel": "Màn trước",
       "nextLabel": "Màn sau",
+      "pauseLabel": "Dừng lướt qua các màn",
+      "resumeLabel": "Lướt tiếp qua các màn",
       "shotAlt": "Màn {screen} của PV One: {what}",
       "s1Label": "One Core",
       "s1Title": "Bản tin sáng",
