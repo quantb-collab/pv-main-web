@@ -76,6 +76,10 @@ benchmark hay testimonial. Không lấp bằng văn marketing chung chung.
 Ảnh thiếu thì để `<MediaFrame>` không có `src` kèm `need`. Yêu cầu kỹ thuật cho
 mọi ảnh còn thiếu (cỡ, nền, màu, prompt, cách giữ ổn định): `docs/IMAGE-BRIEF.md`.
 
+Riêng **giao diện sản phẩm PV One** (ảnh chụp màn hình phần mềm, ở trang chủ và
+mọi trang khác) đi theo `docs/SOFTWARE-KIT.md` — nó là hệ màu khác, có khung
+riêng `AppShot`, ngân sách diện tích riêng và luật "dữ liệu mẫu" riêng.
+
 ---
 
 ## Bản đồ thư mục

@@ -1,8 +1,8 @@
 # Tài liệu sinh ảnh — Pebble Vina
 
-Toàn site cần **20 ảnh**; đã có 13 — xong toàn bộ nhóm A — còn thiếu 7. Tài
-liệu này nói: mỗi ảnh cỡ bao nhiêu, nền trong suốt hay không, màu gì, vẽ ra sao, và làm thế nào để 13 tấm
-sinh bằng AI trông như chụp cùng một buổi chứ không như gom từ 13 nơi.
+Toàn site cần **23 ảnh**; đã có 13 — xong toàn bộ nhóm A — còn thiếu 10. Tài
+liệu này nói: mỗi ảnh cỡ bao nhiêu, nền trong suốt hay không, màu gì, vẽ ra sao, và làm thế nào để cả bộ
+sinh bằng AI trông như chụp cùng một buổi chứ không như gom từ 23 nơi.
 
 Mọi con số ở đây suy ra từ code thật (`product-shelf.tsx`, `templates.tsx`,
 `about/page.tsx`) và từ token màu ở `globals.css`. Sửa layout thì phải sửa lại
@@ -17,14 +17,19 @@ tài liệu này.
 | **A — Card thiết bị** | Kệ phần cứng, trang chủ | 13 ✅ | 1200×675 (16:9) | **Trong suốt** | ✅ Có |
 | **B — Ảnh giải pháp** | 6 trang `/solutions/*` | 6 | 1920×1080 (16:9) | Đục | ⚠️ Được, có điều kiện |
 | **C — Ảnh About** | `/about`, khối sứ mệnh | 1 | 2000×1500 (4:3) | Đục | ❌ **Không** — phải chụp thật |
+| **D — Card sản phẩm phần mềm** | Kệ phần mềm, trang chủ | 3 | 1200×675 (16:9) | **Trong suốt** | ⚠️ Được, **màn hình phải câm** |
 
 Tổng dung lượng cả bộ nên nằm dưới **6 MB**: nhóm A ≤ 250 KB/tấm (PNG-24 có
-alpha), nhóm B ≤ 400 KB/tấm (JPEG q80), nhóm C ≤ 600 KB.
+alpha), nhóm B ≤ 400 KB/tấm (JPEG q80), nhóm C ≤ 600 KB, nhóm D ≤ 350 KB/tấm
+(PNG-24 có alpha — khung hiển thị to gấp đôi nhóm A nên trần cao hơn).
 
 Vì sao khác nhau: nhóm A là vật thể, đặt trên một ô màu do trang quyết định —
 nền trong suốt là cách duy nhất để cả bộ không có mỗi tấm một sắc đen.
 Nhóm B là cảnh, nền là một phần của ảnh. Nhóm C là bằng chứng Pebble Vina có
-thật; một tấm ảnh sinh ra sẽ biến nó thành thứ ngược lại với điều nó phải nói.
+thật; một tấm ảnh sinh ra sẽ biến nó thành thứ ngược lại với điều nó phải nói. Nhóm D
+cùng luật với nhóm A vì nó cũng nằm trên một cái thẻ — nhưng thẻ của nó sáng hơn
+(xem §3.1), và nó có thêm một luật riêng mà ba nhóm kia không có: **màn hình
+trong ảnh không được mang giao diện bịa** (§3.3).
 
 ---
 
@@ -326,7 +331,192 @@ câm. Không phải sửa gì khác.
 
 ---
 
-## 3. Nhóm B — 6 ảnh trang giải pháp
+## 3. Nhóm D — 3 card sản phẩm phần mềm
+
+Ba tấm: `erp` · `context-provider` · `mes`. Chỗ dùng: kệ phần mềm ở trang chủ
+(`src/components/home/software-shelf.tsx`).
+
+> ⚠️ **ĐỌC `docs/SOFTWARE-KIT.md` TRƯỚC KHI SINH BẤT KỲ TẤM NÀO Ở NHÓM NÀY.**
+> Cả mục §3 viết cho tình huống *chưa có giao diện sản phẩm để trưng*, và tình
+> huống đó đã hết: bộ bàn giao POC PV One (10 Aug 2026) có 5 màn desktop thật.
+> Tức nhóm D lên được **mức 1** của chính thang leo ở §3.3 — ảnh chụp sản phẩm
+> thật — nên không còn phải sinh ảnh thiết bị màn câm nữa. Khi đó §3.1–§3.5
+> (nền trong suốt, dải sáng 30–58, diện tích 40%, cụm ba thiết bị, prompt) đều
+> KHÔNG áp dụng; thay bằng `SOFTWARE-KIT.md` §3–§8. Phần còn lại của tài liệu
+> này (nhóm A, B, C) không đổi.
+
+Nhóm này thừa kế TOÀN BỘ §1 (bảng màu, ánh sáng, máy ảnh, danh sách cấm) và
+phần lớn §2. Dưới đây chỉ ghi những chỗ KHÁC nhóm A — và một luật riêng
+(§3.3) mà ba nhóm kia không có.
+
+### 3.1 Kích thước, nền, và cái nền thẻ SÁNG HƠN
+
+- **Giao:** PNG-24, **1200×675**, tỷ lệ 16:9 chính xác, **nền trong suốt**.
+- **Hiển thị:** ~400×225 ở desktop 1440px (lưới 3 cột). **Gấp đôi card thiết bị
+  198×111** — nên mọi khuyết điểm cũng to gấp đôi. Đây không phải chỗ để một
+  tấm "nhìn xa thì ổn".
+- `object-cover`: **sai tỷ lệ là bị CẮT**, không phải bị co. Đúng 16:9 hoặc
+  không giao.
+
+⚠️ **Nền thẻ ở đây KHÔNG phải `#121920`.** Kệ phần mềm đứng ở nấc trời `rise`,
+và thẻ có nền **dốc dọc**:
+
+| Chỗ | HEX | Độ sáng (thang oklch L×100) |
+|---|---|---|
+| Mặt trên thẻ | `#1A232B` | 25 |
+| Mặt dưới thẻ | `#232F37` | 30 |
+| *(so sánh)* card thiết bị nhóm A | `#121920` | 21 |
+
+Hệ quả bắt buộc: **dải sáng an toàn của vật thể dịch lên — 30–58**, thay cho
+19–52 của nhóm A. Một tấm chuẩn nhóm A đem sang đây sẽ CHÌM, vì đáy thẻ ở đây
+còn sáng hơn cả nền thẻ bên kia. Duyệt ảnh trên đúng dốc `#1A232B → #232F37`,
+không duyệt trên nền đen.
+
+Vẫn cấm bake bóng đổ, cùng lý do §2.1: bóng trên nền trong suốt thành mảng xám
+bẩn khi đặt lên thẻ. Vật thể đứng bằng viền sáng, không bằng bóng.
+
+### 3.2 Chủ thể — một sản phẩm trên BA CỠ MÀN HÌNH
+
+Mỗi tấm là **một** sản phẩm hiện đồng thời trên **ba** thiết bị trong cùng
+khung. Đó là toàn bộ nội dung của tấm ảnh, và nó phải đọc ra ngay ở 400px:
+
+| Cỡ | Vật thể | Vị trí trong khung |
+|---|---|---|
+| Điện thoại | máy dựng đứng, khung mỏng, góc bo | trước — trái, khối nhỏ nhất |
+| Máy bàn | màn hình rời trên chân đế, hoặc laptop mở | giữa — sau, khối lớn nhất |
+| Web | laptop mỏng hoặc tablet nằm ngang | phải, khối trung bình |
+
+Bố cục: ba khối **chồng lấn nhẹ**, đỉnh cao dần từ trái vào giữa rồi thấp
+xuống phải — một đường cong đọc được. Ba vật xếp hàng ngang cách đều nhau đọc
+ra là một bảng so sánh sản phẩm, không đọc ra một bộ.
+
+Cùng góc máy 3/4 và cùng nguồn sáng cho **cả ba tấm** (§1.2, §1.3). Ba tấm này
+nằm cạnh nhau trên một hàng — lệch góc máy thì kệ đọc ra là ảnh gom từ ba nơi,
+đúng lỗi mà bộ nhóm A đã phải sửa lại.
+
+**Ba tấm phải phân biệt được với nhau.** Cả ba đều là "màn hình + điện thoại",
+nên nếu dựng y hệt nhau thì kệ có ba tấm giống nhau và tên sản phẩm thành thứ
+duy nhất phân biệt. Cách phân biệt được phép: khác kiểu máy bàn (màn rời / laptop
+/ hai màn), khác góc xoay, khác cách chồng lấn. Cách KHÔNG được phép: khác màu
+vỏ (cả bộ là titan), khác nhiệt độ đèn (một nguồn sáng lạnh duy nhất).
+
+### 3.3 ⚠️ MÀN HÌNH PHẢI CÂM — luật riêng của nhóm này
+
+**Không được vẽ giao diện lên màn hình.** Không dashboard, không biểu đồ, không
+bảng số, không KPI, không menu, không chữ, không logo — kể cả mờ, kể cả nhỏ,
+kể cả "chỉ gợi ý".
+
+Vì sao đây là luật cứng chứ không phải khuyến nghị: blueprint cấm thẳng
+*"dashboard làm thông điệp chính"* và *"case study giả"*, §4 của chính tài liệu
+này đã ghi *"Không dùng dashboard giả — một giao diện bịa trên trang bán phần
+mềm là thứ người mua Enterprise nhận ra nhanh nhất"*. Một tấm ảnh ERP có biểu
+đồ bịa là một lời hứa về tính năng chưa tồn tại, đặt ngay cạnh câu *"chỗ còn
+trống thì dựng mới"*.
+
+Ba mức, dùng mức cao nhất mà tư liệu cho phép:
+
+1. **Ảnh chụp màn hình sản phẩm THẬT.** Mức đúng nhất. Khi có sản phẩm thật
+   thì thay cả ba tấm — lúc đó cân nhắc chuyển nhóm này sang nền đục như nhóm
+   B, vì screenshot thật cần đủ độ phân giải để đọc được.
+2. **Màn hình chỉ có ÁNH SÁNG.** Đây là mức dùng được NGAY, và là mức tài liệu
+   này viết prompt cho. Mặt kính hắt ra một vệt sáng lạnh `#68B6E6` rất mờ, như
+   màn đang bật trong phòng tối nhìn từ 3/4 — thấy có ánh sáng, không thấy có
+   gì trên đó.
+3. **Màn tắt hẳn**, chỉ còn phản chiếu. An toàn tuyệt đối nhưng sản phẩm trông
+   như chưa cắm điện.
+
+Không có mức nào cho phép "vài mảng chữ nhật mờ gợi ý bố cục". Mảng chữ nhật
+mờ ở 400px chính là một giao diện.
+
+### 3.4 Cỡ cụm và hai trần
+
+Chủ thể ở đây là một **CỤM**, không phải một vật, nên chuẩn diện tích cao hơn
+nhóm A và hai trần phải nới theo — không nới thì cụm nằm ngang chạm trần bề
+ngang trước khi đạt chuẩn diện tích, và cụm ra nhỏ hơn hẳn ý định.
+
+| | Nhóm A | Nhóm D |
+|---|---|---|
+| Diện tích | 34% | **40%** |
+| Trần chiều cao | 80% | **82%** |
+| Trần bề ngang | 78% | **86%** |
+
+Vẫn cân theo **diện tích**, không theo chiều cao — lý do đầy đủ ở §2.1, và ở
+đây nó còn đúng hơn: một cụm có laptop mở nằm ngang và một cụm có màn dựng đứng
+cùng cao 550px thì cụm nằm ngang nặng gần gấp đôi trên mặt kệ.
+
+### 3.5 Prompt — một khối phong cách, một khe chủ thể
+
+Giữ nguyên cách làm §2.3: khối phong cách KHÔNG đổi một chữ giữa ba tấm, chỉ
+thay phần trong `{…}`.
+
+```
+Product family shot of {SUBJECT}, shown on three devices together:
+a slim upright smartphone at front-left, a large desktop monitor on a stand
+at centre-back, and a thin open laptop at right. Devices overlap slightly;
+silhouette rises from left to centre then falls to the right.
+
+ALL SCREENS ARE BLANK. No user interface, no charts, no dashboards, no text,
+no icons, no logos of any kind on any screen. Each screen emits only a very
+faint cold glow (#68B6E6) as if switched on in a dark room, seen at an angle.
+
+Matte brushed titanium bodies, dark graphite (#293137) shading to light
+grey (#A5ACB1) where light catches. Single cold key light (#68B6E6) from
+upper-left, rim light along the top-left edges, everything else falls to
+near-black. Three-quarter camera angle, slightly above eye level, 50mm lens,
+no perspective distortion.
+
+Fully transparent background. No shadow, no ground plane, no reflection
+on any surface below the devices. No people, no hands, no robots.
+Photorealistic product render, 16:9.
+```
+
+Khe `{SUBJECT}`:
+
+| Tệp | `{SUBJECT}` |
+|---|---|
+| `erp.png` | `an enterprise resource planning software suite` |
+| `context-provider.png` | `an AI data-context platform, the desktop unit being a rack-style server display` |
+| `mes.png` | `a manufacturing execution system for a factory floor, the upright device being a rugged industrial handheld` |
+
+Hai khe của `context-provider` và `mes` là chỗ làm ba tấm khác nhau mà không
+phá luật §3.2 — khác **kiểu máy**, không khác màu và không khác đèn.
+
+### 3.6 Hậu kỳ — cùng script, khác bốn tham số
+
+`scripts/prep-product-image.py` chạy được cho nhóm D; bốn hằng đè bằng biến
+môi trường:
+
+```bash
+PV_SUBJECT_AREA=0.40 PV_MAX_WIDTH=0.86 PV_MAX_HEIGHT=0.82 \
+PV_OUT_DIR=public/software \
+python3 scripts/prep-product-image.py ~/Downloads/erp.png erp
+```
+
+Script vẫn gỡ bóng bake, đệm về 16:9, nén và in ra dung lượng + số pixel bóng
+đã gỡ. Phần đo màu đèn báo (§2.4) không áp dụng cho nhóm này — thiết bị ở đây
+không có đèn trạng thái; nếu script báo có màu thì đó là ánh màn hình lọt ra,
+kiểm lại §3.3.
+
+### 3.7 Nối vào code — đã có sẵn chỗ, chỉ điền một dòng
+
+Bảng `PRODUCT_SRC` nằm đầu hàm `Software` (`src/components/home/sections.tsx`).
+Khoá là số thứ tự card, khớp `p{n}Name` trong `messages/vi.json`:
+
+```ts
+const PRODUCT_SRC: Record<number, string | undefined> = {
+  1: "/software/erp.png",              // ERP
+  2: "/software/context-provider.png", // Context Provider — card lõi, đứng giữa
+  3: "/software/mes.png",              // MES
+};
+```
+
+Bỏ file vào `public/software/`, thay `undefined` bằng đường dẫn. Chỗ chưa có
+ảnh để `undefined` — `MediaFrame` tự hiện ô chờ kèm `need`. Không phải sửa gì
+khác; `sizes` đã khai `400px` nên `next/image` phục vụ đúng bản.
+
+---
+
+## 4. Nhóm B — 6 ảnh trang giải pháp
 
 Sáu trang: `enterprise-knowledge` · `document-intelligence` ·
 `workflow-automation` · `ai-agents` · `private-ai` · `industrial-edge-ai`.
@@ -345,7 +535,7 @@ trang giải pháp trong `/track`.
 
 ---
 
-## 4. Nhóm C — ảnh About
+## 5. Nhóm C — ảnh About
 
 - **Giao:** JPEG, **2000×1500** (4:3), nền đục.
 - **Hiển thị:** ~568×426, cột phải khối sứ mệnh `/about`, nấc `night` (`#07090E`).
@@ -362,25 +552,34 @@ Kèm: người có mặt trong khung phải đồng ý cho dùng ảnh trên tra
 
 ---
 
-## 5. Nghiệm thu — chạy trước khi giao
+## 6. Nghiệm thu — chạy trước khi giao
 
-- [ ] Đúng tỷ lệ khung? (A và B là 16:9 chính xác, C là 4:3)
-- [ ] Nhóm A có alpha thật, không có quầng trắng ở viền?
+- [ ] Đúng tỷ lệ khung? (A, B và D là 16:9 chính xác, C là 4:3)
+- [ ] Nhóm A và D có alpha thật, không có quầng trắng ở viền?
 - [ ] Đặt cả bộ nhóm A cạnh nhau trên `#121920`: cùng cỡ vật thể, cùng góc
       máy, cùng hướng đèn?
-- [ ] Xem ở đúng cỡ hiển thị (198×111) — còn nhận ra đó là cái gì không?
+- [ ] **Nhóm D: đặt ba tấm cạnh nhau trên dốc `#1A232B → #232F37`** (KHÔNG
+      phải `#121920`) — cùng góc máy, cùng hướng đèn, và ba tấm PHÂN BIỆT được
+      với nhau bằng kiểu máy chứ không bằng màu?
+- [ ] **Nhóm D: mọi màn hình đều CÂM?** Không giao diện, không biểu đồ, không
+      chữ, không logo — kể cả mờ. Phóng lên 200% mà vẫn không đọc ra gì thì đạt.
+- [ ] Xem ở đúng cỡ hiển thị (A: 198×111 · D: 400×225) — còn nhận ra đó là cái
+      gì không?
 - [ ] Không có chữ, số, logo nào trên vật thể?
 - [ ] Không có đèn xanh lá / đỏ / vàng cam?
 - [ ] Không có người, tay, robot hình người?
-- [ ] **Độ sáng vật thể nằm trong dải 19–52** (thang 0–100, nền thẻ là 21)?
-      Đo bằng luminance trung bình của pixel đục. Dưới 19 thì vật thể chìm vào
-      nền thẻ; trên 52 thì nó nhảy ra khỏi kệ và kéo hết mắt về một thẻ.
+- [ ] **Độ sáng vật thể đúng dải của NHÓM?** Đo bằng luminance trung bình của
+      pixel đục, thang 0–100.
+      · Nhóm A: **19–52** (nền thẻ 21). · Nhóm D: **30–58** (nền thẻ dốc 25→30).
+      Dưới ngưỡng thì vật thể chìm vào nền thẻ; trên ngưỡng thì nó nhảy ra khỏi
+      kệ và kéo hết mắt về một thẻ. Một tấm chuẩn nhóm A đem sang nhóm D sẽ
+      CHÌM — đáy thẻ nhóm D còn sáng hơn cả nền thẻ nhóm A.
 - [ ] Dung lượng dưới ngưỡng ở §0?
 - [ ] Tên file không dấu, không khoảng trắng?
 
 ---
 
-## 6. Những ô chờ KHÔNG phải ảnh
+## 7. Những ô chờ KHÔNG phải ảnh
 
 Đừng nhầm. Trang chủ còn 6 `data-gap` không vẽ ra pixel nào, và các trang
 use-case còn nhiều ô chờ nội dung — đó là **chữ và số liệu cần Pebble Vina

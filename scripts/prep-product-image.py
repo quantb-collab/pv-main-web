@@ -46,14 +46,23 @@ WIDTH, HEIGHT = 1200, 675
 # Mắt đọc "to nhỏ" bằng diện tích, nên chuẩn hoá theo diện tích rồi mới kẹp
 # hai chiều. 0.34 là mức chủ dự án chốt sau hai vòng chỉnh (0.42 → 0.34): vật
 # thể cần khoảng thở quanh nó, thẻ không phải cái khung ảnh chật.
-SUBJECT_AREA = 0.34
+#
+# BỐN HẰNG DƯỚI ĐÂY ĐÈ ĐƯỢC BẰNG BIẾN MÔI TRƯỜNG, và đó là cách chạy cho ảnh
+# NHÓM D (card sản phẩm phần mềm, `docs/IMAGE-BRIEF.md` §3). Nhóm D khác nhóm A
+# ở hai chỗ: chủ thể là một CỤM ba thiết bị chứ không phải một vật, và khung
+# hiển thị to gấp đôi (400px so với 198px) — nên cụm được phép chiếm nhiều diện
+# tích hơn, còn hai trần phải nới theo nếu không cụm nằm ngang chạm trần bề
+# ngang trước khi đạt chuẩn diện tích. Xem §3.6.
+#   PV_SUBJECT_AREA=0.40 PV_MAX_WIDTH=0.86 PV_MAX_HEIGHT=0.82 \
+#   PV_OUT_DIR=public/software python3 scripts/prep-product-image.py <nguồn> erp
+SUBJECT_AREA = float(os.environ.get("PV_SUBJECT_AREA", "0.34"))
 # Hai trần: vật dựng đứng bị chiều cao chặn, vật nằm ngang bị bề ngang chặn.
 # Vật chạm trần thì nhỏ hơn chuẩn — đó là giới hạn của khung 16:9, không phải lỗi.
 # Hạ trần chiều cao cùng lúc với SUBJECT_AREA, nếu không thì vật dựng đứng
 # (aptomat, đồng hồ) đứng yên trong khi cả bộ còn lại nhỏ đi.
-SUBJECT_MAX_HEIGHT = 0.80
-SUBJECT_MAX_WIDTH = 0.78
-OUT_DIR = "public/hardware"
+SUBJECT_MAX_HEIGHT = float(os.environ.get("PV_MAX_HEIGHT", "0.80"))
+SUBJECT_MAX_WIDTH = float(os.environ.get("PV_MAX_WIDTH", "0.78"))
+OUT_DIR = os.environ.get("PV_OUT_DIR", "public/hardware")
 # Chữ ký của bóng bake: bán trong suốt VÀ rất tối
 SHADOW_ALPHA, SHADOW_LUMA = 170, 38
 
