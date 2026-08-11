@@ -107,7 +107,18 @@ export default async function LocaleLayout({
           <style>{`[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
         </noscript>
       </head>
-      <body className="flex min-h-full flex-col">
+      {/*
+        `suppressHydrationWarning` ở ĐÂY là để trị tiện ích trình duyệt, không
+        phải để giấu lỗi của mình. Nhiều extension (ColorZilla chèn
+        `cz-shortcut-listen`, trình quản lý mật khẩu, dịch tự động) gắn thuộc
+        tính vào <body> TRƯỚC khi React hydrate, và React báo mismatch cho một
+        thứ không nằm trong repo — HTML server trả về đúng `class` này và không
+        có gì khác.
+        Cờ này chỉ bỏ qua thuộc tính và chữ của CHÍNH thẻ <body>, không lan
+        xuống cây con, nên mọi mismatch thật bên trong trang vẫn báo như cũ.
+        <html> đã có cờ này vì cùng lý do; cờ không tự truyền xuống con.
+      */}
+      <body className="flex min-h-full flex-col" suppressHydrationWarning>
         <NextIntlClientProvider>
           {/*
             Provider bọc TOÀN BỘ site, không chỉ trang chủ: drawer khảo sát là
