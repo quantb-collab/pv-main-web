@@ -435,13 +435,30 @@ export function BentoGrid({
  * đọc ra một hệ; nội dung căn giữa theo trục dọc vì ô chữ đứng cạnh ô số
  * cao hơn nó.
  */
+/**
+ * Chỗ một ô chiếm trong lưới. Hai nấc đầu là bản gốc của bento chỉ số; hai nấc
+ * sau sinh ra cho kệ phần mềm, nơi hình hộp của ô PHẢI nói ra được cỡ màn hình
+ * mà sản phẩm chạy trên đó — ô đứng đọc ra là điện thoại, ô nằm đọc ra là web.
+ *
+ * Hai nấc mới chỉ khai `lg:` chứ không `md:`: chiều CAO của ô chỉ có nghĩa khi
+ * lưới đã có chiều cao hàng cố định (`lg:auto-rows-*` do chỗ dùng khai). Dưới
+ * `lg` hàng tự co theo nội dung, và một `row-span` trên hàng tự co chỉ kéo ô
+ * dài ra vô cớ.
+ */
+const BENTO_SPAN = {
+  "1x1": "",
+  "2x1": "md:col-span-2",
+  "1x2": "lg:row-span-2",
+  "2x3": "md:col-span-2 lg:row-span-3",
+} as const;
+
 export function BentoTile({
   span = "1x1",
   chrome = "mid",
   children,
   className,
 }: {
-  span?: "1x1" | "2x1";
+  span?: keyof typeof BENTO_SPAN;
   chrome?: "mid" | "low";
   children: ReactNode;
   className?: string;
@@ -450,7 +467,7 @@ export function BentoTile({
     <RevealItem
       className={cn(
         "relative isolate flex flex-col justify-center rounded-xl p-6 lg:p-7",
-        span === "2x1" && "md:col-span-2",
+        BENTO_SPAN[span],
         className,
       )}
     >

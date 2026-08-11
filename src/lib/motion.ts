@@ -70,6 +70,25 @@ export const SHELF = {
   stagger: 1300,
 } as const;
 
+/**
+ * Bước tự chạy của kệ phần mềm (software-bento.tsx). Cùng đơn vị và cùng cơ chế
+ * với `SHELF`.
+ *
+ * 1,5s là nhịp LƯỚT, không phải nhịp đọc — chủ dự án chốt 2026-08-11. Ở tốc độ
+ * đọc 200 chữ/phút, 1,5 giây chỉ đủ cho **5 chữ**. Vì vậy thẻ chỉ còn giữ TÊN
+ * màn (2–4 chữ, liếc là bắt được), và toàn bộ phần giải thích chuyển vào bản
+ * phóng to — nơi người đọc tự bấm tới lui theo nhịp của mình. Đặt một đoạn văn
+ * dưới nhịp này là viết chữ cho không ai đọc.
+ *
+ * Ba chỗ khoá bắt buộc đi kèm nhịp nhanh, xem `software-bento.tsx`: dừng khi rê
+ * chuột hoặc focus, dừng hẳn khi người dùng tự bấm một bước, và dừng khi bản
+ * phóng to đang mở — nếu không thì nội dung đổi ngay dưới tay người đang xem.
+ */
+export const STEPPER = {
+  /** Nhịp lướt qua năm màn. Đủ để nhận ra hình, không đủ để đọc. */
+  auto: 1500,
+} as const;
+
 /** Độ trễ giữa các phần tử trong một nhóm */
 export const STAGGER = 0.07;
 

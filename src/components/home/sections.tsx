@@ -3,6 +3,7 @@ import {
   ProductShelf,
   type ShelfPartner,
 } from "@/components/home/product-shelf";
+import { SoftwareBento } from "@/components/home/software-bento";
 import { Reveal } from "@/components/motion/reveal";
 import {
   BentoGrid,
@@ -180,48 +181,191 @@ export async function Stats() {
  * Edge, thiết bị, bán dẫn) nằm ngang hàng với lớp A và kéo sự chú ý khỏi lợi
  * ích kinh doanh — đúng thứ blueprint cấm.
  *
- * KHÔNG viết chữ mới cho thẻ: title/promise lấy thẳng từ namespace `solutions`
- * nên trang chủ và trang giải pháp không bao giờ lệch chữ.
+ * ── DỰNG LẠI 2026-08-10, HAI VÒNG ──────────────────────────────────────────
+ * Bản đầu phiên là lưới 4 thẻ giải pháp. Nó không sai, nhưng nó không nói được
+ * ba điều chủ dự án cần section này nói:
+ *   · sản phẩm chạy ĐA NỀN TẢNG — điện thoại, máy bàn, web;
+ *   · tự hành thì cần AI đứng ĐÚNG GIỮA điều phối;
+ *   · doanh nghiệp bắt đầu được từ đúng chỗ mình đang đứng.
+ * Bốn thẻ ngang hàng nhau thì không có "giữa", không có "chỗ đang đứng", và
+ * không có chỗ nào nhét được ba nền tảng vào.
  *
- * Bốn danh từ ở đây (Kho tri thức · Xử lý chứng từ · Tự động hoá · AI agent)
- * CỐ Ý khác bốn danh từ của Contrast (Tra cứu · Chứng từ · Báo cáo · Phê
- * duyệt): Contrast gọi tên NỖI ĐAU, section này gọi tên THỨ ĐƯỢC XÂY. Lặp lại
- * cùng bộ từ là lý do StartHere bị cắt 2026-08-07 — đừng lặp lại.
+ * VÒNG 1 là một trục điều phối chia theo trạng thái dữ liệu (vào → xử lý → ra),
+ * sáu chip nguồn bấm được, lõi sáng ở giữa. Chủ dự án BỎ trong cùng phiên: nó
+ * là một sơ đồ, mà section này phải trưng được SẢN PHẨM — có ảnh, có tên, có
+ * lời dẫn, có các cỡ màn hình. Bản đó nằm trong git nếu cần đọc lại.
+ *
+ * VÒNG 2 — bản đang chạy — là KỆ PHẦN MỀM (`SoftwareShelf`): một hàng card,
+ * mỗi card một sản phẩm, mỗi card bốn ô chữ theo đúng thứ tự mắt cần (nhãn vai
+ * → tên → lời dẫn → dải size) trên một ảnh 16:9. Hình thức và ngân sách chiều
+ * cao nằm ở `software-shelf.tsx`; chỗ này chỉ nạp dữ liệu.
+ *
+ * BA SẢN PHẨM, và con số đó KHÔNG cố định: `productIndexes` dò bằng `t.has`
+ * nên thêm sản phẩm thứ tư chỉ là thêm một bộ khoá `p4*` trong `vi.json`, y
+ * như cách `Hardware` dò danh sách ứng dụng. Lưới tự xuống 2 cột ở `sm` và 3
+ * cột từ `lg`, nên số lẻ không làm hỏng bố cục.
+ *
+ * "AI ĐỨNG GIỮA" SỐNG SÓT SAU KHI SƠ ĐỒ BỊ BỎ: card `Context Provider` khai
+ * `core`, tức nó là thứ SÁNG NHẤT trên kệ và nó đứng GIỮA. Đó là toàn bộ cách
+ * nói còn lại, và nó đủ — không cần vẽ mũi tên. Nếu sau này thêm sản phẩm thứ
+ * tư thì phải xem lại: "giữa" chỉ đọc được khi số card lẻ.
+ *
+ * BỐN GIẢI PHÁP CŨ ĐI ĐÂU. Ba card trỏ TẠM sang trang giải pháp gần nghĩa nhất
+ * (`workflow-automation` · `industrial-edge-ai` · `enterprise-knowledge`) vì ba
+ * sản phẩm này chưa có trang riêng. Nút "Xem tất cả giải pháp" vẫn dẫn về
+ * /solutions nên toàn bộ danh mục không bị mất khỏi trang chủ. Ba đường trỏ tạm
+ * đã ghi vào `scopeGap` — có trang sản phẩm thật thì sửa `href`, không sửa gì
+ * khác.
+ *
+ * ⚠️ HAI Ô CHỜ, cả hai vô hình như hai ô của `Hardware` và đều đang đếm trong
+ * /track:
+ *   `lineupGap` (proof) — danh sách sản phẩm, tên gọi, ba cỡ màn hình và lời
+ *      dẫn từng sản phẩm đều CHƯA có tài liệu. Mục "MES" là suy đoán: chủ dự án
+ *      viết "ERP" hai lần.
+ *   `scopeGap` (restricted) — ô CHẶN PHÁT HÀNH. Section trưng ERP và MES như
+ *      SẢN PHẨM của Pebble Vina, trong khi blueprint lớp B mới chỉ ghi "tích
+ *      hợp ERP/CRM/MES". Chốt phạm vi rồi sửa blueprint hoặc sửa trang.
  */
 export async function Software() {
   const t = await getTranslations("home.software");
-  const ts = await getTranslations("solutions");
   const tc = await getTranslations("cta");
 
-  const items = [
-    "enterprise-knowledge",
-    "document-intelligence",
-    "workflow-automation",
-    "ai-agents",
-  ] as const;
+  /* Ảnh sản phẩm. Khoá là số thứ tự card. Thiếu ảnh thì để `undefined` —
+     `MediaFrame` tự hiện ô chờ kèm `need`, không phải sửa gì thêm.
+
+     Ảnh phải là 16:9 nền trong suốt, KHÔNG phải ảnh vuông: khung dùng
+     `object-cover` nên ảnh 1:1 bị cắt mất 44% chiều cao. Yêu cầu đầy đủ và
+     cách đệm ảnh vuông về 16:9: `docs/IMAGE-BRIEF.md` nhóm D. */
+  const PRODUCT_SRC: Record<number, string | undefined> = {
+    1: undefined,
+    2: undefined,
+    3: undefined,
+  };
+
+  /* Số sản phẩm KHÔNG cố định — dò bằng `t.has` nên thêm một sản phẩm chỉ là
+     thêm một bộ khoá trong vi.json. Trần 8 là lưới an toàn cho vòng lặp, không
+     phải giới hạn thiết kế. */
+  const productIndexes: number[] = [];
+  for (let i = 1; i <= 8 && t.has(`p${i}Name`); i++) productIndexes.push(i);
+
+  /* Năm bước của stepper = năm màn của PV One trong bộ bàn giao POC. Dò bằng
+     `t.has` như mọi danh sách khác trên trang này, nên thêm màn thứ sáu chỉ là
+     thêm một bộ khoá `s6*`.
+
+     Ảnh render lại từ chính năm file `.dc.html` của bộ bàn giao ở
+     deviceScaleFactor 2, cắt đúng khung màn 2880×1800 (bản 1× có sẵn trong bộ
+     bàn giao sẽ nhoè ở bản phóng to trên màn retina). Cách chụp và cắt:
+     `docs/SOFTWARE-KIT.md` §8. */
+  const STEP_SRC: Record<number, string | undefined> = {
+    1: "/software/one-home.png",
+    2: "/software/one-approvals.png",
+    3: "/software/one-search.png",
+    4: "/software/one-assistant.png",
+    5: "/software/one-rules.png",
+  };
+  const stepIndexes: number[] = [];
+  for (let i = 1; i <= 8 && t.has(`s${i}Title`); i++) stepIndexes.push(i);
+
+  /* Trang đi sâu, TẠM trỏ sang giải pháp gần nghĩa nhất — xem chú thích đầu
+     hàm. Thứ tự khớp p1/p2/p3. */
+  const HREF = [
+    "/solutions/workflow-automation",
+    "/solutions/enterprise-knowledge",
+    "/solutions/industrial-edge-ai",
+  ];
+
+  /* HÌNH HỘP CỦA Ô = CỠ MÀN HÌNH mà sản phẩm chạy trên đó. Đây là chỗ khai,
+     không phải trong messages: nó là quyết định bố cục, và nó chưa được xác
+     nhận (ghi trong `lineupGap`). ERP và MES đều có bản cầm tay — duyệt trên
+     điện thoại, và máy tính bảng ngoài xưởng; Context Provider là lõi hạ tầng
+     nên đứng ở ô nằm.
+     ⚠️ THỨ TỰ TRONG MẢNG QUYẾT ĐỊNH CHỖ TRONG LƯỚI. Ô lớn chiếm cột 1–2 cả ba
+     hàng, nên ô `web` phải đi NGAY SAU nó để rơi vào cột 3–4 hàng 1; hai ô
+     `phone` mới xuống được hai cột của hai hàng còn lại. Đảo thứ tự là lưới
+     thủng một góc. */
+  const SHAPE = { 1: "phone", 2: "web", 3: "phone" } as const;
+  const TILE_ORDER = [2, 1, 3];
 
   return (
     <Section id="phan-mem" sky="rise">
-      <SectionHeader eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
-      <div className="mt-12 overflow-hidden rounded-xl border">
-        <CardGrid cols={2}>
-          {items.map((key, i) => (
-            <Card
-              key={key}
-              index={i + 1}
-              href={`/solutions/${key}`}
-              title={ts(`${key}.title`)}
-            >
-              {ts(`${key}.promise`)}
-            </Card>
-          ))}
-        </CardGrid>
-      </div>
-      <Reveal className="mt-10">
-        <CtaButton href="/solutions" variant="outline">
-          {tc("solutions")}
-        </CtaButton>
-      </Reveal>
+      <SoftwareBento
+        /* Header GIỐNG HỆT công thức của section phần cứng (chủ dự án
+           2026-08-10): nhãn hạng mục kèm dấu hai chấm, gộp cùng dòng tiêu đề,
+           cỡ `subhead`, thẻ vẫn `h2`. Hai section sản phẩm đứng liền nhau nên
+           chúng phải đọc ra là MỘT CẶP; năm section còn lại của trang chủ vẫn
+           giữ eyebrow riêng dòng và cỡ `headline`.
+           ⟹ Chú thích "section DUY NHẤT có tiêu đề nhỏ hơn một nấc" ở
+             `Hardware` bên dưới đã sửa lại thành "hai section".
+
+           KHÔNG truyền `lead` — `docs/SOFTWARE-KIT.md` §3: câu dẫn và ảnh sản
+           phẩm nói cùng một việc, giữ cả hai là trả 52px của ngân sách chiều
+           cao để nói hai lần. Khoá `home.software.lead` vẫn còn trong messages
+           cho bố cục sau này. */
+        header={
+          <SectionHeader
+            eyebrow={t("eyebrow")}
+            eyebrowInline
+            size="subhead"
+            title={t("title")}
+          />
+        }
+        action={
+          <CtaButton href="/solutions" variant="outline">
+            {tc("solutions")}
+          </CtaButton>
+        }
+        stepsLabel={t("stepsLabel")}
+        labels={{
+          sample: t("sampleLabel"),
+          zoom: t("zoomLabel"),
+          close: tc("closeDrawer"),
+          prev: t("prevLabel"),
+          next: t("nextLabel"),
+        }}
+        hero={{
+          label: t("oneLabel"),
+          name: t("oneName"),
+          steps: stepIndexes.map((n) => ({
+            label: t(`s${n}Label`),
+            title: t(`s${n}Title`),
+            body: t(`s${n}Body`),
+            story: t(`s${n}Story`),
+            quote: t(`s${n}Quote`),
+            need: t(`s${n}Need`),
+            src: STEP_SRC[n],
+            /* Công thức `alt` của kit §11: nêu VIỆC đang diễn ra, không mô tả
+               bố cục ("bên trái là sidebar"). Ghép từ tên màn và câu mô tả
+               chứ không viết riêng năm chuỗi — hai thứ đó phải luôn khớp nhau. */
+            alt: t("shotAlt", { screen: t(`s${n}Title`), what: t(`s${n}Body`) }),
+          })),
+        }}
+        products={TILE_ORDER.filter((n) => productIndexes.includes(n)).map(
+          (n) => ({
+            label: t(`p${n}Label`),
+            name: t(`p${n}Name`),
+            lead: t(`p${n}Lead`),
+            need: t(`p${n}Need`),
+            src: PRODUCT_SRC[n],
+            href: HREF[n - 1] ?? "/solutions",
+            shape: SHAPE[n as keyof typeof SHAPE] ?? "web",
+          }),
+        )}
+      />
+
+      {/* Ô chờ vô hình — cùng cơ chế và cùng lý do với hai ô của `Hardware`:
+          cảnh báo dành cho NGƯỜI LÀM thì nằm ở `data-gap`, không nằm trên mặt
+          khách xem. Không vẽ ra pixel nào nhưng `/track` và QA vẫn đếm.
+          ĐỪNG XOÁ — xem cảnh báo ở đầu hàm.
+
+          Ba ô chờ ẢNH thì KHÔNG nằm ở đây: chúng do `MediaFrame` tự vẽ trên
+          mặt card, có badge vàng "Cần bổ sung ảnh" và một dòng `need`. Đó là
+          ba chỗ thiếu ảnh, không phải ba chỗ thiếu quyết định. */}
+      <span hidden data-gap="proof">
+        {t("lineupGap")}
+      </span>
+      <span hidden data-gap="restricted">
+        {t("scopeGap")}
+      </span>
     </Section>
   );
 }
@@ -435,8 +579,9 @@ export async function Hardware() {
            SectionHeader — tức là xuống hai dòng. Ở `subhead` còn ~600px nên
            gọn một dòng. Thẻ vẫn là `h2`: hạ cỡ chữ chứ không hạ cấp thẻ, dàn
            bài của trang không được khuyết cấp chỉ vì thiếu chỗ.
-           ⚠️ Đây là section DUY NHẤT của trang chủ có tiêu đề nhỏ hơn một nấc
-           so với sáu section còn lại. Có chủ ý, không phải sót. */
+           ⚠️ Đây và `Software` là HAI section duy nhất của trang chủ có tiêu đề
+           nhỏ hơn một nấc so với năm section còn lại. Có chủ ý: chúng là cặp
+           section sản phẩm và phải đọc ra là một cặp (chủ dự án 2026-08-10). */
         header={
           <SectionHeader
             eyebrow={t("eyebrow")}
