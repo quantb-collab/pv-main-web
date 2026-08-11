@@ -26,6 +26,10 @@ const RATIO = {
   landscape: "aspect-[4/3]",
   wide: "aspect-[16/9]",
   ultra: "aspect-[21/9]",
+  /** Màn hình sản phẩm: PV One dựng ở 1440×900, và ảnh chụp giữ nguyên tỷ lệ
+   *  đó. Có tên riêng để chỗ nào cần "cả màn, không cắt" thì khai đúng một
+   *  chữ, thay vì mỗi trang tự đoán ra 16/10. */
+  screen: "aspect-[16/10]",
 } as const;
 
 export interface MediaFrameProps {
@@ -56,6 +60,18 @@ export interface MediaFrameProps {
    * trình duyệt tải bản 640w cho một ô 200px, nặng gấp ba lần cần thiết.
    */
   sizes?: string;
+  /**
+   * Phần ảnh được giữ lại khi khung hẹp hơn ảnh. Mặc định cắt đều hai phía.
+   * `top` cho ảnh chụp giao diện: phần trên của một màn là chỗ đặt thanh công
+   * cụ, tiêu đề và số — cắt cân đối là cắt mất đúng phần khai màn đó là gì.
+   */
+  focus?: "center" | "top";
+  /**
+   * Chỉ nâng cho ảnh chụp GIAO DIỆN ở bản phóng to, nơi người đọc phải đọc
+   * được chữ 13px nằm trong ảnh. Mức phải có trong `images.qualities` của
+   * `next.config.ts`, không thì trình tối ưu trả HTTP 400 và ảnh mất trắng.
+   */
+  quality?: number;
   className?: string;
   /** Lớp phủ đặt lên trên ảnh (nhãn, chú thích…) */
   children?: React.ReactNode;
@@ -69,6 +85,8 @@ export function MediaFrame({
   priority = false,
   compact = false,
   sizes = "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 640px",
+  focus = "center",
+  quality,
   className,
   children,
 }: MediaFrameProps) {
@@ -107,8 +125,9 @@ export function MediaFrame({
               alt={alt ?? ""}
               fill
               priority={priority}
+              quality={quality}
               sizes={sizes}
-              className="object-cover"
+              className={cn("object-cover", focus === "top" && "object-top")}
             />
           </motion.div>
         </motion.div>
