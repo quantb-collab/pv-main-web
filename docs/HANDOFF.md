@@ -104,7 +104,12 @@ Không có mục mới. Toàn bộ danh sách phiên trước còn nguyên, chư
 ## Trạng thái kỹ thuật
 
 - Lệnh kiểm tra cuối: `pnpm verify` — sạch, exit 0 (104 trang, 48 file).
-- Commit cuối: `198123f` — sửa bố cục, cấp bậc chữ và bản phóng to của section
-  phần mềm. Tài liệu đi kèm ở commit ngay sau nó.
+- Commit cuối: `5ee1055` — chặn tiện ích trình duyệt làm sai phép so hydrate ở
+  `<body>`. Trước nó là `198123f` (sửa section phần mềm) và `c3f4cca` (tài liệu).
 - Việc chưa commit: không.
-- Repo **chưa có remote**, nên chưa push được gì.
+- Đã push: `develop` khớp `origin/develop`
+  (`github.com/quantb-collab/pv-main-web`). Nhánh `main` chưa được nhập gì từ
+  đợt này.
+- ⚠️ `refs/remotes/origin/HEAD` chưa được set, nên lệnh dò nhánh mặc định
+  (`git symbolic-ref refs/remotes/origin/HEAD`) trả rỗng và dễ bị đọc nhầm
+  thành "repo chưa có remote". Dùng `git remote -v`.
