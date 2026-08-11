@@ -761,3 +761,199 @@ ba vì ba nút làm cùng một việc là ba lần hỏi cùng một câu, và 
 vốn đứng yên — một nút "chạy lại" không làm gì là nói dối người dùng.
 **Đổi lại thì phải sửa:** `ProductShelf` / `MotionToggle` trong
 `product-shelf.tsx`, khoá `home.hardware.motion*` trong `vi.json`.
+
+## 2026-08-10 — Section phần mềm là TRỤC ĐIỀU PHỐI theo trạng thái dữ liệu
+**⛔ ĐÃ BỊ THAY THẾ trong cùng phiên** bởi mục *Kệ phần mềm — card sản phẩm có
+ảnh* ở cuối tài liệu này. Giữ lại để biết vì sao lưới 4 thẻ bị bỏ; phần lập
+luận về hình học và về việc không dựng lại bảng ba nấc vẫn còn đúng.
+**Bối cảnh:** Bản cũ là lưới 4 thẻ giải pháp. Chủ dự án cần section này nói ba
+điều mà bốn thẻ ngang hàng không nói được: sản phẩm chạy đa nền tảng (điện
+thoại · máy bàn · web), tự hành thì cần AI đứng ĐÚNG GIỮA điều phối, và doanh
+nghiệp bắt đầu được từ đúng chỗ mình đang đứng.
+**Chọn:** Ba vùng xếp dọc theo TRẠNG THÁI CỦA DỮ LIỆU — vào → xử lý → ra — nối
+nhau bằng sợi sáng; vùng giữa là lõi (`Context Provider`) và là thứ sáng duy
+nhất. Mỗi vùng mang hai sản phẩm ăn sẵn lấy thẳng từ namespace `solutions`.
+**Vì:** Ba lý do, theo thứ tự quan trọng.
+(1) *Hình học tách hai section sản phẩm.* Kệ phần cứng ngay trên là ba hàng
+NGANG rời nhau, mỗi hàng một món đồ độc lập. Trục phần mềm là ba vùng DỌC nối
+nhau. Cùng vật liệu (viền tóc, `pv-edge`, không đổ bóng), khác hình học — nếu
+cùng hình thì trang chủ đọc ra là một catalogue hai tầng.
+(2) *Lõi nằm giữa là lập luận, không phải trang trí.* Vùng xử lý là chỗ duy
+nhất trong section có ánh sáng và nó nằm đúng giữa, nên hình VẼ RA câu "tự hành
+cần AI đứng giữa điều phối" mà không phải viết câu đó bằng chữ.
+(3) *"Bắt đầu từ nấc mình đang đứng" không được dựng lại bảng ba nấc.* Contrast
+phía trên đã có một bảng ba nấc; lặp lại chính là lỗi đã giết section StartHere
+hôm 2026-08-07. Chia theo trạng thái DỮ LIỆU nói được cùng một điều bằng một
+trục khác.
+**Đã cân nhắc và bỏ:** ba tấm sản phẩm kèm dải chip nền tảng (an toàn, dựng
+nhanh, nhưng vẫn là catalogue và không có "giữa"); ba tab theo nấc doanh nghiệp
+(phục vụ vế "theo state" mạnh nhất nhưng là bảng ba nấc lần thứ hai, và tab thì
+phần cứng vừa dùng xong).
+**Đổi lại thì phải sửa:** `orchestration-flow.tsx`, hàm `Software` trong
+`sections.tsx`, khoá `home.software.*` trong `vi.json`.
+
+## 2026-08-10 — Sáu chip nguồn BẤM ĐƯỢC, mặc định trung tính
+**Bối cảnh:** Cần cho người đọc thấy "thứ đang chạy thì nối vào, chỗ còn trống
+thì dựng mới" mà không được khẳng định hộ họ đang có hay chưa có gì.
+**Chọn:** Sáu chip nguồn (ERP · MES · CRM · WMS · chứng từ giấy · thiết bị
+biên) là nút `aria-pressed`. Nghỉ = nét ĐỨT, chữ mờ. Bấm = nét LIỀN, chữ
+`brand-ink`. Sợi nối xuống lõi sáng dần theo số nguồn được khai, bốn bậc rời
+(`FLOW_LIT`).
+**Vì:** Người đọc TỰ khai trạng thái của mình, nên trang không khẳng định gì cả
+— đúng luật cấm bịa dữ liệu, mà vẫn nói được vế "build theo nấc anh đang đứng".
+Nét đứt / nét liền là quy ước sơ đồ kỹ thuật và nói được điều màu không nói
+được: đứt nghĩa là đường này chưa tồn tại. Bốn bậc rời chứ không nội suy liên
+tục vì đổi màu mượt theo tỷ lệ thì mắt không đọc ra là có gì vừa thay đổi.
+**Đã cân nhắc và bỏ:** mặc định "chưa có gì" rồi để người đọc bấm thêm — người
+mua Enterprise mở trang ra mà thấy sơ đồ khai mình trắng tay là một câu chào
+tệ; đánh dấu sẵn cái nào đã có cái nào chưa (là khẳng định hộ khách).
+**Đổi lại thì phải sửa:** `OrchestrationFlow` và `FLOW_LIT` trong
+`orchestration-flow.tsx`.
+
+## 2026-08-10 — Hai section sản phẩm dùng CHUNG một công thức header
+**Bối cảnh:** `Hardware` gộp eyebrow vào cùng dòng tiêu đề và hạ cỡ xuống
+`subhead`; chú thích cũ ghi đó là "section DUY NHẤT" của trang chủ làm vậy.
+**Chọn:** `Software` dùng đúng công thức đó — nhãn hạng mục kèm dấu hai chấm,
+`eyebrowInline`, `size="subhead"`, thẻ vẫn `h2`. Chú thích ở `Hardware` sửa
+thành "hai section".
+**Vì:** Hai section sản phẩm đứng liền nhau thì phải đọc ra là MỘT CẶP; năm
+section còn lại giữ eyebrow riêng dòng và cỡ `headline` nên cặp này vẫn tách ra
+được. Nó cũng trả lại ~60px cho trục — `Software` nhờ đó vừa một màn hình
+(~580px so với ngân sách ~628px), khác `Hardware` vốn tràn ~94px ở 1440×900.
+**Đổi lại thì phải sửa:** prop `header` ở cả hai section trong `sections.tsx`.
+
+## 2026-08-10 — `private-ai` và `industrial-edge-ai` quay lại trang chủ
+**Bối cảnh:** Hai giải pháp này bị rút khỏi trang chủ 2026-08-07 vì đứng lẫn
+giữa các dòng chip ở section PHẦN CỨNG thì chúng là mô hình triển khai nằm nhầm
+chỗ, và giữ lại thì section quay về làm danh mục.
+**Chọn:** Đưa lại, nhưng vào đúng vùng của trục phần mềm — `industrial-edge-ai`
+ở vùng VÀO, `private-ai` ở vùng XỬ LÝ. Trang chủ nay hiện đủ cả 6 giải pháp,
+mỗi vùng hai cái, và chỉ hiện `title`, không hiện `promise`.
+**Vì:** Edge AI là chỗ dữ liệu SINH RA, Private AI là chỗ dữ liệu ĐƯỢC XỬ LÝ —
+đứng ở trục này thì chúng đúng vai chứ không phải phụ lục. Không hiện `promise`
+vì sáu dòng mô tả nữa thì trục thành một danh mục; luật mật độ cho phép quá 4
+mục khi chúng là nhãn trần.
+**Đổi lại thì phải sửa:** ba mảng `products` trong hàm `Software`.
+
+## 2026-08-10 — Kệ phần mềm: card sản phẩm có ẢNH, thay cho trục điều phối
+**Thay thế** mục *Section phần mềm là TRỤC ĐIỀU PHỐI theo trạng thái dữ liệu*
+ở trên (cùng ngày, cùng phiên).
+**Bối cảnh:** Trục điều phối dựng xong thì chủ dự án xem và bỏ: *"tôi cần vẽ
+những ảnh để show off mà, vẽ rõ từng sản phẩm, mỗi sản phẩm có tên, lời dẫn và
+các size sản phẩm"*.
+**Chọn:** Một HÀNG card, mỗi card một sản phẩm, mỗi card bốn ô chữ theo đúng
+thứ tự mắt cần — nhãn vai → tên → lời dẫn → dải size — đặt dưới một ảnh 16:9.
+Ba sản phẩm: ERP · Context Provider · MES.
+**Vì:** Một sơ đồ nói được QUAN HỆ giữa các thứ nhưng không trưng được THỨ ĐỒ.
+Section này đứng cạnh kệ phần cứng vốn có 13 tấm ảnh thiết bị thật; một sơ đồ
+đường kẻ bên cạnh đó đọc ra là phần mềm không có gì để cho xem. Bốn ô chữ là
+đúng bộ thông tin chủ dự án yêu cầu, không thêm không bớt.
+**Ba hệ quả kéo theo, đều có chủ ý:**
+(1) *`Context Provider` xếp làm sản phẩm GIỮA*, chen giữa ERP và MES thay vì
+đứng cuối theo lối "hai ứng dụng rồi mới tới nền tảng". Nó khai `core` nên là
+card sáng nhất kệ — đó là toàn bộ phần còn lại của "AI đứng giữa điều phối" sau
+khi sơ đồ bị bỏ, và nó đủ. Với số card CHẴN thì không có ô giữa và cách nói này
+hỏng: thêm sản phẩm thứ tư phải nghĩ lại cách đánh dấu lõi.
+(2) *Sáu link giải pháp rút xuống ba*, và ba link còn lại là trỏ TẠM sang trang
+gần nghĩa nhất vì ba sản phẩm chưa có trang riêng. Nút "Xem tất cả giải pháp"
+giữ nguyên nên danh mục không mất khỏi trang chủ.
+(3) *Sáu chip nguồn bấm được bị gỡ.* ERP và MES nay là SẢN PHẨM, nên để chúng
+đồng thời trong danh sách "hệ thống anh đã có" là tự mâu thuẫn. Vế "nối vào /
+dựng mới" chuyển hẳn vào câu dẫn của section.
+**Đã cân nhắc và bỏ:** giữ cả sơ đồ lẫn hàng card (một section chỉ có ~628px,
+không chứa nổi hai); ba tấm ảnh thiết bị riêng cho mỗi cỡ màn hình (9 ảnh cho
+một section, và cỡ màn hình không phải sản phẩm).
+**Đổi lại thì phải sửa:** `software-shelf.tsx`, hàm `Software` trong
+`sections.tsx`, khoá `home.software.*`, và `docs/IMAGE-BRIEF.md` §3.
+
+## 2026-08-10 — Ảnh nhóm D: màn hình trong ảnh PHẢI CÂM
+**Bối cảnh:** Ba card sản phẩm phần mềm cần ảnh. Cách hiển nhiên là render
+thiết bị có giao diện trên màn — và công cụ sinh ảnh mặc định luôn vẽ một cái
+dashboard vào đó.
+**Chọn:** Cấm cứng. Màn hình chỉ được có ÁNH SÁNG (một vệt `#68B6E6` rất mờ),
+không giao diện, không biểu đồ, không chữ, không logo — kể cả mờ, kể cả nhỏ.
+Ba mức được phép, theo thứ tự ưu tiên: ảnh chụp sản phẩm THẬT → màn chỉ có ánh
+sáng → màn tắt hẳn. Không có mức "vài mảng chữ nhật mờ gợi ý bố cục".
+**Vì:** Blueprint cấm *"dashboard làm thông điệp chính"* và *"case study giả"*;
+§4 của IMAGE-BRIEF đã ghi *"một giao diện bịa trên trang bán phần mềm là thứ
+người mua Enterprise nhận ra nhanh nhất"*. Ảnh hiển thị ở 400×225 — gấp đôi
+card thiết bị — nên một biểu đồ bịa ở đây đọc được, và nó đứng ngay cạnh câu
+"chỗ còn trống thì dựng mới", tức thành lời hứa về tính năng chưa tồn tại.
+**Kèm theo — nền thẻ nhóm D SÁNG HƠN nhóm A:** kệ phần mềm ở nấc `rise` nên
+thẻ dốc `#1A232B → #232F37` (độ sáng 25→30), so với `#121920` (21) của card
+thiết bị. Dải sáng an toàn của vật thể dịch từ 19–52 lên **30–58**. Một tấm
+chuẩn nhóm A đem sang sẽ chìm.
+**Đổi lại thì phải sửa:** `docs/IMAGE-BRIEF.md` §3 và mục nghiệm thu §6.
+
+## 2026-08-11 — Giao diện PV One lên site: quy ước ảnh và khung riêng
+**Bối cảnh:** Bộ bàn giao POC "Đơn hàng Sao Đỏ" (10/08/2026) cấp 5 màn desktop
+thật của PV One. Trước đó site không có giao diện sản phẩm nào, nên
+`IMAGE-BRIEF` §3.3 phải đặt luật "màn hình trong ảnh phải câm".
+**Chọn:** Lập `docs/SOFTWARE-KIT.md` làm luật riêng cho mọi chỗ trưng giao diện
+sản phẩm, và dựng `AppShot` (`src/components/pv/app-shot.tsx`) làm khung bắt
+buộc. Ba luật cứng: (1) không giá trị nào của Aurora vào LỚP 1–2 của
+`globals.css`; (2) mọi pixel Aurora nằm trong khung do site vẽ; (3) không chỉnh
+màu ảnh — điều tiết bằng DIỆN TÍCH (≤45% section, chừa 96px cuối section cho
+`pv-skyglow`).
+**Vì:** Đo bằng oklch, nền màn Aurora `#0B1220` (L .183) so với nền section chỉ
+cho **1.02–1.18:1** ở cả năm nấc trời — ảnh KHÔNG có mép, dán thẳng lên trang
+là nó tan vào nền. Và azure `#2E63E6` có chroma .207, gấp **1,99 lần** trần
+.122 của cả thang brand, hue lệch 26° về chàm: đúng thứ chú thích LỚP 1 ghi là
+đã loại. Tức ảnh sản phẩm là một nguồn sáng thứ hai mạnh hơn bình minh, và chỉ
+trị được bằng diện tích chứ không bằng chỉnh pixel.
+**Đã cân nhắc và bỏ:** desaturate/tint ảnh cho hợp tông (chỉnh màu ảnh sản phẩm
+là nói dối về sản phẩm); dựng lại giao diện bằng React (kéo theo 4 họ chữ mới
+~180 KB, Lucide, và một bản sao sẽ lệch khỏi sản phẩm ngay lần cập nhật đầu).
+**Đổi lại thì phải sửa:** `docs/SOFTWARE-KIT.md`, `app-shot.tsx`, và §3 của
+`docs/IMAGE-BRIEF.md` (mục đó nay đã trỏ sang kit).
+
+## 2026-08-11 — Ảnh màn PV One: render lại 2×, và thay avatar ảnh người
+**Bối cảnh:** Bộ bàn giao có sẵn 5 PNG 1440×900, nhưng bản phóng to phải đọc
+được chữ 13px nằm trong ảnh.
+**Chọn:** Render lại từ chính 5 file `.dc.html` ở `deviceScaleFactor 2`, cắt
+đúng khung màn **2880×1800**, giao PNG-24 (6,4 MB cả bộ) vào `public/software/`.
+Trước khi chụp, thay `<img src="i.pravatar.cc">` ở topbar bằng khối CHỮ VIẾT
+TẮT (NT · TH) trên bản chép của `screens/`.
+**Vì:** Bản 1× nhoè ở bản phóng to trên màn retina. Avatar pravatar là mặt một
+người thật trên trang công khai, và trái luôn atom A-05 của chính theme kit
+(*"viết tắt tên, không ảnh"*). Sửa ở gốc rồi mới chụp, không bôi lên ảnh.
+**Kèm theo:** khung màn nằm ở vị trí KHÔNG cố định giữa năm file (mép trên
+645→776 ở 2×) vì tiêu đề trang dài ngắn khác nhau — phải DÒ bằng bề rộng dải
+sáng, dò bằng một cột đơn sẽ bắt nhầm dòng tiêu đề. Kiểm: dải phải rộng đúng
+2880. Và `next/image` mặc định `q=75`; bản phóng to dùng `q=90`, mức này phải
+khai ở `images.qualities` trong `next.config.ts` — Next 16 trả HTTP 400 cho mọi
+mức không khai, tức ảnh mất trắng chứ không xấu đi.
+**Đã cân nhắc và bỏ:** WebP q92 (xuống ~250 KB/tấm, PSNR 41–46 dB) — tiết kiệm
+5 MB nhưng chồng thêm một lần nén lên lần `next/image` sẽ nén; chỉ đổi khi bộ
+ảnh vượt 10 MB.
+**Đổi lại thì phải sửa:** `docs/SOFTWARE-KIT.md` §8, `public/software/`,
+`STEP_SRC` trong `sections.tsx`.
+
+## 2026-08-11 — Kệ phần mềm: bento + stepper lướt 1,5s, chữ dồn vào bản phóng to
+**Bối cảnh:** Chủ dự án muốn vào section là thấy cả bộ sản phẩm dạng bento
+(ô lớn nhất là PV One), stepper tự đổi **1,5 giây một bước**, và phần giải
+thích thì DÀI hơn.
+**Chọn:** Hai yêu cầu đó chỉ đứng chung được khi tách chỗ: **thẻ chỉ còn TÊN
+MÀN**, còn toàn bộ đoạn giải thích (80–87 chữ mỗi màn) chuyển vào bản phóng to,
+nơi người đọc tự bấm tới lui. Bản phóng to xếp **ảnh một bên, cột chữ cố định
+20rem một bên**, kèm cụm điều hướng `‹ 02/05 ›` sticky ở đáy và phím ← →.
+**Vì:** Ở tốc độ đọc 200 chữ/phút, 1,5 giây chỉ đủ **5 chữ**. Để một đoạn văn
+chạy dưới nhịp đó không phải là "nhanh" mà là bày chữ ra cho người ta cố đọc
+rồi hụt. Cột chữ CỐ ĐỊNH chứ không chia tỷ lệ, để mọi pixel thừa chảy vào ảnh —
+chia 50/50 thì ở màn 1440 ảnh còn ~650px (0,45×) và bản phóng to hết lý do tồn
+tại. Đánh đổi đã chấp nhận: ảnh đạt 0,80× trên màn ≥1600px nhưng chỉ **0,69×**
+ở 1440px; giá của việc đặt lời giải thích cạnh ảnh thay vì bên dưới.
+**Kèm theo — ba khoá dừng bắt buộc của nhịp nhanh:** rê chuột/focus; người dùng
+tự bấm một bước (chốt MỘT CHIỀU — không có nó thì 1,5s sau lựa chọn của họ bị
+giật mất); và bản phóng to đang mở (nên `open` do thẻ giữ, không để `Dialog` tự
+giữ). Và **bỏ hết ngoặc kép quanh câu chốt**: một câu bán hàng đóng trong ngoặc
+kép trên trang bán hàng đọc ra là lời khách hàng, tức testimonial bịa (§17).
+**Đã cân nhắc và bỏ:** `Tabs` của shadcn cho stepper (`TabsTrigger` mang sẵn
+`text-sm`, `flex-1`, gạch chân `after:` và sáu luật `dark:` — ghi đè hết, kèm
+cặp `dark:` cho từng cái, dài và dễ hỏng hơn 25 dòng vai trò ARIA viết tay);
+`Math.random()` cho thứ tự ô bento (server và client ra hai lưới khác nhau →
+hydration mismatch, và bố cục đổi hình mỗi lần tải thì không còn là bố cục);
+hai mũi tên đè hai mép ảnh kiểu lightbox cổ điển (che đúng sidebar và cột rail
+phải — hai chỗ mang lập luận của màn).
+**Đổi lại thì phải sửa:** `software-bento.tsx`, `app-shot.tsx`, `STEPPER` trong
+`src/lib/motion.ts`, khoá `home.software.*`.
