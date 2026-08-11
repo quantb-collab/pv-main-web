@@ -957,3 +957,47 @@ hai mũi tên đè hai mép ảnh kiểu lightbox cổ điển (che đúng sideb
 phải — hai chỗ mang lập luận của màn).
 **Đổi lại thì phải sửa:** `software-bento.tsx`, `app-shot.tsx`, `STEPPER` trong
 `src/lib/motion.ts`, khoá `home.software.*`.
+
+## 2026-08-11 — Ngân sách chiều cao của ô bento đo trên trình duyệt, và phần dư trả cho ảnh
+**Bối cảnh:** Section phần mềm dựng xong nhưng chưa ai mở trình duyệt xem. Soi
+lần đầu bằng headless Chrome qua CDP thì ô lớn có một **khoảng trống 91px** —
+18% chiều cao ô — nằm đúng giữa, dưới tên màn. Docstring ghi "dư ~77px" và con
+số đó không sai; cái sai là giả định rằng phần dư sẽ rải đều.
+**Chọn:** Trả phần dư cho ẢNH. Khung poster `ultra` (21:9) → `wide` (16:9),
+hàng lưới 10rem → 10,5rem, `PV One` lên `text-subhead`. Và từ nay ngân sách ô
+bento phải **đo trên trình duyệt** trước khi ghi vào docstring.
+**Vì:** Dãy bước bám đáy bằng `mt-auto`, nên mọi pixel dư dồn vào một chỗ thay
+vì rải ra — cộng nhẩm từ token không nhìn thấy điều đó. Và chỗ dư ấy đứng ngay
+dưới thứ quan trọng nhất section. Đo tiếp thì thấy 21:9 chỉ để lộ **68,6%**
+chiều cao màn nguồn 16:10, tức `object-cover` xén 31% ở chân ảnh — và nó xén
+ngang giữa một hàng bảng, đọc ra là ảnh lỗi chứ không ra một cửa sổ. 16:9 để lộ
+90%, phần xén rơi vào dải dưới cùng.
+**Đánh đổi:** `screen` (16:10, không xén một pixel nào) cần hàng 10,92rem và
+section vượt 900px đúng 1px — nằm ngoài ngân sách, chỉ mở được nếu trả lại chỗ
+ở một dòng khác.
+**Đã cân nhắc và bỏ:** giữ 21:9 rồi kéo ngắn hàng lưới cho hết lỗ (ảnh là thứ
+DUY NHẤT trong section mang bằng chứng, thu nó lại để lấy khoảng trắng là đổi
+sai chiều); xếp nhãn vai trên tên `PV One` cho giống ba ô nhỏ (tốn thêm 21px mà
+ngân sách chỉ dư 15 — cấp bậc đã đọc được bằng chênh lệch cỡ chữ).
+**Đổi lại thì phải sửa:** `software-bento.tsx` (docstring mang toàn bộ phép
+tính), `SOFTWARE-KIT.md` §4.
+
+## 2026-08-11 — Nhịp lướt 1,5s phải có nút dừng thấy được, và chốt một chiều bị bỏ
+**Bối cảnh:** Quyết định cùng ngày ở trên chốt ba khoá dừng cho nhịp 1,5s: rê
+chuột/focus, bấm một bước (một chiều), và dialog đang mở. Soi lại thì cả ba đều
+không phải một **control**: hai cái đầu không tồn tại trên màn cảm ứng, cái thứ
+ba đòi người dùng mở dialog ra mới dừng được.
+**Chọn:** Thêm một nút bấm được ở cuối dãy bước, và đổi `taken` (một chiều)
+thành `paused` (hai chiều). Bấm một bước vẫn dừng như cũ, nhưng nay bật lại
+được.
+**Vì:** WCAG 2.2.2 (mức A) đòi một cách dừng cho nội dung tự đổi quá 5 giây;
+vòng năm màn chạy 7,5 giây và lặp vô hạn. Chốt một chiều sinh ra để bảo vệ lựa
+chọn của người dùng, nhưng nó cũng khoá luôn đường quay lại — mà cái giá đó
+không cần trả khi đã có một nút riêng.
+**Đã cân nhắc và bỏ:** đặt nút vào trong `tablist` (một nút không phải
+`role=tab` nằm trong tablist là phá đúng cái mẫu ARIA dãy này đang khai); nhãn
+chữ thay vì biểu tượng (hai chữ tiếng Việt cạnh dãy năm số mono là thêm một
+tầng chữ vào chỗ đã chật — nhãn nằm ở `sr-only`, hình hai vạch thì không cần
+dịch).
+**Đổi lại thì phải sửa:** `software-bento.tsx`, `STEPPER.auto` trong
+`src/lib/motion.ts`, khoá `home.software.pauseLabel` / `resumeLabel`.

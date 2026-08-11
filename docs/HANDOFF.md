@@ -1,116 +1,110 @@
-# Bàn giao — 2026-08-11
+# Bàn giao — 2026-08-11 (phiên 2)
 
 ## Đang ở đâu
 
-Trang chủ vẫn là mảng việc duy nhất đang mở, và section **phần mềm** vừa được
-dựng lại lần thứ ba. Nó nay là một **bento bốn ô** — ô lớn nhất là PV One và
-chính ô đó là stepper năm bước lướt qua năm màn sản phẩm; bấm vào ảnh thì mở
-bản phóng to đọc được. Đây là lần đầu site có **giao diện sản phẩm thật** thay
-vì ô chờ, nên phiên này đẻ thêm một luật riêng cho nó: `docs/SOFTWARE-KIT.md`.
+Section **phần mềm** của trang chủ vừa được soi bằng trình duyệt thật lần đầu
+(headless Chrome qua CDP, đo ở 1440×900 · 768 · 375 và cả bản phóng to) và sửa
+theo những gì đo được. Bố cục, cấp bậc chữ và bản phóng to đã xong; phần còn
+thiếu của section giờ chỉ là **ảnh cho ba ô nhỏ** — không sửa được bằng code.
 
-Việc tiếp theo đã chốt hướng: **section đào tạo ứng dụng AI trong doanh
-nghiệp** — mảng kinh doanh thứ ba, đứng cạnh phần cứng và phần mềm.
+Việc tiếp theo vẫn như phiên trước: **section đào tạo ứng dụng AI trong doanh
+nghiệp**, mảng kinh doanh thứ ba.
 
 ## Vừa hoàn thành
 
-- `docs/SOFTWARE-KIT.md` — luật trưng giao diện PV One trên toàn site: ba luật
-  biên giới giữa hai hệ màu, thang tỷ lệ, đặc tả `AppShot`, bản đồ 12 trang lấy
-  màn nào, danh sách ảnh phải cắt, checklist nghiệm thu.
-- **Năm ảnh màn PV One thật** ở `public/software/` — render 2× từ chính bộ bàn
-  giao, cắt 2880×1800, tổng 6,4 MB. Avatar ảnh người đã thay bằng chữ viết tắt
-  trước khi chụp.
-- `src/components/pv/app-shot.tsx` — khung ảnh giao diện: poster 21:9 trên
-  trang, bấm mở dialog ảnh một bên / chữ một bên, điều hướng `‹ 02/05 ›` sticky,
-  phím ← →, nhãn "dữ liệu mẫu" không tắt được.
-- `src/components/home/software-bento.tsx` — thay `software-shelf.tsx`.
-- Prop mới cho block sẵn có: `BentoTile span` thêm `1x2` / `2x3`; `MediaFrame`
-  thêm tỷ lệ `screen` (16:10), `focus="top"`, `quality`.
-- `next.config.ts` khai `images.qualities: [75, 90]`.
+Tám thứ, tất cả trong `software-bento.tsx` + `app-shot.tsx` (chi tiết và con số
+nằm trong docstring của chính hai file đó):
+
+- Lấp **lỗ rỗng 91px** giữa ô lớn — trả chỗ đó cho ảnh, khung poster `ultra`
+  (21:9) → `wide` (16:9), hàng lưới 10rem → 10,5rem.
+- `PV One` lên `text-subhead`; trước đó bốn vai trò khác nhau cùng 21px.
+- Tên màn chuyển vào slot `heading` mới của `AppShot` để nằm **giữa ảnh và dòng
+  chú**, thay vì dưới cả hai.
+- Bản phóng to: gộp tiêu đề + nguồn + chữ vào **một cột** (trước đó tiêu đề
+  cách đoạn nói về nó 1200px), thêm `pv-edge`, bỏ dòng mono lặp.
+- `sizes` của ảnh trong dialog xuống ≤1024px → trình duyệt lấy bản **2048**
+  thay vì 3840 (ảnh nguồn chỉ rộng 2880), 110KB → 85KB.
+- `priority` cho ảnh trong dialog — xem *Bẫy* bên dưới.
+- Nút **tạm dừng** cho nhịp lướt 1,5s (WCAG 2.2.2). `taken` một chiều thành
+  `paused` hai chiều; hai khoá `home.software.pauseLabel` / `resumeLabel`.
+- Ba ô nhỏ: bỏ căn giữa, ô `web` xuống chồng dưới `sm` (ở 375 cột chữ của nó
+  chỉ còn 129px).
+
+`docs/SOFTWARE-KIT.md` §4 và checklist §13 đã sửa cho khớp code.
 
 ## Đang làm dở
 
-Không có việc dở trong code. Nhưng **chưa ai mở trình duyệt xem** — phiên này
-không có tool trình duyệt, mới xác nhận được tới mức HTML, ảnh phục vụ 200 và
-`q=90` trả đúng. Hai chỗ cần mắt:
-
-1. **Bản phóng to** (`app-shot.tsx`) — dialog của Radix chỉ mount khi mở nên
-   `curl` không soi được. Chưa ai thấy nó mở ra trông thế nào.
-2. **Section ở 375 / 768 / 1440.** Phép tính cho 588px so với ngân sách 628px
-   nên không tràn, khác kệ phần cứng vốn tràn 94px.
+Không có việc dở.
 
 ## Bước tiếp theo
 
-1. Mở `localhost:3000`, bấm vào ảnh PV One, soi hai chỗ ở mục trên.
-2. **Dựng section đào tạo ứng dụng AI** — mảng kinh doanh thứ ba. Trước khi
-   viết JSX: đọc `home.who.r2Text` (`messages/vi.json`) vì nó đã khai ba mảng
-   là "phần cứng, phần mềm và đào tạo AI", và section mới phải khớp cách gọi
-   đó. Đặt sau `Software`, nấc trời `rise` (cùng nấc là hợp lệ) hoặc `dawn` nếu
-   nó đứng ngay trước `CtaBand`. Chưa có khoá messages nào cho mảng này.
-3. Chép bộ bàn giao POC vào `docs/one/` — hiện đang nằm ở `~/Downloads/handoff`,
-   NGOÀI repo, và mọi con số trong `SOFTWARE-KIT.md` đo từ đó. Chép phần dựng
-   lại được (5 `.dc.html` + `support.js` + `assets/` + `AGENTS.md` +
-   `theme/globals.css` ≈ 1,2 MB), không chép 5 PNG 1× (5,3 MB, render lại được).
-4. Xoá `src/components/home/software-shelf.tsx` — không ai gọi nữa, giữ lại chỉ
-   vì nó chưa từng vào git. Xác nhận rồi xoá.
+1. **Mở `localhost:3000` trên trình duyệt thật**, xem lại section phần mềm và
+   bản phóng to. Mọi thứ ở trên đo bằng headless — xem *Bẫy*.
+2. **Dựng section đào tạo ứng dụng AI.** Trước khi viết JSX: đọc
+   `home.who.r2Text` (`messages/vi.json`) vì nó đã khai ba mảng là "phần cứng,
+   phần mềm và đào tạo AI", section mới phải khớp cách gọi đó. Đặt sau
+   `Software`, nấc trời `rise`, hoặc `dawn` nếu nó đứng ngay trước `CtaBand`.
+3. Chép bộ bàn giao POC vào `docs/one/` — đang ở `~/Downloads/handoff`, NGOÀI
+   repo, và mọi con số trong `SOFTWARE-KIT.md` đo từ đó. Chép phần dựng lại
+   được (5 `.dc.html` + `support.js` + `assets/` + `AGENTS.md` +
+   `theme/globals.css` ≈ 1,2 MB), không chép 5 PNG 1×.
+4. Xoá `src/components/home/software-shelf.tsx` — không ai gọi nữa.
 5. Sửa hydration `src/components/motion/parallax.tsx` (reduced-motion: server
-   thiếu div bọc transform — chính là "1 Issue" trên overlay dev).
+   thiếu div bọc transform). Kèm nó là `useScroll` "Target ref is defined but
+   not hydrated" — cùng một gốc, cùng là "2 Issues" trên overlay dev.
 6. Đọc NAV từ `inNav` trong `registry.ts` thay mảng cứng `site-header.tsx:32`;
    đặt `inNav: false` cho `insights` (`registry.ts:566`).
 
 ## Đang chờ quyết định
 
+Không có mục mới. Toàn bộ danh sách phiên trước còn nguyên, chưa ai trả lời:
+
 - **`PV One` hay `Pebble One`** — chủ dự án — chặn việc viết chữ cho mọi trang
-  có giao diện sản phẩm. Bộ bàn giao dùng `PV One` 16 lần (cả 5 màn và luật §5
-  của `AGENTS.md`) và `Pebble One` 1 lần (mockup sidebar trong theme kit). Site
-  đang dùng `PV One` vì đó là chữ in trong chính ảnh chụp. Sửa = một khoá
-  `home.software.oneName`.
+  có giao diện sản phẩm. Sửa = một khoá `home.software.oneName`.
 - **Phạm vi được công bố của PV One** — Pebble Vina — **chặn phát hành trang
-  chủ**. Cần cho phép công bố: tên sản phẩm, bốn nhánh Sales · Supply · Factory
-  · Finance, hai tầng One Core / One Plus, bốn engine E1–E4. Kèm theo: 9 cái tên
-  người và công ty trong dữ liệu demo — nếu là tên thật thì phải có đồng ý, nếu
-  bịa cho POC thì xác nhận là bịa.
-- **Ảnh đang là tiếng Anh trên trang tiếng Việt** — chủ dự án — *Good morning,
-  Mr. Thắng* · *Approvals inbox*. Dựng trang thì được, phát hành thì không. Sửa
-  = thay chuỗi trong bản chép của `screens/` rồi chạy lại quy trình
-  `SOFTWARE-KIT.md` §8. Tiếng Việt dài hơn EN 15–20% nên phải kiểm bố cục.
-- **Ba sản phẩm hay một sản phẩm** — chủ dự án — kệ đang hiện bốn ô: PV One
-  (có tư liệu) và ERP · Context Provider · MES (chưa có tài liệu, MES là suy
-  đoán). Xem `home.software.lineupGap` và `scopeGap`.
-- **Hero A hay C** · **Pebble Square: 4 việc trong một văn bản** · **danh sách
-  ứng dụng MINT/PAPAYA** · **điều kiện đo `~160 TOPS`** · số đo thật cho 4 chỉ
-  số bento · phân khúc ưu tiên · CRM nhận lead · brand kit — như phiên trước,
-  chưa ai trả lời.
-- **7 / 20 ảnh còn thiếu** — 3 ô nhỏ của kệ phần mềm nay cần ảnh MỘT thiết bị
-  (không phải cụm ba như bản cũ), yêu cầu đã ghi trong `pXNeed`.
+  chủ**. Tên sản phẩm, bốn nhánh, hai tầng license, bốn engine, và 9 cái tên
+  người/công ty trong dữ liệu demo.
+- **Ảnh đang là tiếng Anh trên trang tiếng Việt** — chủ dự án. Dựng trang thì
+  được, phát hành thì không.
+- **Ba sản phẩm hay một sản phẩm** — chủ dự án. Xem `home.software.lineupGap`
+  và `scopeGap`.
+- **7/20 ảnh còn thiếu.** Ba ô nhỏ của kệ phần mềm chiếm gần nửa diện tích
+  section mà cả ba đều là ô chờ — đây là thứ duy nhất còn kéo section xuống, và
+  nó cần ảnh chứ không cần code. Yêu cầu đã ghi trong `pXNeed`.
+- Hero A hay C · Pebble Square · MINT/PAPAYA · điều kiện đo `~160 TOPS` · 4 chỉ
+  số bento · phân khúc ưu tiên · CRM nhận lead · brand kit.
 
 ## Bẫy đã gặp
 
-- **`DialogContent` của shadcn là `grid`.** Ô ảnh dùng `aspect-ratio` bị hàng
-  lưới kéo giãn theo `align-items: stretch` — khung cao theo hàng còn ảnh bên
-  trong vẫn `absolute inset-0`, nên nó **trùm xuống ô chữ**. Đổi sang
-  `flex flex-col` là hết.
-- **Đừng đặt `key` lên component có `Dialog` bên trong.** Đổi `key` là unmount
-  rồi mount lại, và bản phóng to tự đóng đúng lúc người dùng bấm sang màn kế.
-- **`next/image` mặc định `q=75`, và Next 16 chặn mọi mức không khai trong
-  `images.qualities` bằng HTTP 400** — tức ảnh mất trắng chứ không xấu đi.
-- **`t.has` trả false thì danh sách rỗng, và `steps[0].src` làm sập CẢ TRANG.**
-  Danh sách dò bằng `t.has` phải luôn viết như có thể rỗng.
-- **Chuỗi hiển thị chứa `one-home.png` làm `check:i18n` báo lỗi giả** — regex
-  của nó bắt `home.png` như một khoá messages. Bỏ đuôi file khỏi chữ hiện trên
-  trang.
-- **Dò khung màn trong ảnh render phải dò bằng BỀ RỘNG dải sáng**, không dò
-  bằng một cột — cột đơn sẽ bắt nhầm dòng tiêu đề của trang. Kiểm bằng cách
-  khẳng định dải rộng đúng 2880.
-- **Ô chờ vô hình là cố ý.** Trang chủ có 6 `data-gap` không vẽ ra pixel nào.
-  Đừng xoá vì tưởng thừa.
-- **Sửa `messages/*.json` xong PHẢI restart dev server.** Gặp lại lần nữa phiên
-  này: server giữ bản cũ và báo `MISSING_MESSAGE` cho khoá đang có thật trong
-  file, kèm `SoftwareShelf is not defined` từ module graph cũ.
-- Cũ nhưng còn đúng: thêm vai trò chữ mới ở LỚP 3 thì phải thêm vào `TEXT_ROLES`
-  trong `src/lib/utils.ts`, không thì `cn()` vứt cỡ chữ im lặng.
+- **Headless Chrome không kích hoạt `loading="lazy"` ở khổ hẹp.** Ở 375, KHÔNG
+  một ảnh lazy nào trên toàn trang tải (cả ảnh phần cứng không liên quan), dù
+  URL trả 200 và ép `eager` thì tải ngay. Ở 1440 thì bình thường. Ảnh trắng
+  trong ảnh chụp headless ở khổ mobile **không phải lỗi của site** — đừng đi
+  sửa nó. Ảnh trong dialog cũng không tải kể cả ở 1440; đó là lý do có
+  `priority`, nhưng nguyên nhân gốc chưa khẳng định được.
+- **Đo bằng `Page.captureScreenshot` + `clip` thì toạ độ là của TÀI LIỆU, không
+  phải khung nhìn.** Quên cộng `window.scrollY` là lấy nhầm pixel ở đầu trang,
+  và mọi con số tương phản sai theo.
+- **`getComputedStyle().color` trả `lab(...)` chứ không trả `rgb(...)`.** Bổ
+  thẳng bằng regex ra ba số rồi tính tương phản là ra kết quả vô nghĩa (mọi tỷ
+  lệ ≈ 1,3). Đổi màu qua canvas 1×1 rồi mới tính.
+- **`pkill` không kịp nhả cổng.** `pnpm start` sau đó bind lỗi, server cũ vẫn
+  trả 200, và ta ngồi nghiệm thu bản build cũ mà tưởng bản mới. Kiểm bằng
+  `lsof -ti:<cổng>` chứ đừng tin `curl` trả 200.
+- **Ngân sách chiều cao của ô bento phải ĐO, không cộng nhẩm.** Docstring cũ
+  ghi "dư ~77px" và con số đó đúng — nhưng vì dãy bước bám đáy bằng `mt-auto`,
+  toàn bộ phần dư dồn thành một lỗ 91px giữa ô chứ không rải ra.
+- Cũ nhưng còn đúng: `DialogContent` của shadcn là `grid` · đừng đặt `key` lên
+  component có `Dialog` bên trong · Next 16 trả HTTP 400 cho quality không khai
+  trong `images.qualities` · danh sách dò bằng `t.has` phải luôn viết như có
+  thể rỗng · chuỗi hiển thị chứa `*.png` làm `check:i18n` báo lỗi giả · ô chờ
+  vô hình là cố ý (6 `data-gap` không vẽ ra pixel nào) · **sửa `messages/*.json`
+  xong PHẢI restart dev server** (gặp lại lần nữa phiên này).
 
 ## Trạng thái kỹ thuật
 
-- Lệnh kiểm tra cuối: `pnpm verify` — sạch, exit 0 (107 trang, 48 file).
-- Commit cuối: xem `git log -1`. Toàn bộ phiên này **đã commit**.
-- Dev server: chạy được, `/` `/en` `/ko` `/solutions` đều 200, log sạch.
+- Lệnh kiểm tra cuối: `pnpm verify` — sạch, exit 0 (104 trang, 48 file).
+- Commit cuối: `198123f` — sửa bố cục, cấp bậc chữ và bản phóng to của section
+  phần mềm. Tài liệu đi kèm ở commit ngay sau nó.
+- Việc chưa commit: không.
+- Repo **chưa có remote**, nên chưa push được gì.

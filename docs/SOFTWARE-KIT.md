@@ -246,10 +246,12 @@ luật biên giới của §6 soát được bằng một lệnh grep.
 <AppShot
   src="/software/one-approvals.png"      // bắt buộc; không có ô chờ ở đây
   alt="Màn Phê duyệt của PV One: một đơn mua thép đang chờ chữ ký"
-  ratio="ultra"                          // ultra | wide | landscape | portrait | auto
-  screen="Phê duyệt"                     // nhãn mono bên phải dòng chú
-  caption="Ba báo giá, một khuyến nghị, và chuỗi ký còn thiếu ai."
-  sizes="(max-width: 1024px) 100vw, 1120px"
+  ratio="wide"                           // ultra | wide | screen
+  product="PV One"
+  detail={{ label, title, body, story, quote }}
+  heading={<h4 className="…">Hộp chờ duyệt</h4>}   // tuỳ chọn, xem dưới
+  labels={{ sample, zoom, close }}
+  sizes="(max-width: 1024px) 50vw, 600px"
 />
 ```
 
@@ -259,7 +261,9 @@ Cấu tạo, từ ngoài vào:
    (10px) của thẻ và ảnh, **không** phải `--radius-control`.
 2. `pv-edge` với `bg-linear-to-t from-brand/35 to-border` — đây là thứ vẽ ra
    cái mép mà §2 đo được là không có. Gradient dựng đứng, sáng ở chân, cùng
-   hướng chân trời của trang.
+   hướng chân trời của trang. **Cả poster lẫn ảnh trong dialog đều phải có.**
+   Bản đầu chỉ vẽ cho poster, mà chỗ dễ mất mép nhất lại là dialog — ở đó ảnh
+   to nhất và nằm trên `bg-popover` cũng tối như nó.
 3. Nền `one-well` (§6) — đúng `--one-bg`. Ảnh có alpha hay chậm tải thì phần
    lộ ra vẫn là nền của chính màn đó, không phải một mảng xám lạ.
 4. `next/image` phủ kín, `object-cover`, `object-top`. Cắt thì cắt ở chân ảnh —
@@ -267,13 +271,33 @@ Cấu tạo, từ ngoài vào:
    ⚠️ **`ratio` phải khớp tỷ lệ hộp cắt.** Hộp cắt là một quyết định đã cân
    (§8: cắt theo khối, chừa 12px thở); nhét nó vào một khung tỷ lệ khác là để
    `object-cover` cắt lần thứ hai, mù, ngay lúc render — và lần cắt đó sẽ ăn
-   mất đúng cái khối vừa chừa lề. Phần lớn hộp ở §8 **không** rơi vào bốn tỷ lệ
-   có sẵn (`t-ai-strip` là 9,8:1, `d-chain` là 1,95:1), nên chúng khai
-   `ratio="auto"`: khung lấy tỷ lệ thật của file qua `width`/`height` của
-   `next/image`. Bốn tỷ lệ đặt tên chỉ dành cho hộp đã cắt đúng bằng tỷ lệ đó.
-5. Dòng chú **dưới khung**, cao 22px: trái là `caption` (`text-meta
-   text-muted-foreground`), phải là `PV ONE · {screen} · DỮ LIỆU MẪU`
-   (`font-mono text-micro text-subtle-foreground uppercase`).
+   mất đúng cái khối vừa chừa lề.
+   Với `shot` (ảnh cả màn 16:10) thì lần cắt thứ hai là CỐ Ý, và giá của nó đo
+   được: `ultra` để lộ **68,6%** chiều cao màn, `wide` để lộ **90%**, `screen`
+   để lộ 100%. Ở kệ trang chủ, `ultra` xén ngang giữa một hàng bảng — đọc ra là
+   ảnh lỗi, không ra cửa sổ. Chọn tỷ lệ theo chỗ xén rơi vào đâu, đừng chọn
+   theo hình khối đẹp.
+5. `heading` — tiêu đề của ảnh, đặt **giữa khung và dòng chú**. Chỗ dùng tự
+   chọn thẻ (ở kệ phần mềm là `h4` nằm trong `tabpanel`). Thứ tự này là bắt
+   buộc: để dòng chú lên trước thì nhãn engine chen vào giữa ảnh và tên của
+   chính ảnh đó, và nó đọc ra như chrome của khung chứ không như eyebrow.
+6. Dòng chú **dưới cùng**: trái là `{label} · DỮ LIỆU MẪU`, phải là nút mở bản
+   phóng to (cả hai `font-mono text-eyebrow uppercase`).
+
+Trong dialog, dòng nguồn là `{product} · {label} · DỮ LIỆU MẪU` — **không** có
+tên màn, vì tên màn đã là tiêu đề đứng ngay dưới nó.
+
+⚠️ **Ảnh trong dialog khai `priority` và `sizes` không quá 1024px.** Hai thứ,
+hai lý do:
+- Ảnh nguồn rộng 2880, mà nấc thiết bị của Next nhảy 2048 → 3840. Khai
+  `1100px` thì màn DPR 2 lấy bản **3840** — phóng to quá cả bản gốc, thêm 30%
+  dung lượng và không thêm một chi tiết nào. `1000px` đưa mọi màn về nấc 2048,
+  đúng nhu cầu thật của khung 994–1148px.
+- `loading="lazy"` mặc định đo được là **không nổ** cho ảnh sinh ra trong portal
+  của dialog (sau 6 giây `currentSrc` vẫn rỗng, trong khi poster cùng trang đã
+  tải xong). Dù nguyên nhân là gì, ảnh mà người dùng vừa chủ động bấm để xem thì
+  không có lý do gì xếp hàng sau. Nó cũng không tốn gì ở lần tải trang: dialog
+  chưa render thì thẻ ảnh chưa tồn tại.
 
 Ba thứ `AppShot` **không** có, và mỗi cái là một luật:
 
@@ -657,6 +681,9 @@ phải là câu đó.
 - [ ] Trang này chỉ có **một** `shot` hoặc **hai** `tile`, không cộng.
 - [ ] Ảnh của trang này khác ảnh của mọi trang khác (§7).
 - [ ] Dòng chú có nhãn `DỮ LIỆU MẪU`, và `caption` mang luận điểm.
+- [ ] Chỗ ảnh bị `object-cover` xén KHÔNG rơi vào giữa một thẻ hay một hàng.
+- [ ] Khối chứa ảnh không để lại khoảng trống nào trên 40px — đo trên trình
+      duyệt, đừng cộng nhẩm từ token.
 - [ ] Không con số nào trong ảnh xuất hiện lại trong chữ của trang.
 - [ ] `alt` theo công thức §11, không mô tả bố cục.
 - [ ] Tên gọi trong chữ của trang theo §10 luật 2 (PV One · bốn nhánh · viết
