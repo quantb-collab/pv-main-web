@@ -34,12 +34,16 @@ import {
  *   2. Chỗ nào cần nút: `<AssessmentDrawerButton>Nhãn</AssessmentDrawerButton>`.
  *   3. Cần mở từ chỗ khác (ví dụ sau một bước wizard): `useAssessmentDrawer()`.
  *
- * ⚠️ Form bên trong VẪN CHƯA gửi đi đâu — xem `assessment-form.tsx`. Drawer chỉ
- * đổi chỗ đặt form, không nối được CRM thay nó.
+ * Form bên trong POST sang `/api/lead` như ở trang — chưa khai `LEAD_WEBHOOK_URL`
+ * thì cả hai chỗ cùng báo lỗi kèm email, xem `assessment-form.tsx`.
  *
  * Trang `/ai-assessment` GIỮ NGUYÊN form nhúng thẳng trong trang. Drawer là lối
  * tắt cho người đang đọc dở một trang khác; trang kia vẫn là đích của các link
  * chia sẻ và của kết quả tìm kiếm, nên không được biến thành trang rỗng.
+ *
+ * Khung ở đây (`SheetHeader` viền dưới → form `bare`) là CÙNG một cấu trúc với
+ * khối form ở `/ai-assessment`. Sửa một bên thì sang bên kia sửa theo, không
+ * thì cùng một form đọc ra thành hai vật khác nhau.
  * ============================================================================
  */
 

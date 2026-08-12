@@ -621,32 +621,23 @@
   "assessment": {
     "meta": {
       "title": "Đánh giá cơ hội ứng dụng AI",
-      "description": "Buổi đánh giá đầu tiên nhằm xác định bài toán nên làm trước, phạm vi khởi đầu và chỉ số để đo kết quả."
+      "description": "Buổi làm việc đầu tiên với Pebble Vina: chọn bài toán nên làm trước, phạm vi cho bước đầu và chỉ số để đo kết quả."
     },
     "hero": {
       "eyebrow": "Bước tiếp theo",
       "title": "Đánh giá cơ hội ứng dụng AI",
-      "lead": "Mục tiêu của buổi làm việc này là xác định nên bắt đầu từ đâu, chứ không phải chốt hợp đồng."
+      "lead": "Một buổi làm việc để biết nên bắt đầu từ đâu, không phải để chốt hợp đồng."
     },
     "receive": {
-      "title": "Bạn nhận được gì",
-      "r1": "Xác định vấn đề ưu tiên",
-      "r2": "Đánh giá quy trình, dữ liệu hiện có",
-      "r3": "Đề xuất phạm vi ban đầu",
-      "r4": "Đề xuất chỉ số để đo kết quả",
-      "r5": "Kết luận bước tiếp theo nên là gì"
+      "title": "Xong buổi đó, bạn có",
+      "r1": "Bài toán nên làm trước và lý do chọn nó",
+      "r2": "Phạm vi bước đầu, đủ nhỏ để làm xong",
+      "r3": "Chỉ số để biết bước đó có ăn thua"
     },
-    "prepare": {
-      "title": "Bạn cần chuẩn bị gì",
-      "p1": "Mô tả ngắn quy trình đang gặp vấn đề",
-      "p2": "Tên các hệ thống đang dùng",
-      "p3": "Người phụ trách quy trình đó",
-      "p4": "Ràng buộc về dữ liệu nếu có",
-      "note": "Không cần gửi dữ liệu thật ở bước này."
-    },
+    "prepare": "Bạn chỉ cần mô tả quy trình đang vướng và kể tên hệ thống đang dùng. Không cần gửi dữ liệu thật.",
     "form": {
-      "title": "Để lại thông tin",
-      "lead": "Chúng tôi cần đủ thông tin để cử đúng người trao đổi với bạn.",
+      "title": "Đăng ký buổi đánh giá",
+      "lead": "Bước 1 là cách liên hệ bạn. Bước 2 giúp chúng tôi cử đúng người, để trống vẫn gửi được.",
       "company": "Tên doanh nghiệp",
       "industry": "Ngành",
       "size": "Quy mô nhân sự",
@@ -661,8 +652,8 @@
       "back": "Quay lại",
       "next": "Tiếp tục",
       "submit": "Gửi thông tin",
-      "privacy": "Thông tin của bạn chỉ dùng để liên hệ về nội dung này.",
-      "sensitiveNote": "Vui lòng không gửi dữ liệu nhạy cảm hoặc tài liệu nội bộ qua biểu mẫu này.",
+      "privacy": "Thông tin bạn để lại chỉ dùng để liên hệ về buổi đánh giá này.",
+      "sensitiveNote": "Đừng gửi dữ liệu nhạy cảm hay tài liệu nội bộ qua biểu mẫu.",
       "sending": "Đang gửi…",
       "retry": "Gửi lại",
       "errorBody": "Chưa gửi được thông tin. Bạn thử lại giúp, hoặc gửi thẳng tới {email} — chúng tôi trả lời trong ngày làm việc.",
@@ -670,10 +661,7 @@
       "successTitle": "Đã nhận thông tin",
       "successBody": "Chúng tôi sẽ liên hệ lại để hẹn buổi trao đổi đầu tiên."
     },
-    "feeGap": "Buổi đánh giá này miễn phí, có phí hay tuỳ trường hợp; và kéo dài bao lâu.",
-    "slaGap": "Thời gian phản hồi cam kết sau khi nhận thông tin.",
-    "ownerGap": "Bộ phận hoặc cá nhân nhận lead từ website và quy trình chuyển tiếp cho Account Manager.",
-    "crmGap": "Hệ thống CRM và endpoint nhận dữ liệu biểu mẫu. Hiện biểu mẫu chưa gửi đi đâu."
+    "termsGap": "Ba điều kiện của buổi đánh giá, cần Pebble Vina chốt để trả lời ngay tại đây: miễn phí hay có phí, kéo dài bao lâu, và bao lâu thì phản hồi sau khi nhận biểu mẫu."
   },
   "contact": {
     "meta": {
