@@ -24,11 +24,15 @@ Việc này nằm trên **nhánh riêng `worktree-training-section`**, chưa nh�
   `globals.css`, prop `mark` của `<Section>`. Lý do hình học và lý do chỗ đặt
   nằm trong docstring hai file đó; lý do được phép phá luật "một hoạ tiết" nằm
   ở `DECISIONS.md` mục 2026-08-12.
+- **Biểu mẫu khảo sát nay gửi được thật.** Trước đó nó đánh rơi mọi lead: sang
+  bước 2 là các ô bước 1 bị gỡ khỏi DOM, `FormData` chỉ còn năm trường rỗng của
+  bước 2, mà form vẫn báo "Đã nhận thông tin". Nay giữ toàn bộ trường trong
+  state, POST sang `/api/lead`, và route chuyển tiếp tới `LEAD_WEBHOOK_URL`.
+  Chưa khai biến thì trả 503 và form hiện lỗi kèm email — CỐ Ý, xem `.env.example`.
 
 ## Đang làm dở
 
-- **Nhánh chưa nhập.** `worktree-training-section` (commit `009b80b`) tách từ
-  `develop` `4886998`. Nhập bằng cách nào là quyết định của chủ dự án.
+- **Nhánh chưa nhập.** `worktree-training-section` tách từ `develop` `4886998`. Nhập bằng cách nào là quyết định của chủ dự án.
 - **Cây làm việc chính đang có một bản nháp CŨ của cùng section này**, chưa
   commit: `src/components/home/training-tracks.tsx` (ba panel lộ trình, mỗi
   panel một dãy module `01–04`) cộng một dòng `import` thừa trong
@@ -38,24 +42,29 @@ Việc này nằm trên **nhánh riêng `worktree-training-section`**, chưa nh�
 
 ## Bước tiếp theo
 
-1. **Xoá bản nháp cũ trong cây chính**: `rm src/components/home/training-tracks.tsx`
+1. **Chốt lead đổ về đâu rồi đặt `LEAD_WEBHOOK_URL`** — chủ dự án. Đây là thứ
+   duy nhất còn đứng giữa biểu mẫu và một lead thật; code đã xong và đã thử
+   thông với một webhook nội bộ. Zapier/Make, Google Apps Script, HubSpot Forms
+   API, hay Slack đều cắm thẳng được; Salesforce Web-to-Lead cần một lớp trung
+   gian vì nó nhận form-encoded. Không phải sửa `route.ts`.
+2. **Xoá bản nháp cũ trong cây chính**: `rm src/components/home/training-tracks.tsx`
    và `git checkout -- src/components/home/sections.tsx`, rồi mới nhập nhánh
    `worktree-training-section`.
-2. **Trả nút "Xem chương trình" về hàng tiêu đề** khi có trang đào tạo. Hiện
+3. **Trả nút "Xem chương trình" về hàng tiêu đề** khi có trang đào tạo. Hiện
    section là section sản phẩm DUY NHẤT không có nút phụ, vì registry chưa có
    entry nào cho mảng đào tạo (`training.pageGap`). Thêm entry trước, route sau.
-3. **Sửa tràn ngang ở 768.** `document.documentElement.scrollWidth` = 1120 trên
+4. **Sửa tràn ngang ở 768.** `document.documentElement.scrollWidth` = 1120 trên
    khung 753 — thủ phạm là `svg.pv-rings` của hero (rộng 1199px), có sẵn từ
    trước, không phải của section mới. Cả trang cuộn ngang được ở khổ tablet.
-4. Chép bộ bàn giao POC vào `docs/one/` — đang ở `~/Downloads/handoff`, NGOÀI
+5. Chép bộ bàn giao POC vào `docs/one/` — đang ở `~/Downloads/handoff`, NGOÀI
    repo, và mọi con số trong `SOFTWARE-KIT.md` đo từ đó. Chép phần dựng lại
    được (5 `.dc.html` + `support.js` + `assets/` + `AGENTS.md` +
    `theme/globals.css` ≈ 1,2 MB), không chép 5 PNG 1×.
-5. Xoá `src/components/home/software-shelf.tsx` — không ai gọi nữa.
-6. Sửa hydration `src/components/motion/parallax.tsx` (reduced-motion: server
+6. Xoá `src/components/home/software-shelf.tsx` — không ai gọi nữa.
+7. Sửa hydration `src/components/motion/parallax.tsx` (reduced-motion: server
    thiếu div bọc transform). Kèm nó là `useScroll` "Target ref is defined but
    not hydrated" — cùng một gốc, cùng là "2 Issues" trên overlay dev.
-7. Đọc NAV từ `inNav` trong `registry.ts` thay mảng cứng `site-header.tsx:32`;
+8. Đọc NAV từ `inNav` trong `registry.ts` thay mảng cứng `site-header.tsx:32`;
    đặt `inNav: false` cho `insights` (`registry.ts:566`).
 
 ## Đang chờ quyết định
@@ -75,7 +84,10 @@ Danh sách cũ còn nguyên, chưa ai trả lời: `PV One` hay `Pebble One` · 
 công bố của PV One (**chặn phát hành trang chủ**) · ảnh đang là tiếng Anh trên
 trang tiếng Việt · ba sản phẩm hay một · 7/20 ảnh còn thiếu · Hero A hay C ·
 Pebble Square · MINT/PAPAYA · điều kiện đo `~160 TOPS` · 4 chỉ số bento · phân
-khúc ưu tiên · CRM nhận lead · brand kit.
+khúc ưu tiên · brand kit.
+
+**`CRM nhận lead` rời khỏi danh sách này** — nó nay là bước 1 ở trên, và câu
+hỏi đã hẹp lại từ "dùng CRM nào" xuống "URL nào nhận POST JSON".
 
 ## Bẫy đã gặp
 
@@ -97,6 +109,11 @@ khúc ưu tiên · CRM nhận lead · brand kit.
   này tô ba tiêu đề thẻ ba màu (bạc hà · cam · xanh); `globals.css` LỚP 1 ghi rõ
   đó là ngoại lệ duy nhất cho luật "mọi ánh sáng dẫn xuất từ `--brand`" và nó
   chỉ dùng ở `product-shelf.tsx`. Cả ba tiêu đề dùng `brand-ink`.
+- **`AnimatePresence` gỡ bước cũ khỏi DOM, và `FormData` chỉ đọc ô đang mounted.**
+  Form nhiều bước dựng bằng `key={step}` sẽ đánh rơi mọi thứ người dùng điền ở
+  bước trước, im lặng, không lỗi nào. Form nhiều bước phải giữ giá trị trong
+  state; đừng tin `defaultValue`. Kiểm bằng `[...new FormData(f).keys()]` sau
+  khi chuyển bước, đừng nhìn code mà đoán.
 - **Tương phản phải đo trên MẶT THẺ, không phải nền section.** Mặt thẻ là một
   `<span>` định vị tuyệt đối, không phải nền của thẻ cha, nên hàm dò nền đi
   ngược cây DOM sẽ lấy nhầm nền section (tối hơn) và mọi tỷ lệ đẹp hơn thực tế.
@@ -114,9 +131,9 @@ khúc ưu tiên · CRM nhận lead · brand kit.
 
 ## Trạng thái kỹ thuật
 
-- Lệnh kiểm tra cuối: `pnpm verify` — sạch, exit 0 (104 trang, 49 file).
-- Commit cuối: `9d8664f` — đánh số I · II · III cho ba section mảng kinh doanh.
-  Trước nó là `009b80b` (section đào tạo AI).
+- Lệnh kiểm tra cuối: `pnpm verify` — sạch, exit 0 (104 trang, 50 file).
+- Commit cuối: `e49d686` — biểu mẫu khảo sát thôi đánh rơi lead. Trước nó là
+  `9d8664f` (dấu I · II · III) và `009b80b` (section đào tạo AI).
 - Việc chưa commit: không (trong worktree). Cây làm việc CHÍNH thì còn bản nháp
   cũ chưa commit — xem *Đang làm dở*.
 - Nhánh: `worktree-training-section`, tách từ `develop` `4886998`. `develop`

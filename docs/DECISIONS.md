@@ -1073,3 +1073,31 @@ là ngôn ngữ của dãy bước trong `StepRail` và dãy màn của bento �
 cấp section thì hai cấp nói cùng một kiểu ký hiệu).
 **Đổi lại thì phải sửa:** `SectionMark` trong `decor.tsx`, `.pv-mark` trong
 `globals.css`, prop `mark` của `<Section>`, và ba chỗ gọi trong `sections.tsx`.
+
+## 2026-08-12 — Trang chủ giữ form trong drawer, và `/api/lead` chuyển tiếp qua webhook
+**Bối cảnh:** Câu hỏi đặt ra là trang chủ có nên kết bằng một section form lead
+hiện sẵn không. Soi lại thì trang chủ ĐÃ kết bằng form: `CtaBand` mở drawer
+khảo sát ngay tại trang (quyết định 2026-08-07). Nhưng soi tiếp thì form đó
+đang đánh rơi mọi lead.
+**Chọn:** Giữ nguyên chỗ đặt form. Sửa cái hỏng bên trong, và cho nó một
+endpoint `/api/lead` chuyển tiếp tới một URL khai ở `LEAD_WEBHOOK_URL`.
+**Vì:** Thêm một section form nữa thì trang chủ có hai lời mời giống hệt nhau
+nằm liền nhau — đúng thứ blueprint §23 cấm, và cũng là lý do section đào tạo
+hiện không có nút phụ. Còn chỗ đặt form chưa bao giờ là thứ đang chặn: thứ chặn
+là form không gửi đi đâu, và tệ hơn, nó báo "Đã nhận thông tin" nên khách tưởng
+đã gửi. Không nhúng thẳng một CRM vì chưa ai chốt CRM nào; một webhook nhận
+JSON là mẫu số chung của mọi lựa chọn đang cân nhắc, nên chốt xong chỉ phải đặt
+biến môi trường.
+**Chưa khai biến thì trả 503 chứ không trả thành công.** Thà khách thấy "không
+gửi được, email thẳng cho chúng tôi" còn hơn tưởng đã gửi rồi ngồi đợi một cuộc
+gọi không bao giờ tới.
+**Đánh đổi:** Nếu phát hành trước khi khai biến, mọi lượt gửi đều hiện lỗi. Chấp
+nhận được vì `robots.ts` đang chặn toàn bộ site, và một lỗi thấy được sẽ ép việc
+này lên trước thay vì để nó chìm.
+**Đã cân nhắc và bỏ:** đưa form hiện sẵn vào cột phải của `CtaBand` thay cho 4
+gạch đầu dòng (làm được, không phá §23, nhưng `CtaBand` dùng chung cho MỌI trang
+nên phải thêm prop — để dành tới khi form đã nối thông); thêm section form thứ
+tám (hai CTA trùng việc); gửi form bằng `mailto:` (không chấm điểm lead được,
+và trên máy không cấu hình mail client thì không mở được gì).
+**Đổi lại thì phải sửa:** `src/app/api/lead/route.ts`, `assessment-form.tsx`,
+`.env.example`.
