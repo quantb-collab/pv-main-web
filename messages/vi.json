@@ -663,6 +663,10 @@
       "submit": "Gửi thông tin",
       "privacy": "Thông tin của bạn chỉ dùng để liên hệ về nội dung này.",
       "sensitiveNote": "Vui lòng không gửi dữ liệu nhạy cảm hoặc tài liệu nội bộ qua biểu mẫu này.",
+      "sending": "Đang gửi…",
+      "retry": "Gửi lại",
+      "errorBody": "Chưa gửi được thông tin. Bạn thử lại giúp, hoặc gửi thẳng tới {email} — chúng tôi trả lời trong ngày làm việc.",
+      "errorEmail": "contact@pebblevina.com",
       "successTitle": "Đã nhận thông tin",
       "successBody": "Chúng tôi sẽ liên hệ lại để hẹn buổi trao đổi đầu tiên."
     },

@@ -32,6 +32,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...trừ bản mẫu: nó chỉ có TÊN biến và chú thích, không có giá trị nào.
+!.env.example
 
 # vercel
 .vercel
