@@ -1001,3 +1001,45 @@ tầng chữ vào chỗ đã chật — nhãn nằm ở `sr-only`, hình hai v�
 dịch).
 **Đổi lại thì phải sửa:** `software-bento.tsx`, `STEPPER.auto` trong
 `src/lib/motion.ts`, khoá `home.software.pauseLabel` / `resumeLabel`.
+
+## 2026-08-12 — Section đào tạo AI giữ bố cục của bản thiết kế nhưng bỏ ba màu tiêu đề
+**Bối cảnh:** Chủ dự án đưa một bản thiết kế cho section đào tạo AI: hai cột,
+cột phải là ba thẻ, mỗi thẻ có tiêu đề mono viết hoa được tô một màu riêng —
+bạc hà, cam, xanh da trời.
+**Chọn:** Dựng đúng bố cục, đúng chữ, đúng dãy thông số của bản thiết kế; riêng
+ba tiêu đề thẻ thì cả ba cùng dùng `brand-ink`.
+**Vì:** `globals.css` LỚP 1 ghi ba màu chip (mint · papaya · espresso) là
+NGOẠI LỆ DUY NHẤT cho luật "mọi ánh sáng trên trang dẫn xuất từ `--brand`", và
+ngoại lệ đó chỉ cấp cho kệ phần cứng, nơi màu đóng vai nhãn phân biệt ba dòng
+sản phẩm CÓ THẬT. Ba thẻ ở đây là ba nguyên tắc song hàng của cùng một chương
+trình — không có ba thực thể nào để phân biệt, nên màu ở đây chỉ còn là trang
+trí, và ba nguồn sáng trong một section thì section mất chân trời. Nhịp thị
+giác của bản gốc (tiêu đề mono viết hoa CÓ màu) vẫn giữ nguyên, chỉ là một hệ
+màu thay vì ba. `brand-ink` chứ không phải `brand`: đo trên mặt thẻ được 9,3:1,
+còn `brand` sinh ra cho quầng sáng và đem viết chữ 12px chỉ vừa đúng ngưỡng.
+**Đánh đổi:** Ba thẻ nay giống hệt nhau về cường độ, nên thứ phân biệt chúng
+chỉ còn là chữ. Chấp nhận được vì chúng vốn ngang hàng — cùng lý do đã ghi cho
+ba panel của `TrackPanel`.
+**Đã cân nhắc và bỏ:** dùng thang sáng ba bậc `STEP_LIT` (mờ → brand) cho ba
+tiêu đề (nó nói "tiến trình", mà ba nguyên tắc này không phải ba bước nối tiếp;
+và thẻ đầu sẽ đọc ra là kém quan trọng nhất); xin thêm hai màu vào LỚP 1 (đó
+đúng là thứ luật kia sinh ra để chặn).
+**Đổi lại thì phải sửa:** `training-program.tsx`, và trước hết là chú thích
+ngoại lệ ở `globals.css` LỚP 1.
+
+## 2026-08-12 — Section đào tạo không có nút phụ ở hàng tiêu đề
+**Bối cảnh:** Bản thiết kế có nút "Xem chương trình →" ở góc phải hàng tiêu đề,
+giống hai section sản phẩm đứng ngay trên. Registry chưa có entry nào cho mảng
+đào tạo, tức chưa có trang để dẫn tới.
+**Chọn:** Bỏ nút, cắm ô chờ `home.training.pageGap` mô tả chính xác thứ còn
+thiếu. Có trang thì trả nút về đúng chỗ đó.
+**Vì:** Đích duy nhất còn lại là `/ai-assessment`, mà `CtaBand` đứng cách đó
+đúng một màn hình đã mời chính việc ấy với gần y nguyên nhãn — hai lời mời
+giống hệt nhau nằm liền nhau làm yếu cả hai. Luật ô chờ của blueprint §24 nói
+thiếu dữ liệu thì để ô chờ chứ không lấp tạm, và một nút dẫn sai chỗ đúng là
+một cách lấp tạm. Đây cũng là kết luận mà bản nháp `training-tracks.tsx` của
+phiên trước đã đi tới độc lập.
+**Đánh đổi:** Section đào tạo là section sản phẩm duy nhất không có nút phụ,
+nên hàng tiêu đề của nó trông trống hơn hai section anh em.
+**Đổi lại thì phải sửa:** `registry.ts` (thêm entry trước), `sections.tsx`
+(`Training`), `training-program.tsx` (thêm slot `action` vào hàng tiêu đề).
