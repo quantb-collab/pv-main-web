@@ -1043,3 +1043,33 @@ phiên trước đã đi tới độc lập.
 nên hàng tiêu đề của nó trông trống hơn hai section anh em.
 **Đổi lại thì phải sửa:** `registry.ts` (thêm entry trước), `sections.tsx`
 (`Training`), `training-program.tsx` (thêm slot `action` vào hàng tiêu đề).
+
+## 2026-08-12 — Ba section mảng kinh doanh mang số La Mã và một hình riêng
+**Bối cảnh:** Chủ dự án yêu cầu ba section chính (phần cứng · phần mềm · đào
+tạo) mỗi cái có một số La Mã lớn ở nền và một hình vẽ liên quan. `decor.tsx`
+lại mở đầu bằng đúng câu cấm việc đó: "mỗi section một hoạ tiết khác" thì
+"mười hoạ tiết là mười thứ tiếng nói".
+**Chọn:** Làm, nhưng ba hình phải là ba TRẠNG THÁI của cùng một mặt phẳng dẹt
+đã có trong `DawnRings`, không phải ba hình mới: một mặt lồng ba lớp (phần
+cứng) · ba mặt chồng có cột nối (phần mềm) · một mặt với ba nấc dâng lên (đào
+tạo). Cùng độ dẹt 1/φ², cùng nét 1px `non-scaling-stroke`, cùng node, cùng
+thang mờ theo φ.
+**Vì:** Thứ luật kia cấm là THÊM TIẾNG NÓI, không phải thêm hình. Ba biến thể
+của một mặt phẳng vẫn là một tiếng nói — cái thay đổi giữa ba section là động
+từ, không phải từ vựng. Đánh số I·II·III cũng trả lại cho trang chủ một thứ nó
+đang thiếu: `home.who.r2Text` khai ba mảng nhưng người đọc không đếm được ba
+mảng ấy ở đâu trên trang.
+**Chỗ đặt là kết quả ĐO, không phải chọn theo mắt.** Hai phương án đầu hỏng:
+mép phải cao trọn section thì dấu bị thẻ nền đục che gần hết (cả ba section đều
+lấp kín nửa phải); dải padding TRÊN thì không đủ chỗ — nav dính cao 81px, mà
+phần tử đục đầu tiên ở nửa phải của section phần mềm bắt đầu ở y=147, còn lại
+66px. Dải padding DƯỚI trống đều 136·145·136px ở cả ba, nên dấu về đó và cao
+đúng `--section-y`.
+**Đánh đổi:** Dấu ẩn hoàn toàn dưới `lg` — dưới đó lưới xuống một cột và dải
+đáy bị nội dung ăn hết. Ba section này ở khổ điện thoại không có số.
+**Đã cân nhắc và bỏ:** đặt dấu đè LÊN nội dung ở độ mờ rất thấp (nét 1px ở 7%
+thì không còn thấy gì, tức mất luôn lý do tồn tại); dùng số Ả Rập 01·02·03 (đã
+là ngôn ngữ của dãy bước trong `StepRail` và dãy màn của bento — dùng lại ở
+cấp section thì hai cấp nói cùng một kiểu ký hiệu).
+**Đổi lại thì phải sửa:** `SectionMark` trong `decor.tsx`, `.pv-mark` trong
+`globals.css`, prop `mark` của `<Section>`, và ba chỗ gọi trong `sections.tsx`.

@@ -2,11 +2,12 @@
 
 ## Đang ở đâu
 
-Trang chủ đã đủ **ba mảng kinh doanh**. Section đào tạo AI vừa dựng xong theo
-một bản thiết kế do chủ dự án đưa, đặt giữa `Software` và `CtaBand`, nấc trời
-`rise`. Đo bằng trình duyệt thật ở 1440 · 768 · 375: không tràn ngang, tương
-phản thấp nhất trong section là 8,5:1, section cao 903px ở 1440 (vừa một màn
-hình 900px).
+Trang chủ đã đủ **ba mảng kinh doanh**, và ba section ấy nay ĐẾM ĐƯỢC: mỗi cái
+mang một dấu I · II · III kèm một hình ở góc dưới phải. Section đào tạo AI dựng
+theo một bản thiết kế do chủ dự án đưa, đặt giữa `Software` và `CtaBand`, nấc
+trời `rise`. Đo bằng trình duyệt thật ở 1440 · 1024 · 768 · 375: không tràn
+ngang, tương phản thấp nhất trong section là 8,5:1, section cao 903px ở 1440
+(vừa một màn hình 900px), và không dòng chữ nội dung nào chồng lên dấu.
 
 Việc này nằm trên **nhánh riêng `worktree-training-section`**, chưa nhập vào
 `develop` — xem *Đang làm dở*.
@@ -19,6 +20,10 @@ Việc này nằm trên **nhánh riêng `worktree-training-section`**, chưa nh�
 - Hai lỗi bố cục tự tìm ra khi đo, đã sửa: ba bảng thông số lệch nhau ~45px vì
   cột `auto` co theo từng thẻ; và ở dưới `lg` thì `grid-cols-2` ném "90" sang
   mép phải, cách "12" hơn 600px.
+- Dấu section: `SectionMark` trong `decor.tsx`, utility `.pv-mark` trong
+  `globals.css`, prop `mark` của `<Section>`. Lý do hình học và lý do chỗ đặt
+  nằm trong docstring hai file đó; lý do được phép phá luật "một hoạ tiết" nằm
+  ở `DECISIONS.md` mục 2026-08-12.
 
 ## Đang làm dở
 
@@ -80,6 +85,14 @@ khúc ưu tiên · CRM nhận lead · brand kit.
   `git log --oneline -2` trước khi đọc bất cứ file nào, rồi `git reset --hard develop`.
 - **Worktree mới không có `node_modules`** — `pnpm verify` chết ở
   `next: command not found`. `pnpm install` mất ~4 giây vì có store chung.
+- **Nửa PHẢI của cả ba section mảng kinh doanh đều đã bị thẻ nền ĐỤC lấp kín.**
+  Đặt trang trí ở `-z-10` bên đó là đặt vào chỗ không ai thấy — bản đầu của
+  `SectionMark` mất hai vòng sửa vì thế. Dải trống thật là padding DƯỚI
+  (136 · 145 · 136px). Đo bằng cách quét `getBoundingClientRect` tìm phần tử
+  đục đầu tiên ở nửa phải, đừng nhìn ảnh chụp mà đoán.
+- **`check:tokens` soi cả CHÚ THÍCH.** Viết một cỡ chữ tuỳ ý làm ví dụ trong
+  comment để giải thích "vì sao KHÔNG dùng nó" cũng đủ làm `pnpm verify` fail.
+  Cùng loại dương tính giả với chuỗi chứa `*.png` ở `check:i18n`.
 - **Ba màu chip là ngoại lệ CHỈ cấp cho kệ phần cứng.** Bản thiết kế của section
   này tô ba tiêu đề thẻ ba màu (bạc hà · cam · xanh); `globals.css` LỚP 1 ghi rõ
   đó là ngoại lệ duy nhất cho luật "mọi ánh sáng dẫn xuất từ `--brand`" và nó
@@ -102,7 +115,8 @@ khúc ưu tiên · CRM nhận lead · brand kit.
 ## Trạng thái kỹ thuật
 
 - Lệnh kiểm tra cuối: `pnpm verify` — sạch, exit 0 (104 trang, 49 file).
-- Commit cuối: `009b80b` — thêm section đào tạo AI vào trang chủ.
+- Commit cuối: `9d8664f` — đánh số I · II · III cho ba section mảng kinh doanh.
+  Trước nó là `009b80b` (section đào tạo AI).
 - Việc chưa commit: không (trong worktree). Cây làm việc CHÍNH thì còn bản nháp
   cũ chưa commit — xem *Đang làm dở*.
 - Nhánh: `worktree-training-section`, tách từ `develop` `4886998`. `develop`
