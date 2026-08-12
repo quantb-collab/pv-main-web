@@ -4,6 +4,7 @@ import {
   type ShelfPartner,
 } from "@/components/home/product-shelf";
 import { SoftwareBento } from "@/components/home/software-bento";
+import { TrainingProgram } from "@/components/home/training-program";
 import { Reveal } from "@/components/motion/reveal";
 import {
   BentoGrid,
@@ -364,6 +365,87 @@ export async function Software() {
           ba chỗ thiếu ảnh, không phải ba chỗ thiếu quyết định. */}
       <span hidden data-gap="proof">
         {t("lineupGap")}
+      </span>
+      <span hidden data-gap="restricted">
+        {t("scopeGap")}
+      </span>
+    </Section>
+  );
+}
+
+/**
+ * Section 5c — ĐÀO TẠO AI, mảng kinh doanh thứ ba.
+ *
+ * `home.who.r2Text` khai ba mảng ngay ở section định vị: "phần cứng, phần mềm
+ * và đào tạo AI". Hai mảng đầu đã có section riêng, nên mảng thứ ba thiếu
+ * section là trang chủ tự mâu thuẫn với chính nó — nó hứa ba, trưng hai.
+ *
+ * VỊ TRÍ. Ngay sau `Software` và ngay trước `CtaBand`: khối phần mềm vừa đặt
+ * ra câu "mua về rồi ai dùng?", và đây là chỗ trả lời. Đặt trước `Software`
+ * thì nó trả lời một câu chưa ai hỏi.
+ *
+ * NẤC TRỜI `rise`, BẰNG `Software` chứ không cao hơn. `dawn` là của `CtaBand`
+ * và nấc chỉ được đi lên — tiêu `dawn` ở đây thì dải CTA hết chỗ để sáng hơn.
+ * Hai section cùng nấc đứng liền nhau là hợp lệ: ranh giới nằm ở vạch chân
+ * trời và quầng sáng do `<Section>` tự vẽ, không nằm ở màu nền.
+ *
+ * BA Ô CHỜ, không ô nào vẽ ra pixel trên mặt khách xem — cùng cơ chế và cùng
+ * lý do với hai ô của `Hardware` và `Software`: cảnh báo dành cho NGƯỜI LÀM
+ * nằm ở `data-gap`, và `/track` cùng QA vẫn đếm. ĐỪNG XOÁ.
+ *   `paramsGap`  — toàn bộ con số trên section là THIẾT KẾ CHƯƠNG TRÌNH chưa
+ *                  ai duyệt, không phải số đo từ dự án đã chạy.
+ *   `pageGap`    — chưa có trang đào tạo nên hàng tiêu đề khuyết nút phụ.
+ *   `scopeGap`   — hai lời hứa trong lead và ở cột trái cần Pebble Vina gật.
+ */
+export async function Training() {
+  const t = await getTranslations("home.training");
+
+  return (
+    <Section id="dao-tao" sky="rise">
+      <TrainingProgram
+        /* Header GIỐNG HỆT công thức của hai section sản phẩm: nhãn hạng mục
+           kèm dấu hai chấm, gộp cùng dòng tiêu đề, cỡ `subhead`, thẻ vẫn `h2`.
+           Ba mảng kinh doanh phải đọc ra là một BỘ BA; năm section còn lại của
+           trang chủ vẫn giữ eyebrow riêng dòng và cỡ `headline`.
+
+           CÓ `lead` ở đây, khác `Software`. Kit phần mềm bỏ lead vì câu dẫn và
+           ảnh sản phẩm nói cùng một việc; section này không có ảnh nào, và câu
+           dẫn là chỗ DUY NHẤT nói ai đứng lớp — thứ khác biệt nhất của mảng
+           này so với mọi trung tâm đào tạo. */
+        header={
+          <SectionHeader
+            eyebrow={t("eyebrow")}
+            eyebrowInline
+            size="subhead"
+            title={t("title")}
+            lead={t("lead")}
+          />
+        }
+        claim={t("claim")}
+        notes={[
+          { label: t("audienceLabel"), text: t("audienceText") },
+          { label: t("endLabel"), text: t("endText") },
+        ]}
+        metrics={[1, 2].map((n) => ({
+          value: t(`m${n}Value`),
+          label: t(`m${n}Label`),
+        }))}
+        pillarsLabel={t("pillarsLabel")}
+        pillars={[1, 2, 3].map((n) => ({
+          title: t(`p${n}Title`),
+          text: t(`p${n}Text`),
+          rows: [1, 2, 3].map((r) => ({
+            value: t(`p${n}r${r}Value`),
+            label: t(`p${n}r${r}Label`),
+          })),
+        }))}
+      />
+
+      <span hidden data-gap="confirm">
+        {t("paramsGap")}
+      </span>
+      <span hidden data-gap="confirm">
+        {t("pageGap")}
       </span>
       <span hidden data-gap="restricted">
         {t("scopeGap")}

@@ -7,6 +7,7 @@ import {
   Identity,
   Software,
   Stats,
+  Training,
 } from "@/components/home/sections";
 import { CtaBand } from "@/components/pv/cta-band";
 
@@ -26,16 +27,25 @@ export async function generateMetadata({
  * trước vừa làm nảy ra; khối nào bỏ đi mà mạch không hụt câu hỏi nào là khối
  * thừa. Thứ tự là thứ tự thuyết phục, không sắp xếp lại tuỳ ý:
  *   là ai → tôi đang ở nấc nào → lên nấc 3 đáng bao nhiêu → các anh đi được
- *   sâu tới đâu → vậy tôi bắt đầu từ việc nào → bước đầu tiên là gì
+ *   sâu tới đâu → vậy tôi bắt đầu từ việc nào → mua về rồi ai dùng → bước
+ *   đầu tiên là gì
  *
  * PHẦN CỨNG ĐỨNG TRƯỚC PHẦN MỀM (chủ dự án 2026-08-07). Thứ tự này có chủ ý và
  * đọc ra được: chip chứng minh chiều sâu, rồi phần mềm mới là chỗ người đọc
  * đặt chân vào — nên khối ngay trước CTA là bốn việc bắt đầu được, không phải
  * bốn con chip. Cảnh báo blueprint về vị trí này ghi ở đầu `Hardware`.
  *
- * Nấc trời: void → night → night → deep → deep → rise → dawn. Hai section cùng
- * nấc đứng liền nhau là hợp lệ (ranh giới là vạch chân trời + quầng sáng do
- * `<Section>` tự vẽ, không phải màu nền) — xem docs/DESIGN-TOKENS.md.
+ * ĐÀO TẠO AI ĐỨNG SAU PHẦN MỀM và ngay trước CTA. `Identity.r2Text` khai ba
+ * mảng kinh doanh; hai section sản phẩm mới trưng được hai, nên trang chủ vốn
+ * đang tự mâu thuẫn. Nó đặt ở đây vì khối phần mềm vừa làm nảy ra đúng câu mà
+ * nó trả lời — "mua về rồi ai dùng?" — và vì đó là câu cuối cùng cần trả lời
+ * trước khi mời người ta bấm nút.
+ *
+ * Nấc trời: void → night → night → deep → deep → rise → rise → dawn. Hai
+ * section cùng nấc đứng liền nhau là hợp lệ (ranh giới là vạch chân trời +
+ * quầng sáng do `<Section>` tự vẽ, không phải màu nền) — xem
+ * docs/DESIGN-TOKENS.md. Đào tạo KHÔNG lấy `dawn`: nấc đó là của `CtaBand` và
+ * nấc chỉ được đi lên, tiêu trước thì dải CTA hết chỗ để sáng hơn.
  *
  * ĐÃ CHUYỂN SANG TRANG RIÊNG (chủ dự án 2026-08-07 — trang chủ chỉ giữ phần
  * cô đọng và móc khách; cả hai section đều đã tự kết bằng nút "xem chi tiết"
@@ -91,6 +101,7 @@ export default async function HomePage({
       <Stats />
       <Hardware />
       <Software />
+      <Training />
       <CtaBand
         cta="assessment"
         items={[1, 2, 3, 4].map((n) => t(`g${n}`))}
