@@ -835,6 +835,40 @@
   animation-delay: -4.7s;
 }
 
+/* Dấu section — số La Mã + hình, xem `SectionMark` trong decor.tsx.
+
+   Neo GÓC DƯỚI PHẢI, cao đúng `--section-y`. Chỗ đặt này là kết quả đo, không
+   phải chọn theo cảm tính — hai phương án trước đều hỏng vì cùng một lý do:
+
+   1. Mép phải, cao trọn section → gần như tàng hình. Cả ba section đều lấp kín
+      nửa phải bằng thẻ nền ĐỤC (kệ chip · bento · ba thẻ nguyên tắc), nên dấu
+      ở `-z-10` bị che hết, chỉ vài nét lọt qua khe thẻ — đọc ra là lỗi vẽ.
+   2. Dải padding TRÊN → không đủ chỗ. Đo ở 1440: thanh nav dính cao 81px, mà
+      phần tử đục đầu tiên ở nửa phải của section phần mềm (nút phụ) bắt đầu ở
+      y=147. Dải dùng được chỉ còn 66px.
+
+   Dải padding DƯỚI thì trống đều ở cả ba: 136 · 145 · 136px, vì nội dung căn
+   giữa và không section nào chạm tới đáy. Vì vậy chiều cao lấy thẳng
+   `--section-y` — dấu tự co theo nhịp section thay vì mang một con số riêng.
+
+   Hệ quả về hình: dấu là con dấu NẰM NGANG [hình · số], không phải khối dọc.
+   Và số La Mã đứng ngay trên cung chân trời — thứ duy nhất khác cũng sống ở
+   dải này — nên hai lớp trang trí xếp thành một cảnh chứ không giẫm nhau.
+
+   Lùi vào 4,5rem để mép phải của số thẳng với mép phải cột nội dung (lề
+   container đo được là 73px). Sát mép màn hình thì số bị xén và đọc thành mấy
+   vạch dọc. */
+@utility pv-mark {
+  pointer-events: none;
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-end: 4.5rem;
+  height: var(--section-y);
+  width: auto;
+  color: var(--brand);
+  opacity: calc(0.1 + 0.16 * var(--sky-light, 0.2));
+}
+
 /* --------------------------------------------------------------------------
    Titan sần — chất liệu của mọi bề mặt
    --------------------------------------------------------------------------

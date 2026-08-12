@@ -4,7 +4,7 @@ import {
   BoundaryGlow,
   BoundaryHorizon,
 } from "@/components/motion/sky-boundary";
-import { HorizonArc } from "@/components/pv/decor";
+import { type MarkGlyph, HorizonArc, SectionMark } from "@/components/pv/decor";
 import { Highlight } from "@/components/pv/highlight";
 import { cn } from "@/lib/utils";
 
@@ -63,6 +63,15 @@ interface SectionProps {
   flush?: boolean;
   /** Bỏ container (khi cần tràn viền màn hình). */
   bleed?: boolean;
+  /**
+   * Dấu section: số La Mã + một hình, nằm sau nội dung ở mép phải.
+   *
+   * CHỈ dành cho ba section mảng kinh doanh của trang chủ (phần cứng · phần
+   * mềm · đào tạo). Nó là cách đánh số MỘT BỘ BA, nên section thứ tư mang dấu
+   * là bộ ba hết còn là bộ ba. Ba hình dùng chung một ngữ pháp hình học với
+   * `DawnRings` — luật thêm hình mới ghi ở đầu `decor.tsx`.
+   */
+  mark?: { numeral: string; glyph: MarkGlyph };
   className?: string;
   containerClassName?: string;
 }
@@ -74,6 +83,7 @@ export function Section({
   full = true,
   flush = false,
   bleed = false,
+  mark,
   className,
   containerClassName,
 }: SectionProps) {
@@ -100,6 +110,16 @@ export function Section({
       <span aria-hidden className="pv-grain -z-10" />
       <BoundaryGlow className="-z-10" />
       <HorizonArc className="-z-10" />
+      {/* Dấu vẽ SAU cung chân trời: cả hai sống ở dải đáy, và số phải đứng
+          TRÊN đường chân trời chứ không bị cung kẻ ngang qua. Ẩn dưới `lg` —
+          dưới đó lưới xuống một cột và dải đáy bị nội dung ăn hết. */}
+      {mark ? (
+        <SectionMark
+          numeral={mark.numeral}
+          glyph={mark.glyph}
+          className="-z-10 hidden lg:block"
+        />
+      ) : null}
       <BoundaryHorizon className="-z-10" />
 
       {bleed ? children : <div className={cn("pv-container", containerClassName)}>{children}</div>}

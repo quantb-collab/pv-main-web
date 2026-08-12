@@ -288,7 +288,7 @@ export async function Software() {
   const TILE_ORDER = [2, 1, 3];
 
   return (
-    <Section id="phan-mem" sky="rise">
+    <Section id="phan-mem" sky="rise" mark={{ numeral: "II", glyph: "layers" }}>
       <SoftwareBento
         /* Header GIỐNG HỆT công thức của section phần cứng (chủ dự án
            2026-08-10): nhãn hạng mục kèm dấu hai chấm, gộp cùng dòng tiêu đề,
@@ -401,7 +401,7 @@ export async function Training() {
   const t = await getTranslations("home.training");
 
   return (
-    <Section id="dao-tao" sky="rise">
+    <Section id="dao-tao" sky="rise" mark={{ numeral: "III", glyph: "raise" }}>
       <TrainingProgram
         /* Header GIỐNG HỆT công thức của hai section sản phẩm: nhãn hạng mục
            kèm dấu hai chấm, gộp cùng dòng tiêu đề, cỡ `subhead`, thẻ vẫn `h2`.
@@ -647,7 +647,7 @@ export async function Hardware() {
   ];
 
   return (
-    <Section id="phan-cung" sky="deep">
+    <Section id="phan-cung" sky="deep" mark={{ numeral: "I", glyph: "base" }}>
       {/* Tiêu đề và nút đi VÀO trong ProductShelf để tab đứng cùng hàng với
           chúng: một hàng tab riêng tốn 44px, đúng phần chiều cao ô ảnh cần. */}
       <ProductShelf
