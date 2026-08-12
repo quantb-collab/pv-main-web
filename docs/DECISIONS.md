@@ -1101,3 +1101,37 @@ tám (hai CTA trùng việc); gửi form bằng `mailto:` (không chấm điểm
 và trên máy không cấu hình mail client thì không mở được gì).
 **Đổi lại thì phải sửa:** `src/app/api/lead/route.ts`, `assessment-form.tsx`,
 `.env.example`.
+
+## 2026-08-12 — `/ai-assessment` co về một section, chữ nhường chỗ cho form
+**Bối cảnh:** Đây là trang chuyển đổi duy nhất của site — mọi CTA "Đánh giá cơ
+hội ứng dụng AI" đều đổ về đây. Nhưng nó dựng như một trang bán hàng: một
+section hero riêng chỉ chứa tiêu đề, rồi một section nữa chứa 5 mục "bạn nhận
+được gì" + 4 mục "cần chuẩn bị gì" + 4 ô chờ, form nằm ở cột phải. Section cao
+trọn một màn hình, nên muốn thấy ô nhập đầu tiên phải cuộn qua trọn một viewport
+chỉ có ba dòng chữ.
+**Chọn:** Một section duy nhất, hai cột, cột phải rộng hơn (0.85 · 1.15). Chữ
+ngoài form còn 119 từ: tiêu đề, một câu dẫn, ba mục "xong buổi đó bạn có", một
+câu "cần chuẩn bị gì". Tiêu đề form dời vào TRONG khung thẻ.
+**Vì:** Người bấm CTA để tới đây đã đọc thuyết phục ở chỗ khác rồi; trang này
+chỉ còn việc gỡ bốn câu hỏi cuối mà registry ghi ở entry `ai-assessment` rồi
+đưa form ra. Đo ở 1440×900: trọn form kể cả nút gửi nằm trong màn hình đầu
+(đáy nút y=824). Tiêu đề vào trong khung để khối form ở trang và ở drawer là
+CÙNG một cấu trúc (khung · vạch ngăn · form `bare`) — cùng một form xuất hiện
+hai chỗ thì phải đọc ra là một vật.
+**Đánh đổi:** Dưới `lg` lưới xuống một cột nên form bắt đầu ở y≈785 (768px) và
+y≈923 (375px), tức vẫn dưới nếp gấp ở khổ hẹp. Không kéo hai cột xuống `md` vì
+ở 768 mỗi cột chỉ còn ~350px, mà lưới trong form đã tự chia hai ô mỗi hàng từ
+`sm` — ô nhập sẽ còn ~160px.
+**Ô chờ:** ba ô gộp còn một. `feeGap` + `slaGap` là cùng một loại câu hỏi —
+điều kiện của buổi làm việc — nên là một ô `termsGap`. `ownerGap` (ai nhận
+lead) là câu hỏi nội bộ, người mua không quan tâm: nó sống trong `registry.ts`
+để `/track` đếm, không nằm trên mặt trang. `crmGap` **xoá hẳn** — nó viết "biểu
+mẫu chưa gửi đi đâu", không còn đúng từ commit `e49d686`.
+**Đã cân nhắc và bỏ:** giữ hai section và chỉ cắt chữ (form vẫn dưới nếp gấp,
+vì section cao trọn màn hình là luật của `<Section>`, không phải của trang này);
+nâng nấc trời cho thẻ form nổi hơn (nấc đầu trang phải là `void`, và mặt thẻ
+`bg-surface` trên `void` chỉ hơn nền 3 nấc RGB — cái tách nó ra là viền, và
+tương phản chữ thấp nhất trên mặt thẻ vẫn 10,65:1).
+**Đổi lại thì phải sửa:** `src/app/[locale]/ai-assessment/page.tsx`, khối
+`assessment` trong `messages/vi.json`, và docstring khung thẻ trong
+`assessment-drawer.tsx`.
