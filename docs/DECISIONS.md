@@ -1135,3 +1135,28 @@ tương phản chữ thấp nhất trên mặt thẻ vẫn 10,65:1).
 **Đổi lại thì phải sửa:** `src/app/[locale]/ai-assessment/page.tsx`, khối
 `assessment` trong `messages/vi.json`, và docstring khung thẻ trong
 `assessment-drawer.tsx`.
+
+## 2026-08-13 — Dải CTA đóng trang thành thuần chữ, và tiêu đề rút còn hai từ
+**Bối cảnh:** `CtaBand` đứng ở cuối 14 trang. Nó là lưới hai cột: trái là tiêu
+đề + nút, phải là danh sách bốn mục đánh số "bạn nhận được gì". Nhưng CHỈ trang
+chủ truyền `items` — 13 trang còn lại vẫn chia đôi lưới rồi bỏ trống nửa phải,
+nên khối chữ nép vào nửa trái của màn hình sáng nhất trang.
+**Chọn:** Bỏ hẳn prop `items` và cột thứ hai. Dải còn eyebrow, tiêu đề, một câu
+dẫn và một nút, căn giữa. Tiêu đề mặc định rút còn "Bắt đầu ngay" ở cỡ
+`display`; câu dẫn thành lời mời ("Cùng bắt tay tháo gỡ những nút thắt trong
+công việc ngay") chứ không còn tóm tắt nội dung buổi làm việc.
+**Vì:** Chỗ này là chỗ MỜI, không phải chỗ trả lời — bốn mục kia lặp lại đúng
+những gì biểu mẫu nói ngay khi bấm nút, và người đọc tới được đây thì đã đọc
+chán chê ở trên. Căn giữa vì không còn cột nào để căn thẳng lề trái, và đây là
+dấu chấm hết của trang: mắt dừng giữa màn hình rồi mới xuống footer.
+**Cỡ `display` là ngoại lệ có điều kiện:** thang chữ dành nấc đó cho h2 duy
+nhất này vì tiêu đề chỉ có hai từ. Trang nào truyền `title` riêng phải giữ đúng
+độ dài ấy — ở 72px một câu dài sẽ ăn ba dòng và đè lên chỗ của câu dẫn lẫn nút.
+**Đánh đổi:** Trang chủ mất bốn mục "bạn nhận được gì" ở đoạn kết. Chấp nhận
+được vì `/ai-assessment` và drawer đều trả lời đúng câu đó, cách một cú bấm.
+**Đã cân nhắc và bỏ:** giữ `items` cho riêng trang chủ và căn trái ở đó, căn
+giữa ở 13 trang kia (một component hai bố cục, và bố cục nào cũng phải nuôi —
+đúng thứ luật "ghép từ block có sẵn" sinh ra để tránh).
+**Đổi lại thì phải sửa:** `src/components/pv/cta-band.tsx`, chỗ gọi ở
+`src/app/[locale]/page.tsx`, và `home.finalCta` trong `messages/vi.json`
+(bốn khoá `g1`–`g4` đã xoá).

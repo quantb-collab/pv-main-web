@@ -1,21 +1,26 @@
-# Bàn giao — 2026-08-12
+# Bàn giao — 2026-08-13
 
 ## Đang ở đâu
 
-Nhánh `worktree-training-section` giờ mang hai việc: section đào tạo AI trên
+Nhánh `worktree-training-section` giờ mang ba việc: section đào tạo AI trên
 trang chủ (mảng kinh doanh thứ ba, có dấu I · II · III cùng hai section anh em),
-và **trang chuyển đổi `/ai-assessment` dựng lại quanh biểu mẫu**. Trang đó trước
-đây dựng như một trang bán hàng — hero riêng một màn hình, rồi hai danh sách và
-bốn ô chờ chắn trước form; nay còn một section, 119 từ ngoài form, và ở 1440×900
-trọn biểu mẫu kể cả nút gửi nằm trong màn hình đầu.
+**trang chuyển đổi `/ai-assessment` dựng lại quanh biểu mẫu**, và **dải CTA đóng
+trang thành thuần chữ** — cả hai đều đi theo cùng một hướng: chỗ nào MỜI thì chỉ
+mời, chỗ nào TRẢ LỜI mới trả lời, và không lặp lại nhau.
 
 Nhánh vẫn CHƯA nhập vào `develop` — xem *Đang làm dở*.
 
 ## Vừa hoàn thành
 
+- `CtaBand` (`src/components/pv/cta-band.tsx`, đứng ở cuối 14 trang): bỏ cột
+  danh sách bốn mục và prop `items`, căn giữa, tiêu đề rút còn "Bắt đầu ngay" ở
+  cỡ `display`. Lý do và ngoại lệ cỡ chữ nằm ở `DECISIONS.md` mục 2026-08-13.
+  Đo trên `/solutions` và `/technology` ở 1440 · 768 · 375: căn giữa lệch 0px,
+  không tràn ngang, nút mở drawer mà không rời trang, tương phản chữ trên nút
+  9,19:1 và trên nền dải 15,04–18,58:1.
 - `/ai-assessment` dựng lại: `src/app/[locale]/ai-assessment/page.tsx`, khối
   `assessment` trong `messages/vi.json`. Lý do bố cục nằm trong docstring của
-  chính trang; quyết định và phương án đã bỏ nằm ở `DECISIONS.md` mục hôm nay.
+  chính trang; quyết định và phương án đã bỏ nằm ở `DECISIONS.md` mục 2026-08-12.
 - Đo bằng Chrome thật ở 1440 · 1024 · 768 · 375: không tràn ngang, tương phản
   thấp nhất trên MẶT THẺ form 10,65:1, và chạy thật một lượt gửi — giá trị bước
   1 vẫn đi theo POST dù DOM bước 2 chỉ còn năm ô, `/api/lead` trả 503 đúng như
@@ -48,9 +53,12 @@ Nhánh vẫn CHƯA nhập vào `develop` — xem *Đang làm dở*.
    trang đào tạo. Hiện nó là section sản phẩm DUY NHẤT không có nút phụ, vì
    registry chưa có entry nào cho mảng đào tạo (`home.training.pageGap`). Thêm
    entry trước, route sau.
-4. **Sửa tràn ngang ở 768 trên TRANG CHỦ.** `document.documentElement.scrollWidth`
-   = 1120 trên khung 753 — thủ phạm là `svg.pv-rings` của hero (rộng 1199px),
-   có sẵn từ trước. `/ai-assessment` không dính lỗi này.
+4. **Sửa tràn ngang trên TRANG CHỦ ở khổ hẹp** — nặng hơn tưởng. Ở 768,
+   `scrollWidth` = 1120 trên khung 768. Ở 375 thì tệ hơn: `innerWidth` báo về
+   1108, tức trình duyệt phải THU NHỎ cả trang cho vừa phần tràn, nên trang chủ
+   trên điện thoại hiện ra ở dạng thu nhỏ chứ không phải khổ dọc. Thủ phạm là
+   `svg.pv-rings` của hero (rộng 1199px), có sẵn từ trước. `/solutions`,
+   `/technology`, `/ai-assessment` đo cùng lúc đều sạch — lỗi chỉ ở trang chủ.
 5. Chép bộ bàn giao POC vào `docs/one/` — đang ở `~/Downloads/handoff`, NGOÀI
    repo, và mọi con số trong `SOFTWARE-KIT.md` đo từ đó. Chép phần dựng lại được
    (5 `.dc.html` + `support.js` + `assets/` + `AGENTS.md` + `theme/globals.css`
@@ -100,6 +108,14 @@ brand kit.
 - **`bg-surface` trên nấc `void` gần như đen** (7,9,14 so với nền 4,4,7) — thẻ
   tách khỏi nền bằng VIỀN, không bằng độ sáng. Trên `rise` cùng token đó là
   (26,35,43). Đừng bù bằng cách bôi màu tại chỗ.
+- **Đo tương phản ở cuối trang thì HEADER CỐ ĐỊNH chen vào phép đo.**
+  `elementsFromPoint` tại tâm nút CTA trả về link trong nav rồi mới tới nút, nên
+  hàm dò nền lấy nhầm nền header trong suốt và ra 1,02:1 — trông y như một lỗi
+  tương phản nghiêm trọng. Số thật 9,19:1. Nút nằm dưới header là chuyện bình
+  thường ở vị trí cuộn đó; đọc thẳng `backgroundColor` của chính nút để đối chiếu.
+- **Ảnh chụp có thể trúng lúc `Reveal` chưa chạy xong** — cả khối chữ mờ như bị
+  hỏng màu. Chờ ~5 giây sau `scrollIntoView` rồi mới chụp, và kiểm `opacity`
+  bằng số trước khi kết luận từ ảnh.
 - **`EnterWorktree` tách từ `origin/main`, không phải nhánh đang đứng.** `main`
   chậm 29 commit so với `develop`. Vào worktree xong kiểm `git log --oneline -2`
   trước khi đọc file, rồi `git reset --hard develop`. Worktree mới cũng không có
@@ -128,8 +144,9 @@ brand kit.
 ## Trạng thái kỹ thuật
 
 - Lệnh kiểm tra cuối: `pnpm verify` — sạch, exit 0 (104 trang, 50 file).
-- Commit cuối: `399a661` — dựng lại `/ai-assessment` quanh biểu mẫu. Trước nó
-  là `e49d686` (form thôi đánh rơi lead) và `9d8664f` (dấu I · II · III).
+- Commit cuối: `849c9cc` — rút tiêu đề dải CTA còn hai từ ở cỡ `display`.
+  Trước nó là `3c2ef44` (dải CTA thuần chữ) và `399a661` (dựng lại
+  `/ai-assessment` quanh biểu mẫu).
 - Việc chưa commit: không (trong worktree). Cây làm việc CHÍNH thì còn bản nháp
   cũ chưa commit — xem *Đang làm dở*.
 - Nhánh: `worktree-training-section`, tách từ `develop` `4886998`. `develop`
