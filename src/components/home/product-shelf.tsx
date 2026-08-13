@@ -204,27 +204,45 @@ export function ProductShelf({
         {/* `flex-wrap` + `gap-3`: ở 375px cụm này rộng ~330px trong khung 335px.
             Không cho xuống dòng thì nó tràn ngay ở màn nhỏ nhất. */}
         <div className="flex flex-wrap items-center gap-3">
-          <TabsList variant="line" className="h-auto">
-            {partners.map((partner) => (
-              <TabsTrigger
-                key={partner.id}
-                value={partner.id}
-                className="px-3 py-1.5 font-display text-ui font-medium"
-              >
-                {partner.name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+          {/* MỘT đối tác thì KHÔNG vẽ tablist. Một tab đơn độc không chuyển
+              được sang đâu: nó trông y hệt một control (có gạch chân, đứng ngay
+              cạnh nút "Xem chi tiết") nhưng bấm vào không xảy ra gì, và ở 375
+              nó còn ăn trọn một dòng của hàng tiêu đề. Tên đối tác đã nằm trong
+              câu dẫn của section và trong hồ sơ bên dưới, nên không mất chữ
+              nào. Thêm đối tác thứ hai là tablist tự quay lại — đây là điều
+              kiện trên dữ liệu, không phải một quyết định bị gỡ. */}
+          {partners.length > 1 ? (
+            <TabsList variant="line" className="h-auto">
+              {partners.map((partner) => (
+                <TabsTrigger
+                  key={partner.id}
+                  value={partner.id}
+                  className="px-3 py-1.5 font-display text-ui font-medium"
+                >
+                  {partner.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          ) : null}
 
           {/* Không vẽ nút khi hệ điều hành đã khai `prefers-reduced-motion`:
               lúc đó băng vốn đứng yên, một cái nút "chạy lại" không làm gì là
-              nói dối người dùng. */}
+              nói dối người dùng.
+
+              CŨNG KHÔNG VẼ DƯỚI `lg`, và vì đúng lý do đó: thứ nút này dừng là
+              băng ảnh trong `ShelfTier`, mà cả chồng `ShelfTier` khai
+              `hidden ... lg:flex`. Dưới `lg` mặt trang là `ChipSpecs` — không
+              có gì chuyển động — nên nút nằm đó là một control cho một vật
+              không tồn tại. Đo ở 375 · 768 · 900: chiều cao của chồng tầng kệ
+              bằng 0. */}
           {reduced ? null : (
-            <MotionToggle
-              playing={autoplay}
-              labels={motionLabels}
-              onToggle={() => setAutoplay((v) => !v)}
-            />
+            <span className="hidden lg:block">
+              <MotionToggle
+                playing={autoplay}
+                labels={motionLabels}
+                onToggle={() => setAutoplay((v) => !v)}
+              />
+            </span>
           )}
           {action}
         </div>
