@@ -230,10 +230,15 @@ export function AppShot({
           <p className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
             {detail.label} · {labels.sample}
           </p>
+          {/* `py-3 -my-3`: một dòng mono cỡ eyebrow chỉ cao 17px, dưới mọi
+              ngưỡng vùng chạm. Cặp padding–margin ngược dấu nâng vùng chạm lên
+              41px mà KHÔNG dịch một pixel bố cục nào — hàng này căn theo
+              baseline nên cả hai đều không đụng tới vạch chữ. Phần nới thêm rơi
+              vào khe giữa tên màn và dòng chú, chỗ không có control nào khác. */}
           <DialogTrigger asChild>
             <button
               type="button"
-              className="cursor-pointer rounded-control font-mono text-eyebrow font-medium text-brand-ink uppercase transition-colors duration-(--dur-fast) hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              className="-my-3 cursor-pointer rounded-control py-3 font-mono text-eyebrow font-medium text-brand-ink uppercase transition-colors duration-(--dur-fast) hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             >
               {labels.zoom}
             </button>

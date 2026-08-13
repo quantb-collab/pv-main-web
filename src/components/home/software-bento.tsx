@@ -413,7 +413,16 @@ function HeroTile({
                   aria-controls={panelId}
                   tabIndex={on ? 0 : -1}
                   onClick={() => select(i)}
-                  className="group/step flex flex-1 cursor-pointer flex-col gap-1.5 rounded-control pt-1 pb-0.5 text-left focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                  /* Vùng chạm nới XUỐNG bằng một pseudo-element, không bằng
+                     padding: nút chỉ cao 28px (vạch + số mono), nhưng thêm
+                     padding thật thì dãy bước đội lên và ô lớn vỡ ngân sách
+                     chiều cao — ô chỉ dư 15px ở 1440×900. `after` không chiếm
+                     dòng nào mà vẫn nhận chạm, nên vùng chạm thành 44px trong
+                     khi bố cục không đổi một pixel. Nới xuống chứ không nới đều
+                     hai đầu: phía trên là lớp bấm phủ ảnh của `AppShot`, chồng
+                     lên đó là cướp cú chạm của chính tấm ảnh. 16px nới thêm nằm
+                     gọn trong `p-5` ở chân ô. */
+                  className="group/step relative flex flex-1 cursor-pointer flex-col gap-1.5 rounded-control pt-1 pb-0.5 text-left after:absolute after:inset-x-0 after:top-0 after:-bottom-4 after:content-[''] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
                   <span
                     aria-hidden
