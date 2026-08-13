@@ -130,6 +130,10 @@ export interface ShotLabels {
   zoom: string;
   /** Chỉ dẫn vuốt dưới khung ảnh phóng to ở khổ hẹp. */
   pan: string;
+  /** Nhãn nhóm và hai nhãn của cặp nút chọn cách xem ảnh phóng to (dưới `lg`). */
+  view: string;
+  fit: string;
+  read: string;
   close: string;
   prev: string;
   next: string;

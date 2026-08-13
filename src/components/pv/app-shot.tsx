@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MediaFrame } from "@/components/motion/media-frame";
 import {
   Dialog,
@@ -96,6 +96,12 @@ export interface AppShotLabels {
    * không đè chữ của site lên nền Aurora).
    */
   pan: string;
+  /** Nhãn nhóm cho cặp nút chọn cách xem — một cặp nút không tự khai nó là gì. */
+  view: string;
+  /** Xem TRỌN màn hình, thu vừa khung. Nhận ra bố cục, chưa đọc được chữ. */
+  fit: string;
+  /** Xem ở cỡ đọc được (1152px), kéo ngang. Đọc được chữ, thấy từng phần. */
+  read: string;
 }
 
 export function AppShot({
@@ -147,8 +153,50 @@ export function AppShot({
    * tại khi đang mở, trước đó ref còn rỗng.
    */
   const panRef = useRef<HTMLDivElement>(null);
+
+  /*
+   * ── HAI CHẾ ĐỘ XEM Ở KHỔ HẸP (2026-08-14, chủ dự án chốt) ─────────────────
+   * Bản trước khoá cứng vào chế độ "đọc": ảnh 1152px trong khung 358px. Đo
+   * trên máy thật ở 390 thì người xem chỉ thấy **31% bề ngang màn hình** một
+   * lúc và phải vuốt qua ba khung nhìn. Chữ đọc được, nhưng không bao giờ
+   * thấy được cả màn — nên không trả lời được câu hỏi đầu tiên người ta hỏi
+   * một ảnh chụp phần mềm: "màn này là cái gì".
+   *
+   * Không có MỘT bề ngang nào trả lời được cả hai câu hỏi đó — đó là số học:
+   * trọn màn trong 358px thì chữ 13px còn 3,4px, mà chữ đọc được thì phải
+   * 1152px. Nên thôi chọn hộ người đọc: mở ra là TOÀN CẢNH (nhận ra bố cục,
+   * biết mình đang xem màn nào), một nút đổi sang ĐỌC KỸ khi muốn soi chữ.
+   *
+   * Mặc định là `fit` chứ không phải `read`: thứ tự nhận thức là nhận dạng
+   * trước, chi tiết sau. Mở thẳng vào một cửa sổ 31% là bắt người ta đọc chi
+   * tiết của một thứ chưa biết là gì.
+   *
+   * Đặt lại về `fit` mỗi lần đổi màn hoặc mở lại: nút ‹ › thay ảnh mà không
+   * tháo dialog, và màn mới lại là một thứ chưa biết là gì.
+   *
+   * Việc đặt lại làm NGAY TRONG RENDER, không phải trong `useEffect`. Đây là
+   * mẫu "chỉnh state khi prop đổi" của React: so mốc cũ với mốc mới rồi
+   * `setState` thẳng, React huỷ luôn lượt render đang chạy và chạy lại với giá
+   * trị mới trước khi vẽ ra màn hình. Làm bằng effect thì DOM kịp vẽ một khung
+   * hình ở chế độ cũ rồi mới nhảy — người bấm sang màn kế sẽ thấy ảnh giật một
+   * nhịp từ "đọc kỹ" về "toàn cảnh". `eslint` của repo cũng chặn thẳng
+   * `setState` đồng bộ trong effect (cascading renders).
+   *
+   * Đổi `key` của `AppShot` cũng đặt lại được, nhưng cấm: `Dialog` nằm bên
+   * trong nó, và đổi `key` là tháo dialog ra ngay lúc người dùng bấm ‹ ›.
+   *
+   * Từ `lg` cờ này không có tác dụng — ảnh vốn `w-full` và khung hết cuộn.
+   */
+  const [fit, setFit] = useState(true);
+  const shotKey = `${src}|${String(open)}`;
+  const [prevKey, setPrevKey] = useState(shotKey);
+  if (prevKey !== shotKey) {
+    setPrevKey(shotKey);
+    setFit(true);
+  }
+
   useEffect(() => {
-    if (!open) return;
+    if (!open || fit) return;
     /*
      * Căn LẶP LẠI trong khoảng nửa giây đầu, không phải căn một phát.
      *
@@ -173,7 +221,12 @@ export function AppShot({
       }, ms),
     );
     return () => timers.forEach(window.clearTimeout);
-  }, [src, open]);
+    /* `fit` NẰM TRONG deps, không chỉ `src` và `open`: chuyển từ toàn cảnh
+       sang đọc kỹ là lần ĐẦU TIÊN khung có gì để cuộn, nên nếu effect không
+       chạy lại ở đúng lúc đó thì ảnh đứng nguyên ở mép trái — tức cửa sổ đầu
+       tiên rơi trọn vào thanh điều hướng, đúng cái cảnh mà cả khối chú thích
+       trên kia sinh ra để tránh. Đo ở 390: thiếu deps này thì scrollLeft = 0. */
+  }, [src, open, fit]);
 
   /* Dòng nguồn KHÔNG lặp tên màn: ở bản phóng to, tên màn đã là tiêu đề đứng
      ngay dưới nó. Hai dòng mono xếp liền nhau mà một dòng nhắc lại dòng kia
@@ -315,7 +368,9 @@ export function AppShot({
               thiết bị nên nét, không nhoè.
 
             Đổi lại người đọc phải vuốt qua ~3 bề ngang khung nhìn. Đó là cái
-            giá đúng: xem được từng phần rõ ràng vẫn hơn nhìn trọn một vệt mờ.
+            giá đúng CHO VIỆC ĐỌC — nhưng nó không phải cái giá đúng cho việc
+            NHẬN RA màn này là gì, nên từ 2026-08-14 nó chỉ còn là một trong
+            hai chế độ, không còn là chế độ duy nhất. Xem khối `fit` ở đầu hàm.
             `overscroll-contain` để cú vuốt hết mép ảnh không kéo luôn dialog.
             Từ `lg` thì trả về `w-full` và khung hết cuộn — desktop không đổi.
           */}
@@ -323,11 +378,21 @@ export function AppShot({
           <div
             ref={panRef}
             className={cn(
-              "min-w-0 overflow-auto overscroll-contain rounded-xl",
-              "max-h-[56dvh] lg:max-h-none lg:overflow-visible",
+              "min-w-0 overscroll-contain rounded-xl",
+              /* Chế độ toàn cảnh không có gì để kéo, nên khung thôi cuộn hẳn:
+                 một vùng cuộn không cuộn được vẫn ăn cú vuốt của người dùng và
+                 chặn mất cú cuộn dọc của dialog. */
+              fit
+                ? "overflow-hidden"
+                : "max-h-[56dvh] overflow-auto lg:max-h-none lg:overflow-visible",
             )}
           >
-            <div className="relative w-[1152px] rounded-xl lg:w-full">
+            <div
+              className={cn(
+                "relative rounded-xl lg:w-full",
+                fit ? "w-full" : "w-[1152px]",
+              )}
+            >
               {/* `priority` = `loading="eager"` + `fetchPriority: high`, và nó
                 KHÔNG tốn gì ở lần tải trang: ảnh này chỉ tồn tại sau khi người
                 dùng bấm mở, trước đó dialog chưa render. Đây cũng là ảnh duy
@@ -363,12 +428,38 @@ export function AppShot({
             </div>
           </div>
 
-          {/* Chỉ dẫn vuốt — chỉ có nghĩa khi ảnh rộng hơn khung, tức dưới `lg`.
-              Đặt NGOÀI ảnh, cùng chỗ và cùng giọng mono với nhãn "dữ liệu mẫu"
-              của poster: kit §4 cấm đè chữ của site lên nền Aurora. */}
-          <p className="mt-2 font-mono text-micro text-subtle-foreground uppercase lg:hidden">
-            {labels.pan}
-          </p>
+          {/* HÀNG ĐIỀU KHIỂN CÁCH XEM — chỉ sống dưới `lg`, nơi ảnh không vừa
+              khung. Đặt NGOÀI ảnh, cùng chỗ và cùng giọng mono với nhãn "dữ
+              liệu mẫu" của poster: kit §4 cấm đè chữ của site lên nền Aurora.
+
+              Chỉ dẫn vuốt đi cùng hàng và CHỈ hiện ở chế độ đọc — ở toàn cảnh
+              thì không có gì để vuốt, và một chỉ dẫn cho một cử chỉ không làm
+              gì còn tệ hơn không có chỉ dẫn. */}
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 lg:hidden">
+            <div
+              role="group"
+              aria-label={labels.view}
+              className="flex shrink-0 items-center gap-1 rounded-control border p-0.5"
+            >
+              <ViewModeButton on={fit} onClick={() => setFit(true)}>
+                {labels.fit}
+              </ViewModeButton>
+              <ViewModeButton on={!fit} onClick={() => setFit(false)}>
+                {labels.read}
+              </ViewModeButton>
+            </div>
+
+            {/* `min-w-0` + KHÔNG `justify-between`: ở 390 cụm nút chiếm 170px
+                trong 318px, còn chỉ dẫn cần ~190px. Với `justify-between` hai
+                khối bị ghim ra hai mép và dòng chỉ dẫn tràn khỏi hộp thoại —
+                đo được là chữ "MÀN" bị cắt mất một nửa. Bỏ nó đi thì chỉ dẫn
+                đứng ngay sau cụm nút và tự xuống dòng trong phần còn lại. */}
+            {!fit ? (
+              <p className="min-w-0 font-mono text-micro text-subtle-foreground uppercase">
+                {labels.pan}
+              </p>
+            ) : null}
+          </div>
           </div>
 
           <div className="flex flex-col gap-3">
@@ -455,6 +546,46 @@ function NavButton({
         <path d="M6 3.5 10.5 8 6 12.5" />
       </svg>
       <span className="sr-only">{label}</span>
+    </button>
+  );
+}
+
+/**
+ * Một nửa của cặp nút chọn cách xem ảnh. Chỉ tồn tại dưới `lg`.
+ *
+ * `aria-pressed` chứ không phải `role="tab"`: hai nút này không đổi NỘI DUNG
+ * đang xem, chúng đổi CÁCH xem đúng một thứ — tablist sẽ hứa với trình đọc màn
+ * hình rằng có hai panel, mà chỉ có một.
+ *
+ * Nút đang bật lấy mặt `surface-2` chứ không lấy màu brand: brand trong hộp
+ * thoại này là của vòng mép quanh ảnh, và một cụm điều khiển sáng ngang ảnh thì
+ * mắt không biết nhìn đâu trước. Trạng thái đọc ra bằng nền và độ đậm của chữ.
+ *
+ * `min-h-10` vì `text-micro` chỉ cao 15px — chỉ có padding ngang thì vùng chạm
+ * còn 19px, dưới mọi ngưỡng.
+ */
+function ViewModeButton({
+  on,
+  onClick,
+  children,
+}: {
+  on: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={onClick}
+      className={cn(
+        "flex min-h-10 cursor-pointer items-center rounded-control px-3.5 font-mono text-micro uppercase transition-colors duration-(--dur-fast) focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+        on
+          ? "bg-surface-2 font-medium text-foreground"
+          : "text-subtle-foreground hover:text-foreground",
+      )}
+    >
+      {children}
     </button>
   );
 }
