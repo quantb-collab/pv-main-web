@@ -30,9 +30,10 @@ import type { Cta } from "@/content/registry";
  * và section này là dấu chấm hết của trang — mắt dừng ở giữa màn hình sáng nhất
  * rồi mới xuống footer. Còn cột thì phải căn trái.
  *
- * CỠ TIÊU ĐỀ GIỮ NGUYÊN `headline` (mặc định của h2). Đừng nâng lên `display`:
- * cỡ đó dành riêng cho h1, và dải này đứng ở mọi trang — nâng lên là mọi trang
- * có hai dòng chữ to ngang nhau, tiêu đề trang thành ra không còn to nhất.
+ * CỠ `display` — nấc to nhất trong thang chữ, thường dành cho h1 (chủ dự án
+ * chốt 2026-08-13). Chỉ đứng được vì tiêu đề mặc định rút còn HAI TỪ: ở cỡ
+ * 72px, một câu dài sẽ ăn ba dòng và đè lên chỗ của câu dẫn lẫn cái nút. Trang
+ * nào truyền `title` riêng thì giữ nó cùng độ dài đó, đừng truyền cả câu.
  * ============================================================================
  */
 
@@ -67,6 +68,7 @@ export async function CtaBand({
     <Section sky="dawn">
       <SectionHeader
         align="center"
+        size="display"
         eyebrow={tf("eyebrow")}
         title={title ?? tf("title")}
         lead={lead ?? tf("lead")}
