@@ -508,30 +508,42 @@ function ProductTile({ product }: { product: BentoProduct }) {
           Hình hộp đã đủ để phân biệt điện thoại với máy bàn; đổi thêm cách căn
           là đổi thứ không mang thông tin gì.
 
-          Ô nằm XUỐNG CHỒNG dưới `sm`: ở 375 thì ảnh 150px cộng khe chỉ chừa
-          129px cho cột chữ — tên xuống hai dòng và câu dẫn thành bốn dòng 16 ký
-          tự, hẹp hơn mọi ngưỡng đọc được. */}
+          ── DƯỚI `lg` LÀ MỘT HÀNG NGANG, KHÔNG PHẢI MỘT Ô ĐỨNG (2026-08-14) ──
+          Hình hộp chỉ NÓI được cỡ màn hình khi lưới còn span để dựng hình hộp
+          đó, và `BENTO_SPAN` khai `1x2`/`2x3` từ `lg` trở lên. Dưới `lg` cả bốn
+          ô rơi về một cột rộng bằng nhau, nên "ô đứng" không còn đứng so với
+          cái gì — nó chỉ còn là một khung ảnh dọc 168px chiếm 326px chiều cao.
+          Đo ở 375: PV One 378px, ba ô sản phẩm 919px. Tức ba khung chờ RỖNG ăn
+          gấp 2,4 lần sản phẩm số 1 — cấp bậc của kệ lộn ngược đúng ở khổ máy mà
+          người ta xem nhiều nhất. Ở 900 còn tệ hơn: ô 410px chỉ dùng 168px bên
+          trái, nửa phải trống trơn.
+
+          Nên dưới `lg` cả ba ô đọc như một DANH SÁCH: thumb nhỏ bên trái, chữ
+          bên phải, mỗi ô một hàng. Hình hộp quay lại đúng lúc lưới có span để
+          dựng nó — từ `lg`. */}
       <Link
         href={product.href}
         className={cn(
-          "group/tile flex h-full gap-4 rounded-[inherit] p-5 transition-transform duration-(--dur-base) hover:-translate-y-1",
-          phone
-            ? "flex-col items-start"
-            : "flex-col justify-center sm:flex-row sm:items-center",
+          "group/tile flex h-full flex-row items-center gap-4 rounded-[inherit] p-5 transition-transform duration-(--dur-base) hover:-translate-y-1",
+          phone && "lg:flex-col lg:items-start",
         )}
       >
         {/* Ô chờ bản CÂM ở đây: bốn khung chờ đứng cạnh nhau mà cái nào cũng
-            đeo badge vàng thì kệ đọc ra là một bức tường cảnh báo. */}
+            đeo badge vàng thì kệ đọc ra là một bức tường cảnh báo.
+
+            Thumb co theo khổ: 96px ở điện thoại (chừa 183px cho cột chữ ở 375 —
+            đủ ~22 ký tự một dòng), 128px từ `sm`, và chỉ ở `lg` mới trả về bề
+            ngang gốc, nơi ô đứng lại là ô đứng. */}
         <MediaFrame
           ratio={phone ? "portrait" : "landscape"}
           src={product.src}
           alt={product.src ? product.name : undefined}
           need={product.need}
           compact
-          sizes={phone ? "180px" : "150px"}
+          sizes="(min-width: 1024px) 180px, (min-width: 640px) 128px, 96px"
           className={cn(
-            "shrink-0 bg-transparent",
-            phone ? "w-[10.5rem]" : "w-[9.375rem]",
+            "w-24 shrink-0 bg-transparent sm:w-32",
+            phone ? "lg:w-[10.5rem]" : "lg:w-[9.375rem]",
           )}
         />
 
@@ -544,11 +556,13 @@ function ProductTile({ product }: { product: BentoProduct }) {
           </h3>
           {/* Ô đứng hẹp (~250px) chỉ đủ chỗ cho tên; câu dẫn của nó vẫn phải
               tới được trình đọc màn hình nên chuyển thành `sr-only` chứ không
-              bị cắt đi. */}
+              bị cắt đi. Chỉ từ `lg` — dưới đó ô là một hàng ngang và cột chữ
+              rộng 183px ở 375, 226px ở 900, tức thừa chỗ cho câu dẫn. Giấu nó
+              ở khổ hẹp là bỏ đúng câu nói ERP và MES khác nhau ở chỗ nào. */}
           <p
             className={cn(
               "text-body-sm text-muted-foreground",
-              phone && "sr-only",
+              phone && "lg:sr-only",
             )}
           >
             {product.lead}
