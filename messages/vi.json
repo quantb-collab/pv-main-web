@@ -310,11 +310,7 @@
     "finalCta": {
       "eyebrow": "Bước tiếp theo",
       "title": "Bắt đầu ngay từ một việc đang tắc",
-      "lead": "Buổi đánh giá đầu tiên xác định nên làm gì trước, không nhằm chốt hợp đồng.",
-      "g1": "Xác định vấn đề ưu tiên",
-      "g2": "Đánh giá quy trình, dữ liệu hiện có",
-      "g3": "Đề xuất phạm vi và chỉ số đo kết quả",
-      "g4": "Thống nhất bước tiếp theo"
+      "lead": "Buổi đánh giá đầu tiên chọn ra bài toán nên làm trước, phạm vi bước đầu và chỉ số đo kết quả, không nhằm chốt hợp đồng."
     }
   },
   "solutions": {

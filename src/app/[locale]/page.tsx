@@ -91,8 +91,6 @@ export default async function HomePage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const t = await getTranslations("home.finalCta");
-
   return (
     <>
       <Hero />
@@ -102,10 +100,9 @@ export default async function HomePage({
       <Hardware />
       <Software />
       <Training />
-      <CtaBand
-        cta="assessment"
-        items={[1, 2, 3, 4].map((n) => t(`g${n}`))}
-      />
+      {/* Không truyền gì thêm: dải CTA nay thuần chữ và một nút, và trang chủ
+          dùng đúng bản mặc định như 13 trang còn lại. */}
+      <CtaBand cta="assessment" />
     </>
   );
 }
