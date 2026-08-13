@@ -1257,3 +1257,35 @@ là thứ kéo nút — `CtaButton` là `inline-flex` nên nó chỉ nở khi kh
 `/solutions`, `/technology`, `/about`: 375 ra 335×44, 1440 giữ nguyên 168×44
 (và 192×44 ở `/technology`, nhãn dài hơn). Không trang nào tràn ngang.
 **Đổi lại thì phải sửa:** `src/components/pv/cta-band.tsx`.
+
+## 2026-08-14 — Bản phóng to PV One có HAI chế độ, không phải một
+**Bối cảnh:** Chủ dự án xem trang và chê "show detail lên cũng không nhìn rõ
+được". Đo lại trên điện thoại 390: hộp thoại rộng 358px, ảnh 1152px — người xem
+thấy **31% bề ngang màn hình** một lúc và phải vuốt qua ba khung nhìn. Chữ đọc
+được, nhưng cả màn hình thì không bao giờ thấy, nên câu hỏi đầu tiên người ta
+hỏi một ảnh chụp phần mềm — "màn này là cái gì" — không có chỗ nào trả lời.
+**Chọn:** Mở ra là TOÀN CẢNH (ảnh vừa khung, thấy trọn màn), một nút đổi sang
+ĐỌC KỸ (1152px, vuốt ngang). Mặc định là toàn cảnh.
+**Vì:** Không có MỘT bề ngang nào trả lời được cả hai câu hỏi — đó là số học:
+trọn màn trong 358px thì chữ 13px còn 3,4px; chữ đọc được thì phải 1152px. Bản
+trước chọn hộ người đọc một nửa câu trả lời và khoá cứng vào đó. Mặc định là
+toàn cảnh vì thứ tự nhận thức là nhận dạng trước, chi tiết sau: mở thẳng vào một
+cửa sổ 31% là bắt người ta đọc chi tiết của một thứ chưa biết là gì.
+**Đặt lại về toàn cảnh mỗi lần đổi màn**, và làm NGAY TRONG RENDER chứ không
+trong `useEffect`: bằng effect thì DOM kịp vẽ một khung hình ở chế độ cũ rồi mới
+nhảy, tức ảnh giật một nhịp mỗi lần bấm ‹ ›. `eslint` của repo cũng chặn thẳng
+`setState` đồng bộ trong effect. Đổi `key` cũng đặt lại được nhưng CẤM — `Dialog`
+nằm bên trong, đổi `key` là tháo hộp thoại ngay lúc người dùng bấm sang màn kế.
+**Bẫy kèm theo:** effect căn giữa khung vuốt phải nhận `fit` vào deps. Thiếu nó
+thì lần đầu chuyển sang chế độ đọc `scrollLeft` vẫn 0 — cửa sổ đầu tiên rơi trọn
+vào thanh điều hướng, đúng dải tối mà cả khối chú thích căn giữa sinh ra để
+tránh. Đo lại sau khi sửa: `scrollLeft` 417 = (1152−318)/2, đúng tâm.
+**Đã cân nhắc và bỏ:** cắt riêng một vùng ảnh cho điện thoại (phải chọn hộ vùng
+"đắt nhất" cho cả năm màn, và mỗi lần đổi ảnh là chọn lại); bắt xoay ngang (đẩy
+việc sang người dùng, mà 844px cũng mới thấy 73%); để ô chờ xin ảnh bản cầm tay
+(đúng nhưng không sửa được gì hôm nay — vẫn nên xin, xem `SOFTWARE-KIT.md`).
+**Không đổi gì ở desktop:** từ `lg` cờ này vô hiệu. Quét lại 6 khổ: chiều cao
+trang và mọi section y hệt trước, tràn ngang 0.
+**Đổi lại thì phải sửa:** `src/components/pv/app-shot.tsx`, `ShotLabels` trong
+`src/components/home/software-bento.tsx`, ba khoá `viewLabel`/`fitLabel`/
+`readLabel` trong `messages/vi.json`.

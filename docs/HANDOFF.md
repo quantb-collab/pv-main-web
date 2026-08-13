@@ -92,6 +92,13 @@ Nhánh vẫn CHƯA nhập vào `develop` — xem *Đang làm dở*.
 
 ## Đang chờ quyết định
 
+- **Bỏ khung thẻ ở đâu** — chủ dự án. Phản hồi "lạm dụng cards" đưa ra khi đang
+  xem cây CHÍNH, nơi section đào tạo là bản nháp `training-tracks.tsx` (4 thẻ
+  theo đối tượng) không có ở nhánh này. Chủ dự án chọn "xem nhánh đã rồi quyết"
+  (2026-08-14). Ba ứng viên đã dựng sẵn phương án: `con-so` (6 ô → thang chữ
+  trần, chỉ ô −72% giữ mặt), `ket-qua` (12 ô → vạch dọc + thang màu), `dao-tao`
+  (3 thẻ → khối chữ ngăn bằng vạch). Chưa đụng gì cho tới khi có chỉ đạo.
+
 - **Điều kiện buổi đánh giá** — Pebble Vina — `assessment.termsGap`, hiện ngay
   trên `/ai-assessment`: miễn phí hay có phí, kéo dài bao lâu, cam kết bao lâu
   phản hồi. Chặn việc gỡ ô chờ cuối cùng của trang chuyển đổi.
@@ -113,6 +120,22 @@ brand kit.
 
 ## Bẫy đã gặp
 
+- **⚠️ `localhost:3000` KHÔNG phải nhánh này.** Cổng 3000 phục vụ cây làm việc
+  CHÍNH `/Users/st2518/Works/pv-web`, đang chậm cả loạt commit của nhánh và còn
+  mang bản nháp `training-tracks.tsx` chưa commit. Chủ dự án đã review nhầm trên
+  cổng đó một lần và chê bốn chỗ mà ba chỗ đã sửa xong ở nhánh. **Trước khi nhận
+  bất kỳ phản hồi giao diện nào, hỏi rõ đang xem cổng nào.** Ba dấu vết nhận
+  diện cây CHÍNH trong 5 giây: không có `ChipSpecs`, không có `order-first`, có
+  `training-tracks.tsx`. Số đo phân biệt: cây CHÍNH cuộn ngang **352px ở 768**,
+  nhánh này 0 ở mọi khổ.
+- **`scrollWidth - innerWidth = 0` KHÔNG có nghĩa là không mất chữ.** Tổ tiên
+  mang `overflow-x: hidden` thì phần thừa bị cắt chứ không đẩy tài liệu, nên
+  phép đo tràn ngang báo sạch trong khi mặt trang đang mất chữ. Dò đúng cách:
+  quét mọi phần tử tìm `scrollWidth > clientWidth` rồi đi ngược lên tìm tổ tiên
+  nào đang cắt. Script ở `$CLAUDE_JOB_DIR/tmp/clip.mjs` của phiên 2026-08-14.
+- **`setState` trong `useEffect` làm `pnpm verify` fail**, không phải cảnh báo:
+  eslint của repo bật luật "cascading renders". Đặt lại state khi prop đổi thì
+  dùng mẫu so mốc cũ–mới ngay trong render.
 - **`getBoundingClientRect` KHÔNG thấy vùng chạm nới bằng pseudo-element.** Sau
   khi nới `after` cho năm nút bước, phép đo vẫn báo 45×28 y như cũ và trông hệt
   như bản sửa không ăn. Kiểm đúng cách là bắn `elementFromPoint` xuống dưới mép
@@ -199,10 +222,13 @@ brand kit.
 
 - Lệnh kiểm tra cuối: `pnpm verify` — sạch, exit 0 (104 trang, 50 file), chạy ở
   đúng trạng thái đã commit.
-- Commit cuối: `6008306` (docs). Trước nó là bốn commit của lượt rà responsive
-  trang chủ: `6139adb` (nút dải CTA hết bề ngang), `57210b1` (kệ phần cứng bỏ
-  control chết), `309c784` (vùng chạm stepper và nút phóng to), `b29af64` (ô
-  sản phẩm xuống hàng ngang dưới `lg`).
+- Commit cuối: `5845f7d` — bản phóng to PV One có hai chế độ toàn cảnh / đọc kỹ.
+  Trước nó là bốn commit của lượt rà responsive trang chủ: `6139adb` (nút dải
+  CTA hết bề ngang), `57210b1` (kệ phần cứng bỏ control chết), `309c784` (vùng
+  chạm stepper và nút phóng to), `b29af64` (ô sản phẩm xuống hàng ngang dưới
+  `lg`).
+- **Dev server của nhánh này: `pnpm dev -p 3213`.** Đừng đọc cổng 3000 — xem bẫy
+  đầu mục *Bẫy đã gặp*.
 - **CHƯA PUSH.** Skill `commit` của repo chỉ cho push khi chủ dự án yêu cầu rõ.
 - Việc chưa commit: không (trong worktree). Cây làm việc CHÍNH thì còn bản nháp
   cũ chưa commit — xem *Đang làm dở*.
