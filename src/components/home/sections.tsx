@@ -141,8 +141,16 @@ export async function Stats() {
           label={t("s1Label")}
         />
         {/* Ô tuyên ngôn: thông điệp trung tâm của blueprint, lần duy nhất
-            trên trang chủ — tầng chữ đứng chung lưới với tầng số. */}
-        <BentoTile span="2x1">
+            trên trang chủ — tầng chữ đứng chung lưới với tầng số.
+
+            `order-first` cho tới `lg`: thứ tự DOM ở đây là thứ tự của LƯỚI BỐN
+            CỘT, nơi ô tuyên ngôn nằm cạnh ô chỉ số đầu tiên trên cùng một hàng.
+            Xuống một cột thì thứ tự đó đọc ra là "Tra cứu −72% → tuyên ngôn →
+            Chứng từ −58%", tức một câu khẩu hiệu chen vào GIỮA bộ bốn con số và
+            cắt bộ đó làm đôi. Đưa lên đầu thì mạch đọc thành: luận điểm trước,
+            bốn số đo sau, cách đo cuối — đúng thứ tự mà mắt vốn đọc trên lưới
+            rộng, chỉ khác là theo chiều dọc. */}
+        <BentoTile span="2x1" className="order-first lg:order-none">
           <p className="max-w-[24ch] font-display text-title font-semibold text-balance">
             <Highlight>{t("statement")}</Highlight>
           </p>
