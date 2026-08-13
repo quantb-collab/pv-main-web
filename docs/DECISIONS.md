@@ -1193,3 +1193,67 @@ nhân không phải chỗ để biên tập cho ngắn); xếp ba cột link th�
 sách thành răng cưa).
 **Đổi lại thì phải sửa:** `src/components/layout/site-footer.tsx` và khối
 `footer.office` trong `messages/vi.json` (khoá `office.label` đã xoá).
+
+## 2026-08-14 — Rà responsive trang chủ: hình hộp bento chỉ nói được từ `lg`
+**Bối cảnh:** Đo cả tám section trang chủ ở 375 · 414 · 600 · 768 · 900 · 1024 ·
+1280 · 1440 bằng Chrome thật. Sáu trong tám section đọc tốt ở mọi khổ; hai chỗ
+hỏng thật, và cả hai hỏng ở cùng một chỗ — dưới `lg`.
+**Chọn:** Ba sửa đổi, không đụng một pixel nào từ `lg` trở lên.
+
+**1. Ô sản phẩm của kệ phần mềm xuống một HÀNG NGANG dưới `lg`.**
+`BENTO_SPAN` khai `1x2` (ô đứng = điện thoại) và `2x3` (ô lớn) từ `lg`. Dưới đó
+cả bốn ô rơi về một cột rộng bằng nhau, nên "ô đứng" không còn đứng so với cái
+gì — nó chỉ còn là một khung ảnh dọc 168px cao 326px. Đo ở 375: PV One 378px,
+ba ô sản phẩm 919px. Ba khung chờ RỖNG ăn gấp 2,4 lần sản phẩm số 1, tức cấp
+bậc của kệ lộn ngược đúng ở khổ máy người ta xem nhiều nhất. Ở 900 còn tệ hơn:
+ô rộng 410px chỉ dùng 168px bên trái, nửa phải trống trơn.
+Nay dưới `lg` cả ba ô là một danh sách — thumb 96px (128 từ `sm`) bên trái, chữ
+bên phải. Câu dẫn của hai ô điện thoại thôi `sr-only` và chuyển thành
+`lg:sr-only`: cột chữ rộng 183px ở 375 và 226px ở 900, thừa chỗ, mà giấu nó đi
+là bỏ đúng câu nói ERP khác MES ở chỗ nào.
+**Kết quả đo:** section 1657 → 1235px ở 375 (−422), 1510 → 1377 ở 900. Từ
+`lg` lưới không đổi: 472×536 · 472×168 · 228×352 · 228×352 ở 1024, y như trước.
+
+**2. Kệ phần cứng bỏ hai control chết dưới `lg`.**
+· Nút dừng băng ảnh (`MotionToggle`) dừng thứ nằm trong `ShelfTier`, mà cả chồng
+  `ShelfTier` khai `hidden … lg:flex`. Đo ở 375 · 768 · 900: chiều cao chồng
+  tầng kệ bằng 0. Một control cho một vật không tồn tại — nay `hidden lg:block`.
+· Tablist chỉ vẽ khi có TỪ HAI đối tác. Một tab đơn độc trông y hệt một control
+  (có gạch chân, đứng cạnh nút "Xem chi tiết") nhưng bấm không xảy ra gì, và nó
+  là vùng chạm 126×25. Tên đối tác đã nằm trong câu dẫn section và hồ sơ bên
+  dưới nên không mất chữ nào; thêm đối tác thứ hai thì tablist tự quay lại.
+**Kết quả đo:** section 1010 → 950px ở 1024. Ở 375 chiều cao không đổi (tab và
+nút vốn chung một dòng đã xuống dòng), nhưng hết một control nói dối.
+
+**3. Vùng chạm.** "Xem ảnh lớn" cao 17px → 41px bằng cặp `py-3 -my-3` ngược dấu,
+không dịch một pixel bố cục nào (hàng căn theo baseline). Năm nút bước của
+stepper cao 28px → vùng chạm 44px bằng pseudo-element `after` nới XUỐNG 16px —
+không nới đều hai đầu vì phía trên là lớp bấm phủ ảnh của `AppShot`, chồng lên
+đó là cướp cú chạm của chính tấm ảnh. Kiểm bằng `elementFromPoint`: +15px dưới
+mép nút vẫn trúng nút, +20px thì ra ngoài. Dùng `after` chứ không padding thật
+vì ô lớn chỉ dư 15px ngân sách chiều cao ở 1440×900.
+**Đã cân nhắc và bỏ:** cho lưới bento 4 cột chạy từ `md` (ở 768 mỗi cột còn
+164px, ảnh chụp giao diện thành 344px — poster không đọc được); ép `ChipSpecs`
+xuống 2 cột ở dải 640–767 (ba thẻ trong hai cột để lại một thẻ mồ côi, mà dải
+đó chỉ rộng 128px).
+**KHÔNG sửa** (đo rồi thấy đúng): ma trận `ket-qua` 1542px ở 375 — 12 ô đọc rõ
+theo thang "tệ → đỡ hơn → xong", dài là vì có nội dung thật; bento chỉ số
+`con-so` một cột ở 375 — bốn con số xuống dần đúng một cái thang; `dao-tao` và
+`pebble-vina` không có chỗ nào chật.
+**Đổi lại thì phải sửa:** `ProductTile` trong
+`src/components/home/software-bento.tsx`, khối header của `ProductShelf` trong
+`src/components/home/product-shelf.tsx`, nút zoom trong
+`src/components/pv/app-shot.tsx`.
+
+## 2026-08-14 — Nút của dải CTA kéo hết bề ngang dưới `sm`
+**Bối cảnh:** Đo ở 375: nút đóng trang rộng 166px trong khung 335px, chưa tới
+một nửa — trong khi ĐÚNG hành động đó ở hero là một nút 335px (hero đã khai
+`w-full … sm:w-auto` từ đầu).
+**Chọn:** `Reveal` bọc nút thành `flex w-full flex-col items-stretch sm:w-auto`.
+**Vì:** Cùng một lời mời mà vẽ bằng hai cỡ nút thì lời mời SAU yếu hơn lời mời
+TRƯỚC, đúng chỗ người đọc đã đi hết trang và sẵn sàng nhất. `items-stretch` mới
+là thứ kéo nút — `CtaButton` là `inline-flex` nên nó chỉ nở khi khối cha bảo nở.
+**Phạm vi:** `CtaBand` đứng cuối 14 trang nên cả 14 trang đổi theo. Đo trên
+`/solutions`, `/technology`, `/about`: 375 ra 335×44, 1440 giữ nguyên 168×44
+(và 192×44 ở `/technology`, nhãn dài hơn). Không trang nào tràn ngang.
+**Đổi lại thì phải sửa:** `src/components/pv/cta-band.tsx`.
