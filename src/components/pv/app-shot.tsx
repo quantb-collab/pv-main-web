@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { MediaFrame } from "@/components/motion/media-frame";
 import {
   Dialog,
@@ -89,6 +90,12 @@ export interface AppShotLabels {
   sample: string;
   zoom: string;
   close: string;
+  /**
+   * Chỉ dẫn vuốt, hiện DƯỚI khung ảnh ở khổ hẹp — nơi ảnh rộng hơn khung nên
+   * phải kéo mới xem hết. Nằm ngoài ảnh như mọi nhãn khác của kit (§4 luật 1:
+   * không đè chữ của site lên nền Aurora).
+   */
+  pan: string;
 }
 
 export function AppShot({
@@ -122,6 +129,52 @@ export function AppShot({
   heading?: React.ReactNode;
   className?: string;
 }) {
+  /*
+   * Khung vuốt mở ra ở GIỮA màn, không phải mép trái.
+   *
+   * Ảnh rộng 1152px trong một khung ~300px thì vị trí xuất phát quyết định
+   * người ta thấy gì đầu tiên — mà mép trái của mọi màn PV One là thanh điều
+   * hướng: một dải tối gần như không có chữ. Đo ở 375 thì cửa sổ đầu tiên rơi
+   * trọn vào dải đó, và một ô tối đặc đọc ra là ẢNH HỎNG chứ không đọc ra
+   * "còn ảnh ở bên phải". Giữa màn là chỗ đặt luận điểm của mọi màn trong bộ.
+   *
+   * Căn giữa còn tự nó là lời mời vuốt: thấy ảnh bị cắt ở CẢ HAI mép thì biết
+   * ngay là kéo được, không cần tin vào dòng chỉ dẫn bên dưới.
+   *
+   * Chạy lại khi đổi `src` vì nút ‹ › thay ảnh mà không tháo dialog — không
+   * đặt lại thì màn thứ hai thừa hưởng vị trí cuộn của màn thứ nhất. `open`
+   * nằm trong deps để lần mở đầu tiên cũng được căn: `DialogContent` chỉ tồn
+   * tại khi đang mở, trước đó ref còn rỗng.
+   */
+  const panRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    /*
+     * Căn LẶP LẠI trong khoảng nửa giây đầu, không phải căn một phát.
+     *
+     * Hai thứ xoá mất vị trí vừa đặt, và cả hai đều xảy ra SAU effect này:
+     *   · lần commit đầu, `DialogContent` còn đang ở khung hình mở đầu nên
+     *     `scrollWidth` vẫn bằng `clientWidth` — chưa có gì để cuộn, căn ra 0;
+     *   · Radix tự đưa focus vào trong hộp thoại khi mở, mà trình duyệt thì
+     *     cuộn phần tử vừa nhận focus vào tầm nhìn — cú cuộn đó kéo luôn khung
+     *     vuốt về 0, xoá đúng cái ta vừa đặt.
+     * Nên đặt lại ở vài mốc thời gian rồi dừng hẳn. Dừng là bắt buộc: quá mốc
+     * cuối cùng thì vị trí cuộn hoàn toàn thuộc về người dùng, và một hàm còn
+     * chạy nền sẽ giật ảnh về giữa ngay giữa lúc người ta đang kéo.
+     */
+    const at = [0, 60, 160, 320, 500];
+    const timers = at.map((ms) =>
+      window.setTimeout(() => {
+        const el = panRef.current;
+        if (!el) return;
+        const max = el.scrollWidth - el.clientWidth;
+        if (max > 1) el.scrollLeft = max / 2;
+        el.scrollTop = 0;
+      }, ms),
+    );
+    return () => timers.forEach(window.clearTimeout);
+  }, [src, open]);
+
   /* Dòng nguồn KHÔNG lặp tên màn: ở bản phóng to, tên màn đã là tiêu đề đứng
      ngay dưới nó. Hai dòng mono xếp liền nhau mà một dòng nhắc lại dòng kia
      đọc ra là header bị lặp, không đọc ra hai mẩu thông tin. */
@@ -240,8 +293,37 @@ export function AppShot({
               chi tiết nào, chỉ thêm một lần mã hoá nguội (lần mở đầu tiên là
               một hình chữ nhật đen vài giây). 1000px đưa mọi màn về nấc 2048,
               đúng nhu cầu thật của khung ~994–1148px ở DPR 2. */}
-          <div className="relative min-w-0 rounded-xl">
-            {/* `priority` = `loading="eager"` + `fetchPriority: high`, và nó
+          {/*
+            ── KHUNG VUỐT Ở KHỔ HẸP (2026-08-13) ──────────────────────────────
+            Bản trước để ảnh `w-full` ở mọi khổ. Đo trên máy thật 375: poster
+            trên trang rộng 295px, bấm "xem ảnh lớn" ra 303px — phóng to được
+            ĐÚNG 8 PIXEL, tức 0,21× cỡ thiết kế, chữ 13px trong ảnh còn 2,7px.
+            Cả cơ chế "poster trên trang, đọc được trong dialog" của kit §4 vì
+            vậy chết hẳn ở điện thoại: bản phóng to không phóng to.
+
+            Không có cách nào nhét trọn một màn 1440 vào 375 mà vẫn đọc được —
+            đó là số học, không phải lựa chọn bố cục. Nên dưới `lg` ảnh giữ
+            NGUYÊN cỡ đọc được và khung thành vùng kéo hai chiều:
+
+              1152px = 0,80× cỡ thiết kế — đúng sàn kit §3, và bằng đúng thứ
+              màn 1600 đang được hưởng. Chữ 13px ra 10,4px; ở DPR 3 là 31 pixel
+              thiết bị nên nét, không nhoè.
+
+            Đổi lại người đọc phải vuốt qua ~3 bề ngang khung nhìn. Đó là cái
+            giá đúng: xem được từng phần rõ ràng vẫn hơn nhìn trọn một vệt mờ.
+            `overscroll-contain` để cú vuốt hết mép ảnh không kéo luôn dialog.
+            Từ `lg` thì trả về `w-full` và khung hết cuộn — desktop không đổi.
+          */}
+          <div className="min-w-0">
+          <div
+            ref={panRef}
+            className={cn(
+              "min-w-0 overflow-auto overscroll-contain rounded-xl",
+              "max-h-[56dvh] lg:max-h-none lg:overflow-visible",
+            )}
+          >
+            <div className="relative w-[1152px] rounded-xl lg:w-full">
+              {/* `priority` = `loading="eager"` + `fetchPriority: high`, và nó
                 KHÔNG tốn gì ở lần tải trang: ảnh này chỉ tồn tại sau khi người
                 dùng bấm mở, trước đó dialog chưa render. Đây cũng là ảnh duy
                 nhất trên site mà người dùng ĐÃ chủ động xin xem — để nó xếp
@@ -252,22 +334,36 @@ export function AppShot({
                 ngay. (Phép đo chạy trên Chrome headless nên chưa khẳng định
                 được là hành vi của trình duyệt thật; nhưng eager ở đây đúng
                 bất kể nguyên nhân.) */}
-            <MediaFrame
-              ratio="screen"
-              src={src}
-              alt={alt}
-              quality={90}
-              priority
-              sizes="(max-width: 1024px) 92vw, 1000px"
-              className="border-0 bg-transparent"
-            />
-            {/* Cùng vòng mép với poster ngoài trang. Kit §11: ảnh giao diện tối
-                nằm trên nền tối là chỗ dễ mất mép nhất — và trong dialog thì
-                ảnh to nhất, tức mất mép cũng lộ nhất. */}
-            <span
-              aria-hidden
-              className="pv-edge bg-linear-to-t from-brand/35 to-border"
-            />
+              {/* `sizes` khai ĐÚNG bề ngang thật của khung ở từng khổ. Dưới
+                  `lg` khung là 1152px cứng, không phải `92vw` — khai sai thì
+                  trình duyệt tải bản 640w cho một khung 1152px và ảnh nhoè
+                  đúng ở chỗ vừa bỏ công phóng to. */}
+              <MediaFrame
+                ratio="screen"
+                src={src}
+                alt={alt}
+                quality={90}
+                priority
+                still
+                sizes="(max-width: 1023px) 1152px, 1000px"
+                className="border-0 bg-transparent"
+              />
+              {/* Cùng vòng mép với poster ngoài trang. Kit §11: ảnh giao diện tối
+                  nằm trên nền tối là chỗ dễ mất mép nhất — và trong dialog thì
+                  ảnh to nhất, tức mất mép cũng lộ nhất. */}
+              <span
+                aria-hidden
+                className="pv-edge bg-linear-to-t from-brand/35 to-border"
+              />
+            </div>
+          </div>
+
+          {/* Chỉ dẫn vuốt — chỉ có nghĩa khi ảnh rộng hơn khung, tức dưới `lg`.
+              Đặt NGOÀI ảnh, cùng chỗ và cùng giọng mono với nhãn "dữ liệu mẫu"
+              của poster: kit §4 cấm đè chữ của site lên nền Aurora. */}
+          <p className="mt-2 font-mono text-micro text-subtle-foreground uppercase lg:hidden">
+            {labels.pan}
+          </p>
           </div>
 
           <div className="flex flex-col gap-3">

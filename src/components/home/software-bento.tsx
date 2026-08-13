@@ -128,6 +128,8 @@ export interface BentoStep {
 export interface ShotLabels {
   sample: string;
   zoom: string;
+  /** Chỉ dẫn vuốt dưới khung ảnh phóng to ở khổ hẹp. */
+  pan: string;
   close: string;
   prev: string;
   next: string;

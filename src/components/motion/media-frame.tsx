@@ -72,6 +72,22 @@ export interface MediaFrameProps {
    * `next.config.ts`, không thì trình tối ưu trả HTTP 400 và ảnh mất trắng.
    */
   quality?: number;
+  /**
+   * Bỏ nhịp xuất hiện, vẽ ảnh ra ngay.
+   *
+   * Dành cho khung mà ảnh LỚN HƠN chỗ nhìn thấy nó — cụ thể là vùng vuốt của
+   * `AppShot` ở khổ hẹp. Ở đó nhịp mở khung không chỉ thừa mà còn HỎNG:
+   * `useInView` đòi 20% phần tử lộ ra, trong khi khung 303×455 chỉ hở 16,6%
+   * của ảnh 1152×720, nên cờ `inView` không bao giờ bật. Ảnh đứng mãi ở khung
+   * hình đầu tiên của animation — `scale: 1.12` cộng `clipPath` chưa mở — tức
+   * bị cắt mất 6% mép và không có gì gỡ nó ra.
+   *
+   * Nó cũng đúng về mặt ý đồ: nhịp mở khung là để chào một tấm ảnh vừa trôi
+   * vào tầm mắt khi cuộn trang. Ảnh trong hộp thoại thì người ta đã chủ động
+   * bấm để xin xem, và hộp thoại đã có nhịp mở riêng của nó — thêm một lớp
+   * nữa là hai animation chồng lên nhau trên cùng một vật.
+   */
+  still?: boolean;
   className?: string;
   /** Lớp phủ đặt lên trên ảnh (nhãn, chú thích…) */
   children?: React.ReactNode;
@@ -87,6 +103,7 @@ export function MediaFrame({
   sizes = "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 640px",
   focus = "center",
   quality,
+  still = false,
   className,
   children,
 }: MediaFrameProps) {
@@ -94,7 +111,7 @@ export function MediaFrame({
   const reduced = useReducedMotion();
   const inView = useInView(ref, { once: true, amount: 0.2 });
 
-  const shouldAnimate = !reduced;
+  const shouldAnimate = !reduced && !still;
 
   return (
     <div

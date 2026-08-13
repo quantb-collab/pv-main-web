@@ -327,6 +327,7 @@ export async function Software() {
         labels={{
           sample: t("sampleLabel"),
           zoom: t("zoomLabel"),
+          pan: t("panLabel"),
           close: tc("closeDrawer"),
           prev: t("prevLabel"),
           next: t("nextLabel"),
