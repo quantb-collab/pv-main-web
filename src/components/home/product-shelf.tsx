@@ -243,7 +243,21 @@ export function ProductShelf({
           <div className="grid gap-8 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] lg:gap-12">
             <PartnerIntro intro={partner.intro} />
 
-            <RevealGroup className="flex flex-col gap-3">
+            {/* `min-w-0` KHÔNG phải để cho đẹp — thiếu nó thì cả trang chủ
+                cuộn ngang được ở mọi khổ dưới `lg`.
+
+                Băng thẻ chip bên trong cuộn ngang được, nhưng bề rộng
+                MIN-CONTENT của nó vẫn là tổng năm thẻ (5 × 12,5rem + khe =
+                1048px). Con số đó dâng lên qua `ShelfTier` thành 1088px, và
+                khối này là GRID ITEM: `min-width: auto` của grid item bằng
+                chính min-content ấy, nên cột lưới nở ra 1088px và đẩy tài
+                liệu rộng hơn khung nhìn. Từ `lg` trở lên không thấy lỗi vì
+                `lg:grid-cols-[minmax(0,...)]` đã chặn sẵn; dưới `lg` lưới
+                chỉ có một cột ngầm `auto` nên không có gì chặn.
+                Đo ở 768: `scrollWidth` 1120 trên khung 768. Ở 375 còn nặng
+                hơn — trình duyệt thu nhỏ cả trang cho vừa phần tràn, nên
+                `innerWidth` báo về 1108 và trang chủ hiện ra ở dạng thu nhỏ. */}
+            <RevealGroup className="flex min-w-0 flex-col gap-3">
               {partner.lines.map((line, i) => (
                 <ShelfTier
                   key={line.name}
