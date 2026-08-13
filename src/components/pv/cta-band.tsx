@@ -83,7 +83,14 @@ export async function CtaBand({
           `/ai-assessment` VẪN sống và vẫn là đích của mọi link chia sẻ —
           drawer chỉ là lối tắt, không thay thế trang.
         */}
-        <Reveal className="mt-4">
+        {/* Nút KÉO HẾT BỀ NGANG dưới `sm`, y như hàng nút của hero (2026-08-14).
+            Đo ở 375: nút cuối trang chỉ rộng 166px trong khung 335px, tức chưa
+            tới một nửa — trong khi ĐÚNG hành động đó ở hero là một nút 335px.
+            Cùng một việc mà mời bằng hai cỡ nút thì lời mời sau yếu hơn lời mời
+            trước, đúng chỗ người đọc đã đi hết trang và sẵn sàng nhất.
+            `items-stretch` mới là thứ kéo nút: `CtaButton` là `inline-flex` nên
+            nó chỉ nở khi trục ngang của khối cha bảo nó nở. */}
+        <Reveal className="mt-4 flex w-full flex-col items-stretch sm:w-auto">
           {cta === "assessment" ? (
             <AssessmentDrawerButton size="lg">
               {t("assessment")}
