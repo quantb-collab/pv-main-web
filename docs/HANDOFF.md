@@ -12,6 +12,9 @@ Nhánh vẫn CHƯA nhập vào `develop` — xem *Đang làm dở*.
 
 ## Vừa hoàn thành
 
+- **Hết tràn ngang ở khổ hẹp.** Quét 10 trang ở 375 và 768: `scrollWidth` bằng
+  đúng khung nhìn ở mọi trang. Thủ phạm KHÔNG phải `svg.pv-rings` của hero như
+  bàn giao trước ghi — xem *Bẫy đã gặp*.
 - Footer (`src/components/layout/site-footer.tsx`): tách hai tầng — tên hãng,
   điện thoại, email và ba cột link ở trên (bốn cột đều nhau); pháp nhân, địa
   chỉ, mã số thuế xuống dải pháp lý. Lý do và số đo ở `DECISIONS.md` mục
@@ -58,21 +61,15 @@ Nhánh vẫn CHƯA nhập vào `develop` — xem *Đang làm dở*.
    trang đào tạo. Hiện nó là section sản phẩm DUY NHẤT không có nút phụ, vì
    registry chưa có entry nào cho mảng đào tạo (`home.training.pageGap`). Thêm
    entry trước, route sau.
-4. **Sửa tràn ngang trên TRANG CHỦ ở khổ hẹp** — nặng hơn tưởng. Ở 768,
-   `scrollWidth` = 1120 trên khung 768. Ở 375 thì tệ hơn: `innerWidth` báo về
-   1108, tức trình duyệt phải THU NHỎ cả trang cho vừa phần tràn, nên trang chủ
-   trên điện thoại hiện ra ở dạng thu nhỏ chứ không phải khổ dọc. Thủ phạm là
-   `svg.pv-rings` của hero (rộng 1199px), có sẵn từ trước. `/solutions`,
-   `/technology`, `/ai-assessment` đo cùng lúc đều sạch — lỗi chỉ ở trang chủ.
-5. Chép bộ bàn giao POC vào `docs/one/` — đang ở `~/Downloads/handoff`, NGOÀI
+4. Chép bộ bàn giao POC vào `docs/one/` — đang ở `~/Downloads/handoff`, NGOÀI
    repo, và mọi con số trong `SOFTWARE-KIT.md` đo từ đó. Chép phần dựng lại được
    (5 `.dc.html` + `support.js` + `assets/` + `AGENTS.md` + `theme/globals.css`
    ≈ 1,2 MB), không chép 5 PNG 1×.
-6. Xoá `src/components/home/software-shelf.tsx` — không ai gọi nữa.
-7. Sửa hydration `src/components/motion/parallax.tsx` (reduced-motion: server
+5. Xoá `src/components/home/software-shelf.tsx` — không ai gọi nữa.
+6. Sửa hydration `src/components/motion/parallax.tsx` (reduced-motion: server
    thiếu div bọc transform). Kèm nó là `useScroll` "Target ref is defined but
    not hydrated" — cùng một gốc, cùng là "2 Issues" trên overlay dev.
-8. Đọc NAV từ `inNav` trong `registry.ts` thay mảng cứng `site-header.tsx:32`;
+7. Đọc NAV từ `inNav` trong `registry.ts` thay mảng cứng `site-header.tsx:32`;
    đặt `inNav: false` cho `insights` (`registry.ts:566`).
 
 ## Đang chờ quyết định
@@ -98,6 +95,23 @@ brand kit.
 
 ## Bẫy đã gặp
 
+- **Thủ phạm tràn ngang KHÔNG phải thứ trông rộng nhất.** Bàn giao trước đổ cho
+  `svg.pv-rings` của hero vì nó rộng 1199px — nhưng SVG có `overflow-x: hidden`
+  nên nó tự cắt và không đẩy tài liệu; `getBoundingClientRect` của `<g>`/
+  `<ellipse>` bên trong trả về HỘP HÌNH HỌC, không phải phần được vẽ. Thủ phạm
+  thật là một băng cuộn ngang: nó cuộn được, nhưng bề rộng MIN-CONTENT của nó
+  vẫn là tổng các thẻ (1048px), và nó nằm trong một grid item không có
+  `min-w-0` nên số đó nở cột lưới ra. Cách dò đúng: đo `min-content` thật bằng
+  cách gán tạm `width: min-content` cho từng tầng rồi đọc lại bề ngang — quét
+  `getBoundingClientRect` chỉ ra một đống NẠN NHÂN bị kéo giãn, không ra nguồn.
+- **`overflow-x: auto` không miễn cho cha khỏi min-content.** Nó chỉ đưa
+  `min-width: auto` của CHÍNH nó về 0. Cha là grid item thì vẫn phải tự khai
+  `min-w-0`, nếu không `min-width: auto` của grid item bằng min-content và cột
+  nở theo. Trên `lg` lỗi này ẩn vì `grid-cols-[minmax(0,...)]` đã chặn sẵn.
+- **Ảnh chụp bằng `scrollIntoView` ra trắng** khi trang có Lenis + scroll-snap:
+  hai thứ đó kéo vị trí về chỗ khác ngay sau khi cuộn. Chụp bằng
+  `Page.captureScreenshot` với `clip` theo TOẠ ĐỘ TÀI LIỆU và
+  `captureBeyondViewport: true` thì không phải cuộn.
 - **Dev server phục vụ messages CŨ, và nó im lặng.** Sửa `messages/vi.json`
   xong, trang vẫn hiện chữ cũ và in nguyên đường dẫn khoá mới (`assessment.prepare`)
   lên mặt trang — trông y hệt lỗi thiếu khoá trong khi `check:i18n` sạch.
@@ -149,9 +163,9 @@ brand kit.
 ## Trạng thái kỹ thuật
 
 - Lệnh kiểm tra cuối: `pnpm verify` — sạch, exit 0 (104 trang, 50 file).
-- Commit cuối: `fcc8356` — footer tách hai tầng. Trước nó là `849c9cc` (tiêu đề
-  dải CTA còn hai từ), `3c2ef44` (dải CTA thuần chữ) và `399a661` (dựng lại
-  `/ai-assessment` quanh biểu mẫu).
+- Commit cuối: `26575a2` — hết tràn ngang dưới `lg`. Trước nó là `fcc8356`
+  (footer tách hai tầng), `849c9cc` (tiêu đề dải CTA còn hai từ), `3c2ef44`
+  (dải CTA thuần chữ) và `399a661` (dựng lại `/ai-assessment` quanh biểu mẫu).
 - Việc chưa commit: không (trong worktree). Cây làm việc CHÍNH thì còn bản nháp
   cũ chưa commit — xem *Đang làm dở*.
 - Nhánh: `worktree-training-section`, tách từ `develop` `4886998`. `develop`
