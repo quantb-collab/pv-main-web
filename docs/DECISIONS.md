@@ -1160,3 +1160,36 @@ giữa ở 13 trang kia (một component hai bố cục, và bố cục nào cũ
 **Đổi lại thì phải sửa:** `src/components/pv/cta-band.tsx`, chỗ gọi ở
 `src/app/[locale]/page.tsx`, và `home.finalCta` trong `messages/vi.json`
 (bốn khoá `g1`–`g4` đã xoá).
+
+## 2026-08-13 — Footer tách làm hai tầng: thứ để dùng và thứ để tra
+**Bối cảnh:** Cột đầu của footer gánh cả nhãn "Trụ sở", pháp nhân, địa chỉ ba
+dòng, điện thoại, email và mã số thuế. Đo ở 1440: riêng khối `<address>` cao
+225px / 9 dòng, kéo cả hàng cột lên 310px; mà cột đó rộng 2/5 lưới trong khi
+chữ bị chặn ở `max-w-xs` (320px), tức chừa một khoảng chết ~280px ngay giữa
+footer. Ở 375 footer cao 1407px, gần gấp đôi màn hình.
+**Chọn:** Tầng trên giữ thứ người ta ĐỊNH DÙNG — tên hãng, điện thoại, email,
+ba cột link — chia bốn cột đều nhau. Pháp nhân, địa chỉ bưu chính và mã số thuế
+xuống dải pháp lý dưới cùng, ở `text-meta` mờ, chung chỗ với bản quyền và link
+pháp lý.
+**Vì:** Hai nhóm đó phục vụ hai người khác nhau. Người mua cần gọi và gửi mail;
+địa chỉ bưu chính với mã số thuế là thứ chỉ tra khi soạn hợp đồng hoặc xuất hoá
+đơn — để nó chiếm chỗ sáng nhất của footer là đặt sai thứ tự. Bốn cột đều nhau
+cũng xoá luôn khoảng chết, và cho ba cột link đủ chỗ để
+"Kho tri thức doanh nghiệp" hết phải xuống dòng.
+**Địa chỉ viết một chuỗi liền, bỏ `\n` và `whitespace-pre-line`:** xuống dòng
+cứng chỉ đúng với đúng một bề ngang — ở cột 320px nó đẻ ra dòng mồ côi
+("Landmark 72 / Tower"), ở dải rộng thì phí chỗ. Để trình duyệt tự ngắt: 1440
+một dòng, 768 hai dòng, dưới `sm` xếp chồng ba mẩu.
+**Dải danh tính là `sm:block`, KHÔNG phải `sm:flex-row flex-wrap`:** là flex thì
+mỗi mẩu là một item nguyên khối nên mẩu địa chỉ nhảy nguyên cụm xuống dòng dưới
+rồi mới tự ngắt bên trong — đo ở 768 ra 4 dòng và chừa trống nửa dòng đầu.
+`block` trả chúng về dạng chữ chảy, đổ đầy từng dòng.
+**Đánh đổi:** Footer ở 1440 cao thêm 20px (563 → 583) vì dải dưới có thêm một
+dòng. Đổi lại 375 giảm 1407 → 1321 và không còn khối chữ 9 dòng nào. Đây là đổi
+mật độ lấy thứ bậc, không phải đổi lấy chiều cao.
+**Đã cân nhắc và bỏ:** giữ địa chỉ ở cột đầu nhưng rút gọn chữ (địa chỉ pháp
+nhân không phải chỗ để biên tập cho ngắn); xếp ba cột link thành lưới 2 cột ở
+375 (nhãn dài như "Kho tri thức doanh nghiệp" sẽ xuống dòng ở cột 155px, danh
+sách thành răng cưa).
+**Đổi lại thì phải sửa:** `src/components/layout/site-footer.tsx` và khối
+`footer.office` trong `messages/vi.json` (khoá `office.label` đã xoá).

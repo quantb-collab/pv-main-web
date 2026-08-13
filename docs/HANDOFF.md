@@ -12,6 +12,11 @@ Nhánh vẫn CHƯA nhập vào `develop` — xem *Đang làm dở*.
 
 ## Vừa hoàn thành
 
+- Footer (`src/components/layout/site-footer.tsx`): tách hai tầng — tên hãng,
+  điện thoại, email và ba cột link ở trên (bốn cột đều nhau); pháp nhân, địa
+  chỉ, mã số thuế xuống dải pháp lý. Lý do và số đo ở `DECISIONS.md` mục
+  2026-08-13. Footer ở 375 giảm 1407 → 1321px, khối địa chỉ 225px/9 dòng còn
+  20px/1 dòng ở 1440.
 - `CtaBand` (`src/components/pv/cta-band.tsx`, đứng ở cuối 14 trang): bỏ cột
   danh sách bốn mục và prop `items`, căn giữa, tiêu đề rút còn "Bắt đầu ngay" ở
   cỡ `display`. Lý do và ngoại lệ cỡ chữ nằm ở `DECISIONS.md` mục 2026-08-13.
@@ -144,8 +149,8 @@ brand kit.
 ## Trạng thái kỹ thuật
 
 - Lệnh kiểm tra cuối: `pnpm verify` — sạch, exit 0 (104 trang, 50 file).
-- Commit cuối: `849c9cc` — rút tiêu đề dải CTA còn hai từ ở cỡ `display`.
-  Trước nó là `3c2ef44` (dải CTA thuần chữ) và `399a661` (dựng lại
+- Commit cuối: `fcc8356` — footer tách hai tầng. Trước nó là `849c9cc` (tiêu đề
+  dải CTA còn hai từ), `3c2ef44` (dải CTA thuần chữ) và `399a661` (dựng lại
   `/ai-assessment` quanh biểu mẫu).
 - Việc chưa commit: không (trong worktree). Cây làm việc CHÍNH thì còn bản nháp
   cũ chưa commit — xem *Đang làm dở*.
