@@ -760,8 +760,29 @@ export interface MatrixStage {
  * riêng để làm lệch track đầu–cuối. Nấc cuối phóng 1.10 quanh tâm nên hàng của
  * nó lệch dần ra hai đầu (tối đa ~30px ở mép trên và mép dưới, 0 ở giữa) —
  * đổi lấy hiệu ứng "nổi lên", chủ dự án đã chọn (2026-08-06).
- * Nhãn hàng (`rows`) đứng MỘT lần ở rail trái trên desktop; dưới lg rail ẩn
- * đi và nhãn hiện lại trong từng ô để panel xếp dọc vẫn tự đọc được.
+ *
+ * ── DƯỚI `lg` THÌ XOAY TRỤC, KHÔNG PHẢI XẾP DỌC (2026-08-13) ───────────────
+ * Bản trước xếp ba panel chồng lên nhau. Đo ở 375: ba phiên bản của CÙNG một
+ * việc nằm cách nhau 420 và 444px — tổng 864px, hơn trọn một màn hình. Mà so
+ * sánh thì cần kề nhau: không nhìn được hai nấc cùng lúc thì không có tăng
+ * tiến nào để thấy, dù panel có tô đậm tới đâu. Ở 768 còn phí hơn — 704px bề
+ * ngang dùng để trải một câu bảy chữ.
+ *
+ * Nên dưới `lg` đơn vị kể chuyện đổi từ NẤC sang VIỆC: mỗi thẻ là một việc,
+ * ba nấc nằm trong đó theo thứ tự. Ba nấc luôn kề nhau ở mọi khổ máy — xếp
+ * hàng dọc ở điện thoại, xếp cột ngang từ `md` khi đã đủ chỗ. Người đọc thấy
+ * "tệ → đỡ hơn → xong" trong một tầm mắt, lặp lại bốn lần.
+ *
+ * Cái mất: tên ba nấc lặp bốn lần. Chấp nhận được vì bản xếp dọc cũ cũng lặp
+ * nhãn hàng đúng bốn lần, và ở khổ này thẻ tự đọc được là thứ đáng giá hơn.
+ * Thang sáng trong thẻ nhẹ hơn thang của ma trận: giữ nền, viền và màu chữ
+ * leo theo nấc, BỎ quầng sáng và cú phóng 1.10 — hai thứ đó là chữ ký của
+ * panel-một-lần-trên-trang, nhân lên bốn lần thì thành ồn.
+ *
+ * Hai bản là hai cây DOM, chọn nhau bằng `hidden`/`lg:hidden`. `display:none`
+ * cắt hẳn khỏi cây trợ năng nên trình đọc màn hình chỉ gặp MỘT bản, không đọc
+ * đúp. Không có `rows` thì không xoay trục được (thiếu tên việc để đặt đầu
+ * thẻ) — lúc đó giữ nguyên lối xếp dọc cũ.
  */
 export function StageMatrix({
   stages,
@@ -770,6 +791,144 @@ export function StageMatrix({
 }: {
   stages: MatrixStage[];
   /** Nhãn hàng ngắn (1–2 chữ). */
+  rows?: string[];
+  className?: string;
+}) {
+  return (
+    <>
+      <MatrixByStage
+        stages={stages}
+        rows={rows}
+        className={cn(rows && "hidden lg:grid", className)}
+      />
+      {rows ? (
+        <MatrixByJob stages={stages} rows={rows} className={cn("lg:hidden", className)} />
+      ) : null}
+    </>
+  );
+}
+
+/**
+ * Bản xoay trục — mỗi thẻ MỘT VIỆC, ba nấc nằm trong. Chỉ sống dưới `lg`.
+ *
+ * Ba nấc là hàng ở khổ điện thoại và là cột từ `md`: ở 768 thẻ rộng 704px, ba
+ * cột ~208px cho ~20 ký tự một dòng — vừa đủ cho câu dài nhất của bộ nội dung
+ * ("Có luồng duyệt, soạn và nhắc vẫn là người.", 42 ký tự) mà không phải cắt
+ * chữ. Hẹp hơn `md` thì ba cột còn ~95px và câu vỡ thành thang chữ, nên xuống
+ * hàng dọc.
+ *
+ * `items-stretch` + `h-full` ở ô: ba nấc của cùng một việc phải cao bằng nhau
+ * dù câu dài ngắn khác nhau, nếu không mặt nền của chúng so le và cái thang
+ * đọc ra là ba mảnh rời chứ không phải ba bậc.
+ */
+function MatrixByJob({
+  stages,
+  rows,
+  className,
+}: {
+  stages: MatrixStage[];
+  rows: string[];
+  className?: string;
+}) {
+  const last = stages.length - 1;
+
+  return (
+    /* Khe giữa hai VIỆC gấp đôi khe giữa ba NẤC (32 so với 12): nhóm đọc ra
+       bằng khoảng cách, không bằng một cái khung nữa. Bọc ba ô có viền trong
+       một thẻ cũng có viền là nói hai lần cùng một điều — đúng thứ
+       `product-shelf.tsx` đã ghi là sai. Bỏ khung ngoài còn trả lại cho ô chữ
+       40px bề ngang, tức mỗi câu bớt được một dòng gãy. */
+    <RevealGroup className={cn("grid gap-8", className)}>
+      {rows.map((job, r) => (
+        <RevealItem key={job}>
+          {/* Tên việc là nhãn của cả nhóm, KHÔNG mang tín hiệu cấp bậc nào —
+              bốn việc ngang hàng nhau, chỉ ba nấc bên trong mới có thang. */}
+          <h3 className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
+            {job}
+          </h3>
+
+          <div className="mt-3 grid items-stretch gap-3 md:grid-cols-3">
+            {stages.map((stage, s) => {
+              const dim = s === 0;
+              const high = s === last;
+              const mid = !dim && !high;
+              return (
+                <div
+                  key={s}
+                  className={cn(
+                    "relative isolate flex h-full flex-col gap-1.5 rounded-lg p-4",
+                  )}
+                >
+                  {/* Cùng thang sáng với ma trận, trừ quầng và cú phóng: nấc
+                      đầu không có mặt riêng (lớp hạt của section chạy thẳng
+                      qua — "chưa ai chạm vào"), nấc giữa có mặt, nấc cuối có
+                      mặt cộng ánh dâng từ đáy. */}
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "pointer-events-none absolute inset-0 -z-10 rounded-[inherit]",
+                      dim && "border",
+                      mid && "bg-surface",
+                      high &&
+                        "bg-brand-soft bg-linear-to-t from-brand/15 via-transparent to-transparent",
+                    )}
+                  />
+                  {dim ? null : (
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "pv-edge bg-linear-to-t",
+                        mid && "from-brand/45 via-brand/15 to-border",
+                        high && "from-brand via-brand/45 to-brand/25",
+                      )}
+                    />
+                  )}
+
+                  <div className="flex items-baseline gap-2">
+                    <span
+                      className={cn(
+                        "font-mono text-micro font-medium tabular-nums",
+                        dim ? "text-subtle-foreground" : "text-brand",
+                      )}
+                    >
+                      {String(s + 1).padStart(2, "0")}
+                    </span>
+                    {/* `h4` chứ không `h3`: tên việc ở đầu thẻ đã là `h3`, nên
+                        tên nấc là một cấp con của nó. Dàn bài của trang vì vậy
+                        khớp với bản desktop, nơi tên nấc cũng đứng dưới tiêu
+                        đề section một cấp. */}
+                    <h4
+                      className={cn(
+                        "font-mono text-micro font-medium uppercase",
+                        dim && "text-subtle-foreground",
+                        mid && "text-foreground",
+                        high && "text-brand",
+                      )}
+                    >
+                      {stage.label}
+                    </h4>
+                  </div>
+
+                  <p className={cn("text-body-sm", dim && "text-muted-foreground")}>
+                    <Highlight>{stage.items[r]}</Highlight>
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </RevealItem>
+      ))}
+    </RevealGroup>
+  );
+}
+
+/** Ma trận gốc — cột là nấc, hàng là việc. Từ `lg` trở lên. */
+function MatrixByStage({
+  stages,
+  rows,
+  className,
+}: {
+  stages: MatrixStage[];
   rows?: string[];
   className?: string;
 }) {
