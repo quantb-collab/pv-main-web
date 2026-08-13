@@ -241,6 +241,23 @@ export function ProductShelf({
             Dưới lg thì xuống dòng như bình thường.
           */}
           <div className="grid gap-8 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] lg:gap-12">
+            {/*
+              `ChipSpecs` đứng TRƯỚC hồ sơ đối tác trong DOM, và đó là thứ tự
+              đọc đúng ở khổ hẹp: section này tên là "phần cứng", nên câu hỏi
+              đầu tiên là có những chip nào chứ không phải người sáng lập đối
+              tác học ở đâu. Đo bản trước ở 375: hồ sơ chiếm ~700px đứng trên,
+              tức phải cuộn gần một màn hình mới gặp con chip đầu tiên. Uy tín
+              đối tác là BẰNG CHỨNG BỒI THÊM, đọc sau sản phẩm vẫn nguyên giá
+              trị; đọc trước thì nó chặn mất sản phẩm.
+
+              Không cần `order-*` ở cả hai khổ: mỗi khổ đúng một trong hai khối
+              (`ChipSpecs` / kệ) mang `display:none`, nên khối bị ẩn rời hẳn
+              khỏi dòng chảy và thứ tự DOM còn lại tự khớp thứ tự nhìn thấy.
+              Nhờ vậy trình đọc màn hình và mắt luôn đi cùng một mạch — thứ mà
+              `order` thuần CSS không bảo đảm được.
+            */}
+            <ChipSpecs lines={partner.lines} className="lg:hidden" />
+
             <PartnerIntro intro={partner.intro} />
 
             {/* `min-w-0` KHÔNG phải để cho đẹp — thiếu nó thì cả trang chủ
@@ -257,7 +274,7 @@ export function ProductShelf({
                 Đo ở 768: `scrollWidth` 1120 trên khung 768. Ở 375 còn nặng
                 hơn — trình duyệt thu nhỏ cả trang cho vừa phần tràn, nên
                 `innerWidth` báo về 1108 và trang chủ hiện ra ở dạng thu nhỏ. */}
-            <RevealGroup className="flex min-w-0 flex-col gap-3">
+            <RevealGroup className="hidden min-w-0 lg:flex lg:flex-col lg:gap-3">
               {partner.lines.map((line, i) => (
                 <ShelfTier
                   key={line.name}
@@ -392,6 +409,130 @@ function PartnerSite({ site }: { site: { href: string; label: string } }) {
  * card rưỡi và ở 1024px thấy 1 card rưỡi — luôn có một card bị cắt dở, và đó
  * chính là thứ nói cho người đọc biết còn thứ nữa ở bên phải.
  */
+/**
+ * ============================================================================
+ * BẢN KHỔ HẸP — ba cột thông số, không có kệ ảnh. Chỉ sống dưới `lg`.
+ * ----------------------------------------------------------------------------
+ * VÌ SAO KHÔNG DÙNG LẠI KỆ. Kệ là ba tầng, mỗi tầng một băng cuộn ngang năm
+ * thẻ ảnh. Xếp dọc ở khổ hẹp thì nó cho ra, đo ở 375:
+ *   · section cao 2049px = 2,5 màn hình, dài nhất trang;
+ *   · 15 thẻ ứng dụng, trong khi luật 4 của repo cho tối đa 4 mục CÓ MÔ TẢ;
+ *   · 10/15 ảnh chưa có, nên phần lớn băng là ô chờ rỗng;
+ *   · nhãn bị cắt giữa chữ ("Kiểm tr…", "Cảm b…"), mà hai nút trôi chỉ hiện
+ *     khi rê chuột — trên cảm ứng không còn tín hiệu nào báo là cuộn được.
+ * Ba dòng chip là ba LỰA CHỌN THAY THẾ NHAU, không phải ba nấc tăng tiến. Bắt
+ * người đọc cuộn dọc qua cả ba cùng 15 ô chờ là bắt họ đi hết thứ họ đã loại
+ * ngay từ dòng đầu.
+ *
+ * VÌ SAO KHÔNG PHẢI BẢNG SO SÁNH THẬT. Bảng so sánh cần một trục chung, mà ba
+ * chip KHÔNG dùng chung bộ thông số: MINT và PAPAYA khai (hiệu suất điện · nơ-
+ * ron · kích thước), còn ESPRESSO khai (tiến trình · hiệu năng đỉnh · công
+ * suất). Ép chúng vào một bảng bốn dòng thì phải bịa ra giá trị cho những ô
+ * trống — đúng thứ luật 5 cấm. Nên đây là ba CỘT thông số đặt cạnh nhau: so
+ * được hình dáng và thứ hạng, không giả vờ so được từng dòng.
+ *
+ * ỨNG DỤNG THÀNH NHÃN TRẦN, ngăn bằng dấu chấm giữa. Luật 4 cho phép "nhiều
+ * hơn bốn mục nhưng chỉ là nhãn trần" — và đó cũng là tất cả những gì năm cái
+ * tên kia đang nói, vì ảnh thì chưa có. Khi đủ 15 ảnh thì cân lại: hoặc trả
+ * kệ về cho khổ hẹp, hoặc cho mỗi chip một băng ảnh riêng sau khi bấm chọn.
+ * ============================================================================
+ */
+function ChipSpecs({
+  lines,
+  className,
+}: {
+  lines: ShelfLine[];
+  className?: string;
+}) {
+  return (
+    /* `md:grid-cols-3` — ở 768 khung rộng 704px cho ba cột ~224px, đủ cho dòng
+       thông số dài nhất ("Công suất điển hình") không gãy làm ba. Hẹp hơn thì
+       xuống một cột. */
+    <RevealGroup className={cn("grid min-w-0 gap-4 md:grid-cols-3", className)}>
+      {lines.map((line) => (
+        <RevealItem
+          key={line.name}
+          className="relative isolate flex flex-col gap-4 rounded-xl p-5"
+        >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -z-10 rounded-[inherit] bg-surface"
+          />
+          {/* Mép sáng dưới chân thẻ mang màu chip — đúng hai chỗ được dùng màu
+              chip như quyết định 4 của kệ, giữ nguyên ở bản này. */}
+          <span
+            aria-hidden
+            className={cn("pv-edge bg-linear-to-t to-border", ACCENT[line.accent].edge)}
+          />
+
+          <div className="flex flex-col gap-1.5">
+            <h4
+              className={cn(
+                "font-display text-title font-semibold",
+                ACCENT[line.accent].name,
+              )}
+            >
+              {line.name}
+            </h4>
+            <p className="text-body-sm text-muted-foreground">{line.fit}</p>
+          </div>
+
+          {/* Cột số canh thẳng hàng: `dt` cố định bề ngang theo nội dung dài
+              nhất của CHÍNH thẻ đó, không phải của cả ba — ba chip khai ba bộ
+              đơn vị khác nhau nên ép chung một bề ngang là để lại một khoảng
+              trống lớn ở thẻ có số ngắn. */}
+          <dl className="flex flex-col gap-1.5 border-t pt-4">
+            {line.specs.map((spec) => (
+              <div key={spec.label} className="flex items-baseline gap-3">
+                {/* `whitespace-nowrap`: giá trị là MỘT đơn vị đo, gãy dòng
+                    giữa số và đơn vị thì "17 TOPS/W" đọc thành "17" rồi
+                    "TOPS/W" ở dòng dưới. Ở cột 224px của khổ 768 thì cả ba
+                    chip đều dính: 17 TOPS/W, 30 TOPS/W, ~160 TOPS. Nhãn mới
+                    là thứ được phép xuống dòng. */}
+                <dt className="font-mono text-meta whitespace-nowrap text-foreground">
+                  {spec.value}
+                </dt>
+                <dd className="text-body-sm text-muted-foreground">{spec.label}</dd>
+              </div>
+            ))}
+          </dl>
+
+          {/* Tên thiết bị nối bằng dấu chấm giữa.
+
+              Dấu đứng SAU mỗi mục (trừ mục cuối), không phải trước mỗi mục
+              (trừ mục đầu). Hai cách nhìn qua như nhau nhưng khác hẳn khi
+              xuống dòng: đặt trước thì dấu bị đẩy xuống mở đầu dòng mới và cả
+              cụm đọc ra là một danh sách bullet lạc — đo ở 375 thì hai trong
+              năm nhãn của MINT rơi đúng vào cảnh đó. Đặt sau thì dấu luôn dính
+              vào đuôi mục nó vừa ngăn, và dòng mới bắt đầu bằng chữ.
+
+              `aria-hidden` cho dấu: nó là nét phân cách của MẮT. Cấu trúc danh
+              sách đã nằm ở `ul`/`li` nên trình đọc màn hình tự biết có bao
+              nhiêu mục, đọc thêm "chấm" giữa mỗi mục chỉ là rác. */}
+          {/* Dòng chảy CHỮ, không phải lưới flex. Để `flex flex-wrap` thì mỗi
+              `li` là một ô lưới và ô nào không đủ chỗ sẽ tự chiếm trọn một
+              dòng — ở cột 224px của khổ 768 thành ra mỗi tên một dòng, kèm một
+              dấu chấm lơ lửng ở cuối dòng chẳng ngăn cách gì. `inline` thì năm
+              cái tên chảy liền như một câu và tự lấp đầy từng dòng, đúng thứ
+              "nhãn trần" mà luật 4 cho phép liệt kê quá bốn mục. */}
+          <ul className="border-t pt-4 text-body-sm text-subtle-foreground">
+            {line.products.map((p, i) => (
+              <li key={p.name} className="inline">
+                {p.name}
+                {i < line.products.length - 1 ? (
+                  <span aria-hidden className="mx-2 text-border">
+                    ·
+                  </span>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </RevealItem>
+      ))}
+    </RevealGroup>
+  );
+}
+
 function ShelfTier({
   line,
   index,
