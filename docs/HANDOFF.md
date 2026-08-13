@@ -1,4 +1,4 @@
-# Bàn giao — 2026-08-13
+# Bàn giao — 2026-08-14
 
 ## Đang ở đâu
 
@@ -12,6 +12,24 @@ Nhánh vẫn CHƯA nhập vào `develop` — xem *Đang làm dở*.
 
 ## Vừa hoàn thành
 
+- **Rà responsive TOÀN BỘ tám section trang chủ** ở 375 · 414 · 600 · 768 · 900
+  · 1024 · 1280 · 1440 bằng Chrome thật (hình học từng khối, vùng chạm, số ký tự
+  một dòng, ảnh chụp từng section). Sáu section đọc tốt ở mọi khổ; hai chỗ hỏng
+  thật và cả hai hỏng dưới `lg`. Lý do đầy đủ ở `DECISIONS.md` mục 2026-08-14.
+  · **Kệ phần mềm** — ô sản phẩm xuống một hàng ngang dưới `lg`. `BENTO_SPAN`
+    chỉ khai span từ `lg`, nên dưới đó "ô đứng" chỉ còn là khung ảnh dọc 326px:
+    ở 375 ba khung chờ RỖNG ăn 919px trong khi PV One có 378px. Section
+    1657 → 1235px ở 375, 1510 → 1377 ở 900; **từ `lg` không đổi một pixel**.
+  · **Kệ phần cứng** — bỏ hai control nói dối: nút dừng băng ảnh (băng nó điều
+    khiển là `hidden … lg:flex`, cao 0px ở mọi khổ dưới `lg`) và tablist một
+    tab (bấm không đi đâu, vùng chạm 126×25). Section 1010 → 950px ở 1024.
+  · **Vùng chạm** — "Xem ảnh lớn" 17 → 41px, năm nút bước 28 → 44px (nới bằng
+    `after`, không bằng padding: ô lớn chỉ dư 15px ngân sách chiều cao).
+  · **Dải CTA** — nút kéo hết bề ngang dưới `sm` (166 → 335px ở 375), bằng cỡ
+    nút hero cho cùng một hành động. Ảnh hưởng cả 14 trang mang `CtaBand`.
+  · **KHÔNG sửa, đã đo và thấy đúng:** `ket-qua` (1542px ở 375 — 12 ô đọc rõ
+    theo thang, dài vì có nội dung thật), `con-so` (bốn số xuống dần thành một
+    cái thang), `dao-tao`, `pebble-vina`. Không khổ nào tràn ngang.
 - **Hết tràn ngang ở khổ hẹp.** Quét 10 trang ở 375 và 768: `scrollWidth` bằng
   đúng khung nhìn ở mọi trang. Thủ phạm KHÔNG phải `svg.pv-rings` của hero như
   bàn giao trước ghi — xem *Bẫy đã gặp*.
@@ -95,6 +113,23 @@ brand kit.
 
 ## Bẫy đã gặp
 
+- **`getBoundingClientRect` KHÔNG thấy vùng chạm nới bằng pseudo-element.** Sau
+  khi nới `after` cho năm nút bước, phép đo vẫn báo 45×28 y như cũ và trông hệt
+  như bản sửa không ăn. Kiểm đúng cách là bắn `elementFromPoint` xuống dưới mép
+  nút từng nấc: +15px vẫn trúng nút, +20px thì ra ngoài — tức vùng chạm thật là
+  28+16=44px.
+- **Chiều cao section ở khổ hẹp phải đo từ `:scope > .pv-container`.** Lấy
+  `:scope > div` thì trúng một trong bốn lớp trang trí `absolute` mà `<Section>`
+  tự gắn, và ra những con số vô lý (nội dung 6263px trong section 1966px).
+- **Ảnh trong section chưa cuộn tới thì `complete: false` mãi mãi** trong
+  headless — `loading="lazy"` không kích hoạt, nên khung PV One chụp ra trống
+  trơn và trông y như lỗi ảnh hỏng. `srcset` vẫn đúng (384w…), chỉ là chưa tải.
+  Đừng đuổi theo con số `w=3840` trong `src`: đó là bản dự phòng Next luôn đặt.
+- **Chrome headless dùng `--user-data-dir` trùng nhau thì phiên sau bám vào
+  phiên trước** và phép đo treo giữa chừng (`unsettled top-level await`).
+  `pkill -f <tên profile>` trước mỗi lượt đo.
+- **Cây làm việc này đã có sẵn một dev server ở cổng 3212** (`next dev` từ
+  chối chạy cái thứ hai và in ra PID của cái đang chạy). Đừng cố mở cổng mới.
 - **Thủ phạm tràn ngang KHÔNG phải thứ trông rộng nhất.** Bàn giao trước đổ cho
   `svg.pv-rings` của hero vì nó rộng 1199px — nhưng SVG có `overflow-x: hidden`
   nên nó tự cắt và không đẩy tài liệu; `getBoundingClientRect` của `<g>`/
@@ -162,10 +197,13 @@ brand kit.
 
 ## Trạng thái kỹ thuật
 
-- Lệnh kiểm tra cuối: `pnpm verify` — sạch, exit 0 (104 trang, 50 file).
-- Commit cuối: `26575a2` — hết tràn ngang dưới `lg`. Trước nó là `fcc8356`
-  (footer tách hai tầng), `849c9cc` (tiêu đề dải CTA còn hai từ), `3c2ef44`
-  (dải CTA thuần chữ) và `399a661` (dựng lại `/ai-assessment` quanh biểu mẫu).
+- Lệnh kiểm tra cuối: `pnpm verify` — sạch, exit 0 (104 trang, 50 file), chạy ở
+  đúng trạng thái đã commit.
+- Commit cuối: `6008306` (docs). Trước nó là bốn commit của lượt rà responsive
+  trang chủ: `6139adb` (nút dải CTA hết bề ngang), `57210b1` (kệ phần cứng bỏ
+  control chết), `309c784` (vùng chạm stepper và nút phóng to), `b29af64` (ô
+  sản phẩm xuống hàng ngang dưới `lg`).
+- **CHƯA PUSH.** Skill `commit` của repo chỉ cho push khi chủ dự án yêu cầu rõ.
 - Việc chưa commit: không (trong worktree). Cây làm việc CHÍNH thì còn bản nháp
   cũ chưa commit — xem *Đang làm dở*.
 - Nhánh: `worktree-training-section`, tách từ `develop` `4886998`. `develop`
