@@ -1,3 +1,8 @@
+/* `import type` chứ không import thường: `section.tsx` đã import ngược lại file
+   này, mà kiểu thì bị xoá lúc biên dịch nên không sinh vòng lặp module lúc
+   chạy. Giữ `Sky` ở `section.tsx` vì nó là thuộc tính của section, không phải
+   của đồ hoạ. */
+import type { Sky } from "@/components/pv/section";
 import { cn } from "@/lib/utils";
 
 /**
@@ -44,7 +49,40 @@ import { cn } from "@/lib/utils";
  * Hai cung lệch nhau chứ không một: một cung đơn đọc ra là một nét vẽ, hai
  * cung so le đọc ra là chiều sâu.
  */
-export function HorizonArc({ className }: { className?: string }) {
+/**
+ * Độ VỒNG của hai cung, một bộ cho mỗi nấc trời.
+ *
+ * Số là toạ độ y của điểm điều khiển trong viewBox cao 140, đáy ở y=139. y
+ * càng nhỏ thì điểm điều khiển càng cao và cung càng vồng. Đi từ `void` tới
+ * `dawn` là cung dựng dần lên: ở đêm sâu chân trời gần như một vạch thẳng,
+ * càng về sáng nó càng cong — nguồn sáng tới gần thì đường nó chạm vào mặt đất
+ * càng lộ ra.
+ *
+ * Đây là nửa còn lại của bộ ba biến `--sky-arc-h` / `--sky-glow-w` /
+ * `--sky-grain` trong `globals.css`. Nửa kia làm được bằng CSS vì chỉ là kích
+ * thước; độ vồng thì phải sửa chính đường path nên nó nằm ở đây. Thêm nấc mới
+ * phải sửa CẢ HAI chỗ.
+ *
+ * `dawn` giữ nguyên bộ số nguyên bản (6 / 54) — thang nở về phía tối, nấc sáng
+ * nhất không đổi một nét nào.
+ */
+const ARC_RISE: Record<Sky, [number, number]> = {
+  void: [96, 120],
+  night: [74, 105],
+  deep: [50, 86],
+  rise: [26, 68],
+  dawn: [6, 54],
+};
+
+export function HorizonArc({
+  sky = "night",
+  className,
+}: {
+  sky?: Sky;
+  className?: string;
+}) {
+  const [front, back] = ARC_RISE[sky];
+
   return (
     <svg
       aria-hidden
@@ -54,12 +92,12 @@ export function HorizonArc({ className }: { className?: string }) {
     >
       <g fill="none" stroke="currentColor">
         <path
-          d="M0 139 Q600 6 1200 139"
+          d={`M0 139 Q600 ${front} 1200 139`}
           strokeWidth="1"
           vectorEffect="non-scaling-stroke"
         />
         <path
-          d="M0 139 Q600 54 1200 139"
+          d={`M0 139 Q600 ${back} 1200 139`}
           strokeWidth="1"
           opacity="0.5"
           vectorEffect="non-scaling-stroke"

@@ -285,8 +285,31 @@
   --secondary: var(--surface-2);
 }
 
+/* --------------------------------------------------------------------------
+   HÌNH của trang trí cũng leo theo nấc, không chỉ ĐỘ MỜ
+   --------------------------------------------------------------------------
+   Trước 2026-08-13 cả năm nấc dùng chung một bộ hình: cùng dải chân trời cao
+   9rem, cùng quầng rộng 110%, cùng lớp hạt 0.42 — khác nhau duy nhất ở opacity
+   do `--sky-light` lái. Đo trên trang chủ ở 375: tám section cho ra tám lớp nền
+   giống hệt nhau về bố cục, chỉ hơn kém nhau độ sáng (quầng 0.116→0.30, cung
+   0.128→0.32). Mắt đọc ra MỘT bức tranh lặp tám lần với núm chỉnh sáng, tức là
+   trang trí không còn nói gì thêm ngoài thứ màu nền đã nói.
+
+   Ba biến dưới đây cho mỗi nấc một HÌNH riêng. Chúng đi cùng một chiều vật lý:
+   nguồn sáng càng gần thì chân trời càng cao và càng vồng, quầng càng loe rộng,
+   và lớp hạt càng lùi đi (hạt titan đọc rõ trên nền tối, nền sáng lên thì cùng
+   một lượng hạt hoá thành nhiễu).
+
+   Nấc `dawn` giữ đúng bộ số cũ (9rem đổi thành 12rem là mở rộng thang lên
+   trên, còn cung 6/54 là nguyên bản) — thang nở về phía TỐI chứ không kéo tụt
+   chỗ sáng nhất, nên đỉnh trang vẫn là đỉnh trang.
+   -------------------------------------------------------------------------- */
+
 .sky-void {
   --sky-light: 0;
+  --sky-arc-h: 6rem;
+  --sky-glow-w: 78%;
+  --sky-grain: 1;
   --background: var(--pv-night-0);
   --surface: var(--pv-night-1);
   --surface-2: var(--pv-night-2);
@@ -294,6 +317,9 @@
 
 .sky-night {
   --sky-light: 0.2;
+  --sky-arc-h: 7.5rem;
+  --sky-glow-w: 90%;
+  --sky-grain: 0.94;
   --background: var(--pv-night-1);
   --surface: var(--pv-night-2);
   --surface-2: var(--pv-night-3);
@@ -301,6 +327,9 @@
 
 .sky-deep {
   --sky-light: 0.42;
+  --sky-arc-h: 9rem;
+  --sky-glow-w: 104%;
+  --sky-grain: 0.86;
   --background: var(--pv-night-2);
   --surface: var(--pv-night-3);
   --surface-2: var(--pv-night-4);
@@ -308,6 +337,9 @@
 
 .sky-rise {
   --sky-light: 0.7;
+  --sky-arc-h: 10.5rem;
+  --sky-glow-w: 120%;
+  --sky-grain: 0.78;
   --background: var(--pv-night-3);
   --surface: var(--pv-night-4);
   --surface-2: var(--pv-night-5);
@@ -315,6 +347,9 @@
 
 .sky-dawn {
   --sky-light: 1;
+  --sky-arc-h: 12rem;
+  --sky-glow-w: 138%;
+  --sky-grain: 0.7;
   --background: var(--pv-night-4);
   --surface: var(--pv-night-5);
   --surface-2: var(--pv-night-6);
@@ -750,8 +785,11 @@
   height: 38.2%;
   min-height: 12rem;
   max-height: 30rem;
+  /* Bề NGANG của quầng leo theo nấc (`--sky-glow-w`): nguồn sáng càng gần thì
+     vệt sáng trên nền càng loe. Chiều dọc giữ 100% ở mọi nấc — quầng luôn dâng
+     trọn dải của nó, chỉ khác nó trùm rộng tới đâu. */
   background-image: radial-gradient(
-    110% 100% at 50% 100%,
+    var(--sky-glow-w, 110%) 100% at 50% 100%,
     var(--brand) 0%,
     transparent 72%
   );
@@ -785,7 +823,9 @@
   inset-inline: 0;
   bottom: 0;
   width: 100%;
-  height: 9rem;
+  /* Dải chân trời cao dần theo nấc — xem bảng ở khối `.sky-*`. Cung bên trong
+     cũng vồng dần, nhưng đó là chuyện của `HorizonArc` vì nó là hình vector. */
+  height: var(--sky-arc-h, 9rem);
   color: var(--brand);
   /* Nhạt hơn hẳn quầng sáng: cung là đường viền của ánh sáng, thấy nó rõ hơn
      chính ánh sáng thì thành hình vẽ chứ không thành chân trời. */
@@ -862,11 +902,30 @@
   pointer-events: none;
   position: absolute;
   inset-block-end: 0;
-  inset-inline-end: 4.5rem;
+  /* Mép phải của số thẳng với mép phải cột nội dung. `--gutter` là chính lề
+     của `pv-container`, nên hàng này tự đúng ở mọi khổ thay vì cứng 4.5rem —
+     4.5rem là lề đo được ở 1440, còn ở 375 lề chỉ 1.25rem và con số bị đẩy vào
+     tận giữa khối chữ. Cộng thêm 1.75rem để số không dính sát mép chữ. */
+  inset-inline-end: calc(var(--gutter) + 1.75rem);
   height: var(--section-y);
   width: auto;
   color: var(--brand);
-  opacity: calc(0.1 + 0.16 * var(--sky-light, 0.2));
+  /* Mờ hơn một nấc dưới `lg` qua `--pv-mark-damp`. Dải đáy ở khổ hẹp chỉ cao
+     5rem so với 8.5rem, mà dấu luôn cao đúng dải đó — cùng một độ mờ trên một
+     hình bé lại thì đọc ra ĐẬM hơn, không nhạt đi.
+
+     Hệ số đi qua một biến chứ không phải một khối `@media` bọc ngoài:
+     `@utility` của Tailwind v4 không lồng được, nên bọc nó trong `@media` là
+     lỗi cú pháp làm hỏng cả file CSS (và trang trắng, không phải xấu đi). */
+  opacity: calc(
+    (0.1 + 0.16 * var(--sky-light, 0.2)) * var(--pv-mark-damp, 0.72)
+  );
+}
+
+@media (width >= 64rem) {
+  :root {
+    --pv-mark-damp: 1;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -893,7 +952,12 @@
   background-size: 180px 180px;
   background-repeat: repeat;
   mix-blend-mode: overlay;
-  opacity: 0.42;
+  /* Lùi dần khi trời sáng lên (`--sky-grain`, xem bảng ở khối `.sky-*`). Cùng
+     một lượng hạt đọc ra là MẶT TITAN trên nền tối và ra NHIỄU trên nền sáng —
+     giữ nguyên 0.42 ở mọi nấc là để nấc sáng nhất trông như ảnh bị bẩn. Sàn
+     vẫn cao (0.7 ở `dawn` → 0.294): bỏ hạt là mất chất liệu, không phải tinh
+     tế hơn. */
+  opacity: calc(0.42 * var(--sky-grain, 1));
 }
 
 /* Nền lưới kỹ thuật, dùng cho vùng "phòng lab". Chỉ dùng ở hero/anchor.

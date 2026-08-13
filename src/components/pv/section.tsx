@@ -109,15 +109,26 @@ export function Section({
           → cung chân trời (đường mà ánh sáng chạm vào) → vạch ranh giới. */}
       <span aria-hidden className="pv-grain -z-10" />
       <BoundaryGlow className="-z-10" />
-      <HorizonArc className="-z-10" />
+      {/* Cung nhận `sky` để độ VỒNG leo theo nấc. Ba biến kích thước còn lại
+          (`--sky-arc-h`, `--sky-glow-w`, `--sky-grain`) đi qua CSS nên không
+          component nào phải truyền — chỉ độ vồng là hình vector. */}
+      <HorizonArc sky={sky} className="-z-10" />
       {/* Dấu vẽ SAU cung chân trời: cả hai sống ở dải đáy, và số phải đứng
-          TRÊN đường chân trời chứ không bị cung kẻ ngang qua. Ẩn dưới `lg` —
-          dưới đó lưới xuống một cột và dải đáy bị nội dung ăn hết. */}
+          TRÊN đường chân trời chứ không bị cung kẻ ngang qua.
+
+          HIỆN Ở MỌI KHỔ từ 2026-08-13. Trước đó `hidden lg:block`, với lý do
+          "dưới lg lưới xuống một cột và dải đáy bị nội dung ăn hết" — đo lại
+          thì không đúng: ở 375 dải đáy trống đủ 80px ở cả ba section mang dấu,
+          vì nội dung căn giữa và không khối nào chạm đáy.
+          Cái giá của việc ẩn nó thì lớn: dấu I·II·III là thứ trang trí DUY
+          NHẤT khác nhau giữa các section, nên ẩn nó đi là bỏ đúng thứ phân
+          biệt được section này với section kia, ở đúng khổ máy mà mọi thứ đã
+          xếp thành một cột dọc giống hệt nhau. */}
       {mark ? (
         <SectionMark
           numeral={mark.numeral}
           glyph={mark.glyph}
-          className="-z-10 hidden lg:block"
+          className="-z-10"
         />
       ) : null}
       <BoundaryHorizon className="-z-10" />
