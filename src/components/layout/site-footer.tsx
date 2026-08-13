@@ -3,13 +3,37 @@ import { Link } from "@/i18n/navigation";
 import { footerPages } from "@/content/registry";
 
 /**
- * Footer — mặt đất dưới đường chân trời.
- *
+ * ============================================================================
+ * FOOTER — MẶT ĐẤT DƯỚI ĐƯỜNG CHÂN TRỜI
+ * ----------------------------------------------------------------------------
  * Đứng ngay sau `CtaBand` (nấc `dawn`, chỗ sáng nhất trang) nên nó lùi xuống
  * một nấc: dải CTA phải là điểm sáng cuối cùng mắt dừng lại, không phải danh
  * sách link. Vạch chân trời ở mép trên là thứ tách hai khối đó ra.
  *
  * Danh sách link lấy từ registry, không viết tay, để không lệch khi thêm trang.
+ *
+ * HAI TẦNG, VÀ RANH GIỚI GIỮA CHÚNG LÀ "AI CẦN CÁI NÀY":
+ *   · TẦNG TRÊN — thứ người ta ĐỊNH DÙNG: tên hãng, điện thoại, email, và ba
+ *     cột link. Bốn cột đều nhau.
+ *   · DẢI DƯỚI — thứ người ta chỉ TRA khi cần: pháp nhân, địa chỉ bưu chính,
+ *     mã số thuế, bản quyền, link pháp lý. Toàn bộ ở `text-meta` mờ.
+ *
+ * Trước đây cả hai tầng dồn vào cột đầu: nhãn "Trụ sở" + pháp nhân + địa chỉ
+ * ba dòng + điện thoại + email + mã số thuế. Đo ở 1440 thì riêng khối
+ * `<address>` cao 225px / 9 dòng, kéo cả hàng cột lên 310px, mà cột đó rộng
+ * 2/5 lưới trong khi chữ bị chặn ở `max-w-xs` — tức chừa một khoảng chết
+ * ~280px ngay giữa footer. Ở 375 thì footer cao 1407px, gần gấp đôi màn hình.
+ *
+ * ĐỊA CHỈ VIẾT MỘT DÒNG, KHÔNG PHẢI `whitespace-pre-line`. Xuống dòng cứng
+ * bằng `\n` trong messages chỉ đúng với đúng một bề ngang; ở cột 320px nó đẻ
+ * ra dòng mồ côi ("Landmark 72 / Tower"), còn ở dải rộng thì phí chỗ. Để chuỗi
+ * liền và cho trình duyệt tự ngắt: ở 1440 nó nằm gọn một dòng, ở 375 nó tự
+ * xuống dòng theo chỗ có thật.
+ *
+ * `<address>` CHỈ CÓ MỘT, và nó ở dải dưới — nơi có danh tính bưu chính đầy
+ * đủ. Điện thoại và email ở tầng trên là hai LINK hành động, mang nhãn
+ * `sr-only` để trình đọc màn hình biết đâu là số đâu là hòm thư.
+ * ============================================================================
  */
 
 /**
@@ -46,22 +70,20 @@ export async function SiteFooter() {
         {/* Không mở footer bằng một câu tuyên ngôn: CtaBand ngay phía trên đã
             nói xong bước tiếp theo. Footer làm việc khác — danh tính pháp nhân,
             đường đi, và điều kiện pháp lý. */}
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
-          <div className="lg:col-span-2">
+        {/* Bốn cột ĐỀU NHAU, không còn cột đầu rộng gấp đôi: cột đầu nay chỉ
+            giữ tên hãng và hai đường liên hệ, mà cột rộng chứa ít chữ chính là
+            cái đẻ ra khoảng chết. Đều nhau cũng cho ba cột link thêm chỗ —
+            "Kho tri thức doanh nghiệp" hết phải xuống dòng. */}
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
             <span className="font-display text-ui font-semibold tracking-brand uppercase">
               Pebble Vina
             </span>
 
-            <h2 className="mt-6 font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
-              {t("office.label")}
-            </h2>
-            <address className="mt-4 max-w-xs text-body-sm text-muted-foreground not-italic">
-              <span className="block text-foreground">{t("office.entity")}</span>
-              <span className="mt-1 block whitespace-pre-line">
-                {t("office.address")}
-              </span>
-
-              <span className="mt-4 flex flex-col gap-1.5">
+            {/* `mt-4` bằng đúng khoảng cách nhãn → link ở ba cột kia, để hai
+                đường liên hệ này bắt đầu ngang hàng với dòng link đầu tiên. */}
+            <ul className="mt-4 flex flex-col gap-2.5 text-body-sm">
+              <li>
                 <a
                   href={t("office.phoneHref")}
                   className="text-foreground transition-colors hover:text-brand"
@@ -69,6 +91,8 @@ export async function SiteFooter() {
                   <span className="sr-only">{t("phone")}: </span>
                   {t("office.phoneLabel")}
                 </a>
+              </li>
+              <li>
                 <a
                   href={`mailto:${t("office.emailLabel")}`}
                   className="text-foreground transition-colors hover:text-brand"
@@ -76,12 +100,8 @@ export async function SiteFooter() {
                   <span className="sr-only">{t("email")}: </span>
                   {t("office.emailLabel")}
                 </a>
-              </span>
-
-              <span className="mt-4 block font-mono text-micro text-subtle-foreground">
-                {t("office.taxId")}
-              </span>
-            </address>
+              </li>
+            </ul>
           </div>
 
           <FooterColumn title={t("solutions")}>
@@ -109,20 +129,58 @@ export async function SiteFooter() {
           </FooterColumn>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t pt-6 text-meta text-subtle-foreground sm:flex-row sm:items-center sm:justify-between">
-          <span>
-            © {new Date().getFullYear()} {t("rights")}
-          </span>
-          <div className="flex gap-4">
-            {legal.map((p) => (
-              <Link key={p.key} href={p.path} className="hover:text-foreground">
-                {t(`links.${p.key}`)}
-              </Link>
-            ))}
+        <div className="mt-12 flex flex-col gap-4 border-t pt-6 text-meta text-subtle-foreground">
+          {/* Ba mẩu danh tính: dưới `sm` xếp chồng thành ba dòng ngắn, từ `sm`
+              nối thành một dòng ngăn bằng dấu chấm giữa. Dấu ngăn `aria-hidden`
+              và chỉ hiện khi đã nối dòng — xếp chồng mà còn dấu thì mỗi dòng
+              lủng lẳng một chấm.
+
+              `sm:block` chứ KHÔNG phải `sm:flex-row flex-wrap`: là flex thì mỗi
+              mẩu là một item nguyên khối, nên mẩu địa chỉ không đủ chỗ sẽ nhảy
+              nguyên cụm xuống dòng dưới rồi mới tự ngắt bên trong — đo ở 768
+              ra 4 dòng và chừa trống nửa dòng đầu. `block` trả ba mẩu về dạng
+              chữ chảy: chúng đổ đầy từng dòng, 768 còn 2 dòng.
+
+              `{" "}` quanh dấu ngăn là khoảng trắng THẬT để dòng có chỗ ngắt.
+              Ở chế độ flex (dưới `sm`) các nút chỉ chứa khoảng trắng bị bỏ qua,
+              nên chúng không đẻ ra dòng rỗng. */}
+          <address className="flex flex-col gap-1 not-italic sm:block">
+            <span className="text-muted-foreground">
+              {t("office.entity")}
+            </span>{" "}
+            <Dot />{" "}
+            <span>
+              <span className="sr-only">{t("address")}: </span>
+              {t("office.address")}
+            </span>{" "}
+            <Dot />{" "}
+            <span className="font-mono">{t("office.taxId")}</span>
+          </address>
+
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <span>
+              © {new Date().getFullYear()} {t("rights")}
+            </span>
+            <div className="flex gap-4">
+              {legal.map((p) => (
+                <Link key={p.key} href={p.path} className="hover:text-foreground">
+                  {t(`links.${p.key}`)}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+/** Dấu ngăn giữa hai mẩu danh tính. Chỉ có mặt khi cả dải đã nối thành dòng. */
+function Dot() {
+  return (
+    <span aria-hidden className="hidden sm:inline">
+      ·
+    </span>
   );
 }
 

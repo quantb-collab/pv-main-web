@@ -40,9 +40,8 @@
     "email": "Email",
     "phone": "Điện thoại",
     "office": {
-      "label": "Trụ sở",
       "entity": "Công ty TNHH Pebble Vina",
-      "address": "Văn phòng O1912, Tầng 19, Landmark 72 Tower\nKhu E6, Khu đô thị mới Cầu Giấy\nPhường Yên Hòa, Hà Nội, Việt Nam",
+      "address": "Văn phòng O1912, Tầng 19, Landmark 72 Tower, Khu E6, Khu đô thị mới Cầu Giấy, Phường Yên Hòa, Hà Nội, Việt Nam",
       "phoneLabel": "0345 913 369",
       "phoneHref": "tel:+84345913369",
       "emailLabel": "contact@pebblevina.com",
