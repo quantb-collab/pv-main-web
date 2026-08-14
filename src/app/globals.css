@@ -249,8 +249,10 @@
   --shadow-control-hover:
     inset 0 1px 0 oklch(1 0 0 / 14%), 0 4px 12px -3px oklch(0 0 0 / 45%);
 
-  /* Cường độ ánh bình minh của section hiện tại, 0 → 1. Vạch chân trời và
-     quầng sáng đọc biến này; `.sky-*` là nơi duy nhất đặt nó. */
+  /* Cường độ ánh bình minh của section hiện tại, 0 → 1. `.sky-*` là nơi duy
+     nhất đặt nó. HIỆN KHÔNG AI ĐỌC: bốn lớp dựng cảnh từng đọc biến này đã gỡ
+     2026-08-14. Giữ lại vì nó là thang cường độ của nấc trời — nền mới cần
+     biết nấc này sáng cỡ nào thì đọc ở đây, không tự đặt số. */
   --sky-light: 0.2;
 }
 
@@ -570,13 +572,11 @@
   --animate-pan: pan 18s linear infinite;
   /* Gợi ý cuộn: một cái hích xuống rồi về, không phải nhịp nảy liên tục. */
   --animate-nudge: nudge 2.4s var(--ease-in-out-quart) infinite;
-  /* Bộ ba nhịp sống của DawnRings (hero). Ba chu kỳ cố ý KHÔNG chia hết cho
-     nhau (16 / 7 / 5.2) để trường sóng không bao giờ bắt cùng pha — bắt cùng
-     pha thì thành đèn nháy. Tất cả đủ chậm để biết trang đang sống mà không
-     nhận ra chuyển động khi đang đọc chữ. */
-  --animate-dawn-swell: dawn-swell 16s var(--ease-in-out-quart) infinite;
+  /* Nhịp thở của quầng sau lưng panel nổi (BentoTile · StageMatrix). Sinh ra
+     cho DawnRings, nay hai khối đó là chủ duy nhất — DawnRings đã xoá
+     2026-08-14. Đủ chậm để biết trang đang sống mà không nhận ra chuyển động
+     khi đang đọc chữ. */
   --animate-dawn-pulse: dawn-pulse 7s var(--ease-in-out-quart) infinite;
-  --animate-dawn-twinkle: dawn-twinkle 5.2s var(--ease-in-out-quart) infinite;
 
   @keyframes shimmer {
     0%,
@@ -614,18 +614,7 @@
       transform: translate3d(0, 5px, 0);
     }
   }
-  /* Trường sóng thở: phồng 1.2% từ nguồn sáng ở đáy rồi xẹp lại — sóng đang
-     lan chứ không phải hình dán. Đặt trên phần tử có transform-origin đáy. */
-  @keyframes dawn-swell {
-    0%,
-    100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.012);
-    }
-  }
-  /* Vệt bình minh loé theo nhịp hải đăng: sáng chậm, dịu chậm. */
+  /* Sáng chậm, dịu chậm — nhịp hải đăng, không phải đèn nháy. */
   @keyframes dawn-pulse {
     0%,
     100% {
@@ -633,17 +622,6 @@
     }
     55% {
       opacity: 1;
-    }
-  }
-  /* Node nhấp nháy như sao xa — đổi scale, không đổi opacity, vì mỗi node
-     mang sẵn một nấc mờ theo khoảng cách trong decor.tsx. */
-  @keyframes dawn-twinkle {
-    0%,
-    100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.5);
     }
   }
 }
@@ -703,139 +681,6 @@
 }
 
 /* --------------------------------------------------------------------------
-   Chân trời — thứ tách hai section liền nhau
-   --------------------------------------------------------------------------
-   Hai nền đêm cách nhau 3% độ sáng thì mắt đọc ra là lỗi render, không phải
-   ranh giới. Nên ranh giới không nằm ở màu nền: nó là một vạch sáng.
-
-   `pv-horizon`  vạch 1px ở mép TRÊN section, sáng nhất ở giữa, tắt dần ra hai
-                 mép — một đường chân trời nhìn từ chính diện.
-   `pv-skyglow`  quầng LED dâng từ mép DƯỚI section. Ở boundary, quầng của
-                 section trên và vạch của section dưới chồng lên nhau thành
-                 một dải sáng duy nhất.
-
-   Cả hai đọc `--sky-light` nên cường độ tự tăng dần theo mạch của trang;
-   component không truyền tham số nào.
-
-   `--pv-boundary` là hệ số CHUYỂN ĐỘNG (mặc định 1 — bản tĩnh). Hai component
-   BoundaryHorizon / BoundaryGlow (src/components/motion/sky-boundary.tsx)
-   nhân nó theo tiến trình cuộn: ranh giới sáng dần khi đi vào khung nhìn.
-   Chỗ dùng span tĩnh (footer, hero) không phải làm gì — var rơi về 1.
-   -------------------------------------------------------------------------- */
-@utility pv-horizon {
-  pointer-events: none;
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  height: 1px;
-  background-image: linear-gradient(
-    to right,
-    transparent 0%,
-    var(--border) 14%,
-    var(--brand) 50%,
-    var(--border) 86%,
-    transparent 100%
-  );
-  opacity: calc((0.4 + 0.6 * var(--sky-light, 0.2)) * var(--pv-boundary, 1));
-}
-
-@utility pv-skyglow {
-  pointer-events: none;
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  /* 38.2% = phần bù của lát vàng (1 − 1/φ): quầng chiếm đúng phần dưới vạch
-     vàng của section. Ở hero, chữ đậu TRÊN vạch đó (xem hero.tsx) nên ánh
-     sáng dâng lên vừa chạm chân khối chữ mà không trèo lên sau lưng nó. */
-  height: 38.2%;
-  min-height: 12rem;
-  max-height: 30rem;
-  background-image: radial-gradient(
-    110% 100% at 50% 100%,
-    var(--brand) 0%,
-    transparent 72%
-  );
-  /* Không bao giờ về 0 tuyệt đối: đêm sâu nhất vẫn phải thấy ánh sáng đang
-     tới ở rìa dưới, nếu không thì đó là đêm chết chứ không phải trước bình minh.
-     Sàn 0.07 cũng là thứ tách hai section cùng nấc trời: mép trên tối, mép
-     dưới có quầng, rồi vạch chân trời — nhịp đó đọc ra ranh giới ngay cả khi
-     hai nền giống hệt nhau. */
-  opacity: calc((0.07 + 0.23 * var(--sky-light, 0.2)) * var(--pv-boundary, 1));
-}
-
-/* Hero nằm ở nấc tối nhất nhưng là khung DUY NHẤT có trọn một màn hình bầu
-   trời trống để ánh sáng loang ra — cùng cường độ với một section thường thì
-   ở đó nó biến mất. Kèm với `pv-skyglow` trên cùng phần tử. */
-@utility pv-skyglow-hero {
-  --sky-light: 0.16;
-}
-
-/* --------------------------------------------------------------------------
-   Đồ hoạ trang trí — xem src/components/pv/decor.tsx
-   --------------------------------------------------------------------------
-   Hai lớp này chỉ đặt KHUNG và ĐỘ ĐẬM; hình nằm trong component. Độ đậm đọc
-   `--sky-light` nên trang trí cũng sáng dần theo mạch trời, không phải một
-   hoạ tiết dán cố định.
-   -------------------------------------------------------------------------- */
-
-/* Cung chân trời ở đáy section. */
-@utility pv-arc {
-  pointer-events: none;
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  width: 100%;
-  height: 9rem;
-  color: var(--brand);
-  /* Nhạt hơn hẳn quầng sáng: cung là đường viền của ánh sáng, thấy nó rõ hơn
-     chính ánh sáng thì thành hình vẽ chứ không thành chân trời. */
-  opacity: calc(0.08 + 0.24 * var(--sky-light, 0.2));
-}
-
-/* Gợn bình minh của hero. Không đọc `--sky-light`: hero ở nấc `void` (=0) nên
-   sẽ tắt hẳn, mà đây lại là vector chính của trang chủ.
-   Nhốt trong 61.8% dưới của khung — lát vàng lớn, phần bù của 38.2% mà
-   `pv-skyglow` chiếm và là phần trời hero chừa lại dưới khối chữ. Phủ trọn
-   khung thì ở khổ hẹp trường sóng phóng theo `slice` trèo lên tận hàng CTA. */
-@utility pv-rings {
-  pointer-events: none;
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  height: 61.8%;
-  min-height: 18rem;
-  color: var(--brand);
-  opacity: 0.32;
-  /* Che dần ra rìa để các gợn không kết thúc bằng một nét cắt ngang khung.
-     Mask rộng ngang, thấp dọc — theo đúng hình của trường sóng dẹt. */
-  mask-image: radial-gradient(
-    96% 92% at 50% 100%,
-    black 38%,
-    transparent 100%
-  );
-}
-
-/* Node của DawnRings: twinkle scale quanh tâm chính nó — không có transform-box
-   thì SVG xoay/scale quanh gốc viewBox và node bay khỏi chỗ. Delay âm, mỗi
-   node một pha để chòm sao không nháy đồng loạt như đèn trang trí. */
-.pv-rings .pv-node {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.pv-rings .pv-node:nth-of-type(2) {
-  animation-delay: -1.3s;
-}
-.pv-rings .pv-node:nth-of-type(3) {
-  animation-delay: -2.6s;
-}
-.pv-rings .pv-node:nth-of-type(4) {
-  animation-delay: -3.4s;
-}
-.pv-rings .pv-node:nth-of-type(5) {
-  animation-delay: -4.7s;
-}
-
-/* --------------------------------------------------------------------------
    Titan sần — chất liệu của mọi bề mặt
    --------------------------------------------------------------------------
    Nhiễu fractal xám phủ lên nền section. Đây là NỬA CÒN LẠI của chất liệu:
@@ -851,12 +696,11 @@
    `baseFrequency` — tần số đó quyết định cỡ hạt, và cỡ hạt là thứ phân biệt
    "kim loại nhám" với "ảnh nhiễu vì kém chất lượng".
 
-   Vì sao là biến chứ không phải một số cố định: nơi nào có CHẤT LIỆU THẬT nằm
-   dưới (hero trang chủ đặt ảnh chụp nhung) thì lớp hạt phải hạ xuống, nếu
-   không hai lớp nhiễu cộng dồn thành mặt giấy nhám — đúng cái bẫy đã ghi ở
-   docs/IMAGE-BRIEF.md §1. Hạ chứ không tắt: nửa trên tấm ảnh đó là bóng tối
-   studio, độ lệch chuẩn nhiễu chỉ 0,6/255, phẳng tới mức dễ lộ vân chuyển màu
-   nhất trên cả trang.
+   Vì sao là biến chứ không phải một số cố định: đặt ảnh CHẤT LIỆU THẬT xuống
+   dưới thì lớp hạt phải hạ, nếu không hai lớp nhiễu cộng dồn thành mặt giấy
+   nhám — đúng cái bẫy đã ghi ở docs/IMAGE-BRIEF.md §1. Hạ chứ không tắt: vùng
+   tối phẳng của một tấm ảnh studio dễ lộ vân chuyển màu nhất trên cả trang.
+   (Trang chủ từng đặt 0,16 dưới ảnh nhung; ảnh đã gỡ 2026-08-14.)
    -------------------------------------------------------------------------- */
 @utility pv-grain {
   pointer-events: none;
@@ -867,17 +711,6 @@
   background-repeat: repeat;
   mix-blend-mode: overlay;
   opacity: var(--grain-strength, 0.42);
-}
-
-/* Nền lưới kỹ thuật, dùng cho vùng "phòng lab". Chỉ dùng ở hero/anchor.
-   Tâm mask ở 38% dọc — vạch vàng của khung, cùng chỗ hero đặt khối chữ —
-   nên lưới sáng nhất ngay sau lưng chữ rồi lặn dần về hai mép. */
-@utility pv-grid-bg {
-  background-image:
-    linear-gradient(to right, var(--border) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 38%, black 40%, transparent 100%);
 }
 
 /* Gradient fill for a highlighted term. Paired with a blurred duplicate behind

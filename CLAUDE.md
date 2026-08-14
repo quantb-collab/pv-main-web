@@ -53,8 +53,11 @@ thấp và luôn phủ lớp hạt `pv-grain` — bỏ lớp hạt là mất ch�
 Site chỉ có một chế độ — không còn nền sáng, không còn `.tone-dark`.
 Mỗi section khai một nấc trời qua prop `sky` (`void` → `night` → `deep` →
 `rise` → `dawn`) và nấc chỉ được đi lên trong một trang. Section cao trọn một
-màn hình theo mặc định. Bảng nấc và cơ chế chân trời: `docs/DESIGN-TOKENS.md`
-mục *Thang sky*.
+màn hình theo mặc định. Bảng nấc: `docs/DESIGN-TOKENS.md` mục *Thang sky*.
+
+Toàn bộ đồ hoạ trang trí đã xoá 2026-08-14 (cung chân trời, quầng sáng, vạch
+ranh giới, vòng bình minh). Nền đang chờ kế hoạch mới — **đừng dựng lại lớp nào
+khi chưa có quyết định**, kể cả để lấp chỗ trống giữa hai section.
 
 Chữ gọi theo vai trò (`text-body`, `text-title`, `text-eyebrow`…), không gọi
 theo cỡ (`text-sm`, `text-lg`, `text-[11px]`). Mỗi vai trò đã mang sẵn cỡ,

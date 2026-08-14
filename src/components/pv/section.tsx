@@ -1,10 +1,5 @@
 import type { ReactNode } from "react";
 import { Reveal } from "@/components/motion/reveal";
-import {
-  BoundaryGlow,
-  BoundaryHorizon,
-} from "@/components/motion/sky-boundary";
-import { HorizonArc } from "@/components/pv/decor";
 import { Highlight } from "@/components/pv/highlight";
 import { cn } from "@/lib/utils";
 
@@ -30,11 +25,14 @@ import { cn } from "@/lib/utils";
  * là trọn màn hình — thiết kế section cứ nhắm vào khung đó.
  *
  * NẤC TRỜI. `sky` chọn một nấc trong thang đêm → bình minh (globals.css LỚP 2).
- * Nấc chỉ đi lên trong một trang. Ranh giới giữa hai section không phải là
- * chênh lệch màu nền — nó là vạch chân trời + quầng sáng do chính component
- * này vẽ, nên không section nào phải tự lo phần đó. Ranh giới còn SỐNG theo
- * cuộn: quầng dâng sáng và vạch tự vẽ ra khi nó đi vào khung nhìn
- * (sky-boundary.tsx) — hai section nối nhau bằng một cú trao ánh sáng.
+ * Nấc chỉ đi lên trong một trang.
+ *
+ * ⚠️ RANH GIỚI GIỮA HAI SECTION HIỆN KHÔNG CÓ GÌ VẼ (chủ dự án 2026-08-14 —
+ * bốn lớp dựng cảnh đã xoá). Trước đó ranh giới là vạch chân trời + quầng sáng
+ * do chính component này vẽ, và nó tồn tại vì hai nền đêm cách nhau ~3% độ
+ * sáng thì mắt đọc ra là lỗi render chứ không phải ranh giới. Vấn đề đó nay
+ * quay lại, NẶNG NHẤT ở hai section cùng nấc đứng liền nhau — chúng không còn
+ * đường nào tách ra. Kế hoạch nền mới phải trả lời đúng câu đó.
  * ============================================================================
  */
 
@@ -106,20 +104,13 @@ export function Section({
         className,
       )}
     >
-      {/* -z-10 chứ không chỉ dựa vào thứ tự DOM: bốn lớp này position:absolute,
-          còn container nội dung là static — không có z-index thì phần tử được
-          định vị luôn vẽ đè lên phần tử tĩnh, dù đứng trước trong DOM.
-          Thứ tự dựng cảnh: hạt titan (vật liệu) → quầng bình minh (ánh sáng)
-          → cung chân trời (đường mà ánh sáng chạm vào) → vạch ranh giới. */}
-      {/* -z-20: dưới cả bốn lớp dựng cảnh. Ảnh key visual là VẬT LIỆU của
-          section, không phải một lớp cảnh thứ năm — hạt titan phải phủ lên nó
-          y như phủ lên nền màu, nếu không chỗ có ảnh sẽ mịn hơn phần còn lại
-          của trang và đọc ra là một mảng dán vào. */}
+      {/* -z-20 (ảnh nền) rồi -z-10 (hạt): cả hai position:absolute, còn
+          container nội dung là static — không có z-index thì phần tử được định
+          vị luôn vẽ đè lên phần tử tĩnh, dù đứng trước trong DOM.
+          Hạt titan phải nằm TRÊN ảnh nền, nếu không chỗ có ảnh sẽ mịn hơn phần
+          còn lại của trang và đọc ra là một mảng dán vào. */}
       {backdrop}
       <span aria-hidden className="pv-grain -z-10" />
-      <BoundaryGlow className="-z-10" />
-      <HorizonArc className="-z-10" />
-      <BoundaryHorizon className="-z-10" />
 
       {bleed ? children : <div className={cn("pv-container", containerClassName)}>{children}</div>}
     </section>

@@ -628,8 +628,8 @@ export function StatTile({
         />
       ) : null}
 
-      {/* Mặt panel. Cả ba nấc đều có ánh dâng từ đáy, cùng chiều với
-          `pv-skyglow` của section — khác nhau ở cường độ, không ở kiểu. */}
+      {/* Mặt panel. Cả ba nấc đều có ánh dâng từ đáy — hướng sáng chung của
+          site, khác nhau ở cường độ, không ở kiểu. */}
       <span
         aria-hidden
         className={cn(
@@ -827,11 +827,10 @@ export function StageMatrix({
           >
             {/* Quầng bình minh sau lưng panel — panel nổi bằng ÁNH SÁNG chứ
                 không bằng bóng đen, đúng chất đêm rạng dần. Đậm ở đáy nhạt ở
-                đỉnh, cùng chiều với `pv-skyglow` của section. Nở theo chiều
-                DỌC nhiều hơn chiều ngang: bề ngang còn phải chừa chỗ cho panel
-                bên cạnh và cho mép container ở khổ 1024–1344. Nhịp thở tái
-                dùng keyframe của hero; người bật giảm chuyển động thì @media
-                trong globals.css tắt nó ngay. */}
+                đỉnh — hướng sáng chung của site. Nở theo chiều DỌC nhiều hơn
+                chiều ngang: bề ngang còn phải chừa chỗ cho panel bên cạnh và
+                cho mép container ở khổ 1024–1344. Người bật giảm chuyển động
+                thì @media trong globals.css tắt nhịp thở ngay. */}
             {high ? (
               <span
                 aria-hidden
@@ -839,8 +838,8 @@ export function StageMatrix({
               />
             ) : null}
 
-            {/* Mặt panel. Nấc cuối có thêm ánh dâng từ đáy — cùng hướng sáng
-                với `pv-skyglow` của section. */}
+            {/* Mặt panel. Nấc cuối có thêm ánh dâng từ đáy — hướng sáng chung
+                của site. */}
             <span
               aria-hidden
               className={cn(

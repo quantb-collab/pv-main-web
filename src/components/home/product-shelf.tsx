@@ -392,8 +392,7 @@ function ShelfTier({
   return (
     <RevealItem className="group relative flex flex-col gap-4 rounded-xl bg-background px-5 py-2 transition-colors duration-(--dur-base) hover:bg-surface lg:flex-row lg:items-center lg:gap-6 lg:px-7">
       {/* Vòng viền 1px. Gradient đi từ dưới lên nên mép sáng nằm ở chân tầng
-          kệ — cùng hướng ánh sáng với `pv-skyglow` của section, chỉ đổi màu
-          theo dòng chip. */}
+          kệ — hướng sáng chung của site, chỉ đổi màu theo dòng chip. */}
       <span
         aria-hidden
         className={cn("pv-edge bg-linear-to-t to-border", accent.edge)}

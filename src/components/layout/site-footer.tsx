@@ -41,7 +41,6 @@ export async function SiteFooter() {
        điểm dừng này thì đứng ở footer sẽ bị snap hút ngược lên CtaBand. */
     <footer data-snap="end" className="sky-deep relative isolate">
       <span aria-hidden className="pv-grain -z-10" />
-      <span aria-hidden className="pv-horizon -z-10" />
 
       <div className="pv-container py-16 lg:py-20">
         {/* Không mở footer bằng một câu tuyên ngôn: CtaBand ngay phía trên đã

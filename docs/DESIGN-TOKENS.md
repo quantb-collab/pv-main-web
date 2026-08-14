@@ -51,47 +51,37 @@ chữ, và cả cường độ ánh sáng ở chân trời.
 Mẫu của một trang: `void` → `night` → `deep` → `rise` → `dawn` → footer
 (`sky-deep`, lùi một nấc để dải CTA vẫn là điểm sáng cuối mắt dừng lại).
 
-**Nấc không phải là thứ tách hai section liền nhau.** Hai nền đêm cách nhau 3%
-độ sáng thì mắt đọc ra là lỗi render. Ranh giới là ánh sáng, do `<Section>` tự
-vẽ, không trang nào phải lo:
+### ⚠️ Ranh giới giữa hai section: HIỆN KHÔNG CÓ GÌ VẼ
 
-- `pv-horizon` — vạch 1px ở mép **trên**, sáng nhất ở giữa, tắt dần ra hai mép.
-- `pv-skyglow` — quầng xanh da trời dâng từ mép **dưới**.
+Chủ dự án xoá toàn bộ lớp dựng cảnh 2026-08-14 để đổi kế hoạch nền. `<Section>`
+nay chỉ còn nền màu của nấc + lớp hạt.
 
-Ở boundary, quầng của section trên và vạch của section dưới chồng lên nhau
-thành một dải sáng. Nhịp *mép trên tối → mép dưới có quầng → vạch* đọc ra ranh
-giới **kể cả khi hai section cùng một nấc trời** — nên hai section cùng nấc
-đứng liền nhau là hợp lệ.
+Trước đó, **nấc không phải là thứ tách hai section liền nhau** — ranh giới là
+ánh sáng: `pv-horizon` (vạch 1px mép trên) + `pv-skyglow` (quầng dâng từ mép
+dưới) + `pv-arc` (cung chân trời), cộng hai bản chuyển động `BoundaryHorizon` /
+`BoundaryGlow`. Nhịp *mép trên tối → mép dưới có quầng → vạch* đọc ra ranh giới
+kể cả khi hai section cùng nấc.
 
-Cả hai utility đọc `--sky-light` (0 → 1), và `.sky-*` là nơi duy nhất đặt biến
-đó. Muốn một section sáng hơn thì đổi nấc, **không** chỉnh opacity tại chỗ.
+Vấn đề mà bộ đó giải nay quay lại nguyên vẹn, và đây là thứ kế hoạch nền mới
+phải trả lời: **hai nền đêm cách nhau ~3% độ sáng thì mắt đọc ra là lỗi render,
+không phải ranh giới.** Nặng nhất ở hai section CÙNG nấc đứng liền nhau — trang
+chủ đang có hai cặp như vậy (`night`+`night`, `rise`+`rise`).
 
-Ranh giới còn **sống** theo cuộn: khi nó đi vào khung nhìn, quầng của section
-trên dâng sáng dần và vạch của section dưới tự vẽ ra từ tâm — hai section trao
-ánh sáng cho nhau. Phần chuyển động nằm ở `BoundaryHorizon` / `BoundaryGlow`
-(`src/components/motion/sky-boundary.tsx`, `<Section>` tự gắn); chúng chỉ nhân
-hệ số `--pv-boundary` (mặc định 1) lên opacity CSS đã cân, nên chỗ dùng span
-tĩnh (footer, hero) và người bật giảm chuyển động vẫn thấy đúng bản tĩnh.
+`--sky-light` (0 → 1, đặt ở `.sky-*`) vẫn còn nhưng **hiện không ai đọc**. Giữ
+vì nó là thang cường độ của nấc trời: nền mới cần biết nấc này sáng cỡ nào thì
+đọc ở đó, đừng tự đặt số. Muốn một section sáng hơn thì đổi nấc, **không** chỉnh
+opacity tại chỗ.
 
-## Trang trí — `pv-arc` và `pv-rings`
+## Trang trí — KHÔNG CÒN
 
-Hình nằm ở `src/components/pv/decor.tsx`, khung và độ đậm ở LỚP 5.
+Site hiện **không có đồ hoạ trang trí nào**. Xoá hết 2026-08-14 cùng lần với
+ranh giới section: `decor.tsx` (`HorizonArc`, `DawnRings`), `sky-boundary.tsx`,
+và các utility `pv-arc` · `pv-horizon` · `pv-skyglow` · `pv-skyglow-hero` ·
+`pv-rings` · `pv-grid-bg`. Bản cũ nằm trong git nếu cần đọc lại lý do hình học.
 
-| Utility | Hình | Ở đâu |
-|---|---|---|
-| `pv-arc` | cung chân trời ở đáy section | `<Section>` tự gắn, mọi trang |
-| `pv-rings` | vòng đồng tâm toả từ nguồn sáng | ⚠️ **hiện không dùng** |
-
-`pv-arc` đọc `--sky-light` nên trang trí cũng sáng dần theo mạch trời. `pv-rings`
-thì không — nó cố ý bỏ qua biến đó vì hero ở nấc `void` (`--sky-light: 0`).
-
-⚠️ `pv-rings` (và `DawnRings`) **mất chỗ dùng từ 2026-08-14**: hero trang chủ
-nay lấy nền là ẢNH CHỤP nhung, mà vẽ vòng sóng đè lên một tấm vải thật là hai
-thứ tiếng nói chồng nhau. Code còn nguyên vì chưa chốt phục hồi hay bỏ hẳn —
-xem `docs/DECISIONS.md` mục *Hero: nền là ảnh chụp nhung*.
-
-Cung nhạt hơn hẳn quầng sáng: cung là **đường viền** của ánh sáng. Thấy nó rõ
-hơn chính ánh sáng thì nó thành hình vẽ chứ không thành chân trời.
+Luật cũ vẫn còn giá trị khi dựng bộ mới: **một ý hình học duy nhất, biến tấu
+theo nấc trời** — mười hoạ tiết là mười thứ tiếng nói. Đừng thêm hình thứ hai
+chỉ để một section trông khác đi; đó là việc của nấc `sky`.
 
 ## Viền gradient — `pv-edge`
 

@@ -73,7 +73,7 @@ section bị bỏ qua.
 | Bento chỉ số (số chưa xác minh thì để slot chờ) | `<BentoGrid>` + `<StatTile hero tag value label gap>` |
 | Ảnh | `<MediaFrame ratio need src alt>` |
 | Ô chờ nội dung | `<Gap kind>` / `<GapChip kind>` |
-| Đồ hoạ trang trí | `<HorizonArc>` — `<Section>` tự gắn, không phải khai |
+| Đồ hoạ trang trí | không còn — xem mục *Trang trí* |
 | Dải CTA đóng trang | `<CtaBand cta items>` |
 | Trang solution / use case | `<SolutionTemplate>` / `<UseCaseTemplate>` |
 | Trang V2 chưa tới lượt | `<StubPage>` |
@@ -140,11 +140,14 @@ sáng, và thứ ló rạng là xanh da trời. Mỗi `<Section>` khai một n�
 đặt).
 
 **Nấc chỉ đi lên trong một trang.** Sáng rồi tối lại là lỗi duy nhất không được
-phép ở đây. Hai section CÙNG nấc đứng liền nhau thì hợp lệ — ranh giới nằm ở
-vạch chân trời + quầng sáng do `<Section>` tự vẽ, không nằm ở màu nền. Muốn một
-chỗ sáng hơn thì đổi nấc, không chỉnh opacity tại chỗ.
+phép ở đây. Muốn một chỗ sáng hơn thì đổi nấc, không chỉnh opacity tại chỗ.
 
-Bảng nấc, cơ chế chân trời, lớp hạt: `docs/DESIGN-TOKENS.md` mục *Thang sky*.
+⚠️ **Ranh giới giữa hai section hiện KHÔNG CÓ GÌ VẼ** (xoá 2026-08-14). Hai
+section cùng nấc đứng liền nhau nay không còn đường nào tách ra, và hai nền đêm
+cách nhau ~3% độ sáng thì đọc ra là lỗi render. Đây là việc còn nợ của kế hoạch
+nền mới, không phải thứ vá tại chỗ bằng một viền hay một khoảng đệm.
+
+Bảng nấc và lớp hạt: `docs/DESIGN-TOKENS.md` mục *Thang sky*.
 
 ## Chiều cao section
 
@@ -154,16 +157,20 @@ Mặc định cao trọn một viewport, nội dung căn giữa. Không tự đ�
 Hệ quả: mỗi section chỉ còn chỗ cho **một ý**. Nhồi hai ý vào một màn hình thì
 khối chữ tụt xuống nhỏ và chật đúng thứ mà chiều cao này sinh ra để tránh.
 
-## Trang trí
+## Trang trí — KHÔNG CÒN GÌ
 
-MỘT ý duy nhất, biến tấu theo nấc trời — không phải một bộ hoạ tiết.
-`<Section>` **tự** gắn cung chân trời, không phải khai gì.
+Xoá sạch 2026-08-14 để đổi kế hoạch nền: hai lớp ảnh thương hiệu của trang chủ,
+`decor.tsx` (`HorizonArc`, `DawnRings`), `sky-boundary.tsx`, và các utility
+`pv-arc` · `pv-horizon` · `pv-skyglow` · `pv-rings` · `pv-grid-bg`. Cả site nay
+chỉ còn **nền màu theo nấc `sky` + lớp hạt `pv-grain`** (và `pv-edge` cho mép
+card).
 
-Cần trang trí mới thì hỏi trước: nó có phải cùng một bầu trời không? Nếu là
-một hình khác hẳn thì đó là thứ tiếng nói thứ hai, và câu trả lời là không.
+**ĐỪNG DỰNG LẠI khi chưa có quyết định** — kể cả một cung, một quầng hay một
+vạch "cho đỡ trống". Đó đúng là thứ vừa bị bỏ.
 
-Nền hero trang chủ là ẢNH CHỤP, không phải vector (2026-08-14) — `<DawnRings>`
-vì thế đang không có chỗ dùng.
+Luật cũ vẫn dùng được khi dựng bộ mới: MỘT ý hình học duy nhất, biến tấu theo
+nấc trời, không phải một bộ hoạ tiết. Cần trang trí mới thì hỏi trước — nếu nó
+là một hình khác hẳn thì đó là tiếng nói thứ hai, và câu trả lời là không.
 
 ## Ghi đè class cho component `ui/`
 
