@@ -10,8 +10,12 @@ import { DUR, EASE, LIFT, STAGGER } from "@/lib/motion";
 
 /**
  * Hero — §9 Section 1. Cao trọn một viewport, nấc `sky-void`, và là chỗ DUY
- * NHẤT trên site được dùng ScrollStage. Nền là ảnh chụp nhung chủ dự án cấp
- * 2026-08-14 (xem `HeroBackdrop`), nên hero không còn ô chờ ảnh nền.
+ * NHẤT trên site được dùng ScrollStage.
+ *
+ * NỀN ĐANG TRỐNG (chủ dự án 2026-08-14): ảnh chụp nhung, quầng `pv-skyglow-hero`
+ * và vạch brand ở mép dưới đều đã gỡ để đổi sang kế hoạch nền khác. Chỉ còn lớp
+ * hạt — `CLAUDE.md` luật 2 bắt mọi nền phải có nó, và hero không dựng bằng
+ * `<Section>` nên nó không được cấp sẵn như các section khác.
  */
 export function Hero() {
   const t = useTranslations("home.hero");
@@ -38,7 +42,7 @@ export function Hero() {
       data-snap=""
       className="sky-void relative isolate flex min-h-dvh flex-col overflow-hidden"
     >
-      <HeroBackdrop />
+      <span aria-hidden className="pv-grain -z-10" />
 
       <div className="relative flex flex-1 flex-col">
         {/* Tỉ lệ vàng theo chiều dọc. `items-center` đặt khối chữ vào tâm
@@ -46,8 +50,8 @@ export function Hero() {
             hơn tâm hình học, nên bản cũ nhìn như chữ đang chìm giữa hai
             khoảng trống vô danh. Hai spacer chia khoảng trống còn lại theo
             382 : 618 (φ): tiêu đề đậu đúng vạch vàng của màn hình, và phần
-            lớn bầu trời dồn xuống dưới — đúng chỗ quầng sáng với các vòng
-            cần chỗ thở, thay vì bị khối chữ đè lên.
+            lớn khoảng trống dồn xuống dưới — nửa dưới là chỗ nền hero cần để
+            thở, thay vì bị khối chữ đè lên.
             min-h là sàn khi màn hình thấp: trên phải lọt qua header fixed
             (h-16 / lg:h-20), dưới phải chừa chỗ cho ExploreCue neo ở mép. */}
         <div aria-hidden className="min-h-24 flex-[382] lg:min-h-28" />
@@ -156,52 +160,5 @@ function ExploreCue({ label, reduced }: { label: string; reduced: boolean }) {
         <ChevronDown className="-mt-2.5 size-4 opacity-50" />
       </span>
     </motion.a>
-  );
-}
-
-/**
- * Nền hero: ảnh chụp nhung, hai bản cắt đổi theo TỈ LỆ KHUNG 1:1 — không phải
- * mốc px, vì `object-cover` xén theo cạnh dư nên iPad dọc lấy bản 16:9 sẽ mất
- * 60% bề ngang ảnh. Art direction hai FILE nên bắt buộc `<picture>`;
- * `next/image` không đổi file theo media query.
- *
- * Không phủ scrim: đo trên file, vùng chữ đậu có p95 chói 0,020 → chữ trắng
- * 15:1. Không parallax: dịch 6% là hở một dải trống ở mép dưới, đúng chỗ vải
- * sáng nhất.
- */
-function HeroBackdrop() {
-  return (
-    <div aria-hidden className="absolute inset-0 -z-10">
-      <picture>
-        <source media="(min-aspect-ratio: 1/1)" srcSet="/brand/hero-wide.webp" />
-        <img
-          src="/brand/hero-tall.webp"
-          alt=""
-          /* Ảnh quyết định LCP của trang chủ. */
-          fetchPriority="high"
-          decoding="async"
-          className="absolute inset-0 size-full object-cover object-bottom"
-        />
-      </picture>
-
-      {/* Không thêm `inset-0`: pv-skyglow tự neo vào mép dưới, còn inset-0 đặt
-          cả top lẫn bottom nên khung bị ràng buộc thừa và quầng nhảy lên đỉnh. */}
-      <div className="pv-skyglow pv-skyglow-hero" />
-
-      {/* 0,16 thay cho 0,42: vải trong ảnh đã có nhiễu riêng (sd 18/255), cộng
-          dồn thành giấy nhám. Không tắt hẳn — nửa trên ảnh sd 0,6/255, phẳng
-          tới mức dễ lộ vân chuyển màu. */}
-      <div className="pv-grain [--grain-strength:0.16]" />
-
-      {/* A cold rim right on the edge — the sharp line the diffuse glow can't
-          give on its own, and the seam that hands off to the next section. */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-px opacity-70"
-        style={{
-          background:
-            "linear-gradient(to right, transparent, var(--brand) 50%, transparent)",
-        }}
-      />
-    </div>
   );
 }

@@ -51,122 +51,20 @@ import { Section, SectionHeader } from "@/components/pv/section";
  * số liệu chưa xác minh. Chi tiết dịch vụ từng mảng thuộc section offer sẽ
  * dựng sau, không liệt kê ở đây.
  */
-/**
- * ẢNH KEY VISUAL — hai bản cắt, ĐỔI THEO KHỔ MÀN (chủ dự án giao 2026-08-14).
- *
- * Đây là chỗ duy nhất trên site dùng `<picture>` thay cho `next/image`, và lý do
- * là ART DIRECTION chứ không phải tiện: hai file KHÔNG phải một ảnh ở hai cỡ,
- * chúng là hai bố cục khác nhau của cùng một vật.
- *   `who-wide` 1672×941 — vật nằm bên PHẢI, khoảng trống bên TRÁI
- *   `who-tall` 941×1672 — vật nằm bên DƯỚI, khoảng trống bên TRÊN
- * Chữ đặt vào đúng khoảng trống đó, nên khi bố cục đổi (một cột ↔ hai cột) thì
- * ẢNH cũng phải đổi bản cắt. `next/image` không làm được việc này: nó đổi CỠ
- * theo `sizes` chứ không đổi FILE theo `media`, và hai bản `<Image>` chồng nhau
- * rồi ẩn bớt một bản thì trình duyệt vẫn tải cả hai. `<picture>` tải đúng một.
- *
- * Đổi lại là mất trình tối ưu của Next, nên hai file đã nén sẵn sang WebP
- * (q88, `-sharp_yuv`): 1,5 MB PNG → 74 KB và 90 KB. Không cần bản PNG dự
- * phòng — WebP đã phổ cập.
- *
- * ⚠️ Ngưỡng `80rem` PHẢI khớp `xl:` ở dưới. Lệch một nấc là có một dải khổ màn
- * lấy bản cắt của bố cục kia: chữ nằm bên trái trong khi vật cũng nằm bên trái.
- *
- * VÌ SAO `xl` CHỨ KHÔNG `lg`. Bản đầu đổi ở 64rem và đo ra một dải hỏng
- * 1024–1280px. Lý do là hai thứ chạy theo hai luật khác nhau: ảnh `cover` phóng
- * theo CHIỀU CAO section, còn cột chữ nằm trong container căn giữa tối đa
- * 1280px. Với H≈810 thì mép an toàn của chữ là `VW/2 − 56`, còn mép phải của
- * chữ là `max(544, VW/2 − 96)` — hai vế cùng dạng `VW/2` nên từ 1280px trở lên
- * chữ luôn thoát đúng 40px, nhưng dưới 1280px container thôi căn giữa, mép chữ
- * đứng yên ở 544px trong khi mép an toàn tụt xuống 456px. Muốn cứu dải đó bằng
- * cách thu cột chữ thì phải xuống ≤424px, mà `DefinitionList` còn cột nhãn
- * ~176px nên phần chữ chỉ còn ~208px — hẹp hơn mọi ngưỡng đọc được. Vậy dải
- * 1024–1280 dùng bố cục XẾP DỌC như khổ hẹp.
- *
- * ⚠️ Bản gốc chỉ rộng 1672px. Phủ tràn viền một màn 1440 ở DPR 2 cần ~2880px,
- * nên trên màn retina mép kim loại sẽ hơi mềm. Cần bản master ≥3200px — đã ghi
- * vào `docs/IMAGE-BRIEF.md`.
- */
-function IdentityBackdrop() {
-  return (
-    <>
-      {/* `contents`: `<picture>` không được là một ô trong flex column của
-          `<Section>`. Ảnh bên trong đã `absolute` nên nó không chiếm chỗ, nhưng
-          chính thẻ `picture` thì vẫn là một flex item cao 0. */}
-      <picture aria-hidden className="contents">
-        <source media="(min-width: 80rem)" srcSet="/brand/who-wide.webp" />
-        {/* eslint-disable-next-line @next/next/no-img-element -- art direction:
-            xem khối chú thích ngay trên. `next/image` không đổi file theo `media`. */}
-        <img
-          src="/brand/who-tall.webp"
-          alt=""
-          /* Xén CÂN ĐỐI, không neo trái. Neo trái đẩy toàn bộ phần thừa sang
-             mép phải và cắt mất một mảng huy hiệu ngôi sao — cắt cụt chính dấu
-             hiệu thương hiệu thì đọc ra là lỗi ảnh. Xén cân đối giữ trọn huy
-             hiệu ở 1440 và chỉ kéo vật sang trái nửa phần thừa; cột chữ đã thu
-             về `max-w-lg` để nhường đúng chỗ đó. */
-          className="pointer-events-none absolute inset-0 -z-20 size-full object-cover"
-        />
-      </picture>
-
-      {/*
-        LỚP LÀM NỀN CHO CHỮ — CHỈ Ở KHỔ HẸP, và nó không phải trang trí.
-        Bản cắt dựng đứng chừa khoảng trống ở nửa trên, nhưng ba khối chữ của
-        section này dài hơn nửa màn: hai khối cuối rơi đúng lên thanh kim loại
-        sáng nhất của vật, đo bằng mắt trên bản chụp 390×844 là không đọc được.
-        Dải chuyển này kéo nền của chính section xuống hết vùng chữ rồi tan
-        trước khi chạm huy hiệu.
-
-        Vì sao KHÔNG có ở `lg`: bản cắt nằm ngang để vật hẳn sang phải nên chữ
-        đứng trên nền trơn, không cần lớp nào.
-
-        ⚠️ Đây KHÔNG phải ngoại lệ của luật "không vẽ đè màu lên ảnh" trong
-        `docs/SOFTWARE-KIT.md` — luật đó áp cho ảnh chụp GIAO DIỆN SẢN PHẨM,
-        nơi chỉnh màu là nói dối về sản phẩm. Đây là ảnh thương hiệu làm nền.
-      */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-20 h-4/5 bg-linear-to-b from-background from-35% via-background/80 via-65% to-transparent xl:hidden"
-      />
-
-    </>
-  );
-}
-
 export async function Identity() {
   const t = await getTranslations("home.who");
 
   return (
-    <Section
-      id="pebble-vina"
-      sky="night"
-      backdrop={<IdentityBackdrop />}
-      /* Khổ hẹp: chữ bám ĐẦU section vì bản cắt dựng đứng chừa chỗ trống ở nửa
-         trên. Từ `lg` trả về căn giữa như mọi section khác — lúc đó chỗ trống
-         nằm bên trái, không nằm bên trên. */
-      className="justify-start xl:justify-center"
-    >
-      {/*
-        HAI BỀ RỘNG KHÁC NHAU, và chênh lệch đó là do ẢNH quyết định — đo trên
-        chính file `who-wide`, không ước lượng:
-
-          · theo CỘT, độ sáng vọt lên từ 46,1% bề ngang ảnh; trước mốc đó nền
-            gần như đen tuyền. Quy ra màn 1440×900 (ảnh `cover` thành 1599px,
-            xén cân đối 79,5px mỗi bên) thì chữ phải dừng trước ~655px. Lề trái
-            của container là 112px ⟹ cột chữ tối đa 543px ⟹ `max-w-lg` (512px,
-            kết thúc ở 624px, chừa 31px).
-          · theo HÀNG, vật chỉ bắt đầu từ 18% chiều cao ảnh. Tiêu đề nằm cao hơn
-            mốc đó nên nó được rộng hơn — `max-w-xl` giữ "Định vị doanh nghiệp"
-            gọn MỘT dòng.
-
-        Một dòng tiêu đề không chỉ đẹp hơn: tiêu đề gãy hai dòng đẩy section cao
-        thêm ~62px, mà `cover` phóng ảnh theo chiều cao section — vượt 964px là
-        huy hiệu ngôi sao (kết thúc ở 92% bề ngang ảnh) bị xén mất ở mép phải.
-        Đây là một vòng lặp: chữ hẹp hơn → section cao hơn → ảnh to hơn → xén
-        nhiều hơn. ĐO LẠI cả ba con số nếu thay ảnh hoặc sửa chữ.
-      */}
-      <SectionHeader title={t("title")} className="max-w-2xl xl:max-w-xl" />
+    /* ẢNH KEY VISUAL ĐÃ GỠ (chủ dự án 2026-08-14) — `who-{wide,tall}.webp`, dải
+       chuyển làm nền chữ ở khổ hẹp, và ba bề ngang do ảnh quyết định
+       (`justify-start`, `xl:max-w-xl`, `xl:max-w-lg`) đều trả về mặc định. Dựng
+       nền mới thì ĐO LẠI trên ảnh mới, đừng chép ba con số cũ — chúng lấy từ
+       chỗ vật sáng lên trong đúng file đó. Bản cũ nằm trong git; hai file ảnh
+       vẫn ở `public/brand/`. */
+    <Section id="pebble-vina" sky="night">
+      <SectionHeader title={t("title")} />
       <DefinitionList
-        className="mt-14 w-full max-w-2xl xl:max-w-lg"
+        className="mt-14 w-full max-w-3xl"
         items={[1, 2, 3].map((n) => ({
           label: t(`r${n}Label`),
           text: t(`r${n}Text`),
