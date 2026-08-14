@@ -5,28 +5,43 @@ description: Dựng và sửa giao diện website Pebble Vina sao cho mọi tran
 
 # Dựng giao diện Pebble Vina
 
-Đọc `docs/DESIGN-TOKENS.md` trước. Skill này là quy trình; file đó là bảng tra.
+Skill này là quy trình; bảng tra là `docs/DESIGN-TOKENS.md`. Mở bảng tra khi
+cần một con số, đừng đọc cả file trước khi bắt đầu.
+
+## Bước 0 — chốt xong ba thứ rồi mới viết JSX
+
+Sai một trong ba thứ này là phải dựng lại, không phải sửa. Hỏi gộp MỘT lượt
+(luật 6 trong `CLAUDE.md`), rồi làm liền mạch:
+
+1. **Asset** — có sẵn file ảnh không? Chất liệu chụp được (vải, kim loại, cảnh
+   thật) thì XIN ẢNH, không vẽ bằng CSS/SVG. Vẽ bằng code chỉ cho hình học
+   thuần: cung, lưới, sơ đồ, chuyển động.
+2. **Chữ** — có bản thiết kế kèm chữ thì lấy NGUYÊN VĂN, không viết lại.
+   Không có thì dùng skill `pv-content`.
+3. **Khổ** — bản thiết kế có mấy khổ? Bố cục đổi theo BỀ NGANG hay theo HƯỚNG
+   MÀN (`portrait`/`landscape`)? Ảnh nền `object-cover` gần như luôn là hướng
+   màn, không phải bề ngang.
+
+Ba thứ tự quyết được, đừng hỏi: chọn block nào, đặt token nào, ngắt dòng ở đâu,
+tên file.
 
 ## Ba luật không thương lượng
 
-**1. Chỉ dùng token.**
-Không hardcode màu, cỡ chữ, easing, ms, px cho nhịp section. Màu qua semantic
-token (`bg-surface`, `text-muted-foreground`, `text-brand`…), chữ qua vai trò
-(`text-body`, `text-title`…), chuyển động qua `EASE` / `DUR` trong
-`src/lib/motion.ts`.
+Chi tiết ở `CLAUDE.md` luật 2–4. Bản rút gọn để không phải mở file:
 
-Sai: `className="bg-slate-900 text-white"` · `text-lg leading-relaxed`
-· `transition={{duration: 0.5}}`
-Đúng: `<Section sky="deep">` · `text-lead`
-· `transition={{duration: DUR.slow, ease: EASE.out}}`
+1. **Chỉ dùng token.** Sai: `bg-slate-900` · `text-lg leading-relaxed` ·
+   `transition={{duration: 0.5}}`. Đúng: `<Section sky="deep">` · `text-lead` ·
+   `transition={{duration: DUR.slow, ease: EASE.out}}`.
+2. **Ghép từ block có sẵn.** Cần biến thể mới → thêm prop cho block sẵn có,
+   không dựng lưới riêng cho một trang.
+3. **Chữ nằm ở messages**, kể cả nhãn nút và `aria-label`. Chỗ ngắt dòng cũng
+   là nội dung: đặt `\n` trong chuỗi + `whitespace-pre-line`, không `<br/>`.
 
-**2. Ghép từ block có sẵn.**
-Cần biến thể mới → thêm prop cho block sẵn có. Không dựng lưới riêng cho một
-trang. Mười trang tự dựng lưới riêng sẽ thành mười thứ tiếng nói khác nhau.
+## Chú thích trong code
 
-**3. Chữ nằm ở messages, không nằm trong JSX.**
-Mọi chuỗi đi qua `useTranslations` / `getTranslations`. Không có ngoại lệ, kể cả
-nhãn nút và aria-label.
+Ngắn. Chỉ viết cái code không tự nói được, và ưu tiên chỗ có SỐ ĐO — "p95 chói
+0,020 nên không cần scrim" đáng một dòng; "hai cung so le đọc ra chiều sâu" thì
+không. Một component 60 dòng không cần 40 dòng chú thích.
 
 ---
 
@@ -58,7 +73,7 @@ section bị bỏ qua.
 | Bento chỉ số (số chưa xác minh thì để slot chờ) | `<BentoGrid>` + `<StatTile hero tag value label gap>` |
 | Ảnh | `<MediaFrame ratio need src alt>` |
 | Ô chờ nội dung | `<Gap kind>` / `<GapChip kind>` |
-| Đồ hoạ trang trí | `<HorizonArc>` (Section tự gắn) · `<DawnRings>` (hero, 1 lần/site) |
+| Đồ hoạ trang trí | `<HorizonArc>` — `<Section>` tự gắn, không phải khai |
 | Dải CTA đóng trang | `<CtaBand cta items>` |
 | Trang solution / use case | `<SolutionTemplate>` / `<UseCaseTemplate>` |
 | Trang V2 chưa tới lượt | `<StubPage>` |
@@ -117,25 +132,19 @@ Biên độ:
 Chuyển động để dẫn hướng đọc, không để giải trí. Hiệu ứng làm chậm việc đọc là
 hiệu ứng sai.
 
-## Nấc trời — đêm trước bình minh
+## Nấc trời
 
-Chủ đề: cả site là một bầu trời dọc, đỉnh trang tối nhất, càng xuống chân trời
-càng sáng, và thứ ló rạng là **xanh da trời** chứ không phải nắng vàng.
-Chất liệu nền là **titan sần**: chroma rất thấp cộng lớp hạt `pv-grain` —
-`<Section>` tự phủ, đừng gỡ.
-Không có chế độ sáng. Không còn `.tone-dark`.
+Cả site là một bầu trời dọc: đỉnh trang tối nhất, càng xuống chân trời càng
+sáng, và thứ ló rạng là xanh da trời. Mỗi `<Section>` khai một nấc qua `sky`:
+`void` (hero) → `night` → `deep` → `rise` (ngay trước CTA) → `dawn` (CtaBand tự
+đặt).
 
-Mỗi `<Section>` khai một nấc qua `sky`:
-`void` (hero) → `night` → `deep` → `rise` (ngay trước CTA) → `dawn` (CtaBand tự đặt).
+**Nấc chỉ đi lên trong một trang.** Sáng rồi tối lại là lỗi duy nhất không được
+phép ở đây. Hai section CÙNG nấc đứng liền nhau thì hợp lệ — ranh giới nằm ở
+vạch chân trời + quầng sáng do `<Section>` tự vẽ, không nằm ở màu nền. Muốn một
+chỗ sáng hơn thì đổi nấc, không chỉnh opacity tại chỗ.
 
-**Nấc chỉ đi lên trong một trang.** Sáng rồi tối lại là gãy mạch — đó là lỗi
-duy nhất không được phép ở đây.
-
-Hai section **cùng nấc đứng liền nhau là hợp lệ**: ranh giới không nằm ở màu
-nền mà ở vạch chân trời + quầng sáng do `<Section>` tự vẽ. Đừng bù bằng cách
-nhảy nấc chỉ để "cho khác nhau".
-
-Muốn một chỗ sáng hơn → đổi nấc. Không chỉnh opacity hay bôi màu tại chỗ.
+Bảng nấc, cơ chế chân trời, lớp hạt: `docs/DESIGN-TOKENS.md` mục *Thang sky*.
 
 ## Chiều cao section
 
@@ -148,11 +157,13 @@ khối chữ tụt xuống nhỏ và chật đúng thứ mà chiều cao này si
 ## Trang trí
 
 MỘT ý duy nhất, biến tấu theo nấc trời — không phải một bộ hoạ tiết.
-`<Section>` **tự** gắn cung chân trời, không phải khai gì. `<DawnRings>` là
-vector chính của trang chủ, chỉ dùng **một lần trên toàn site**.
+`<Section>` **tự** gắn cung chân trời, không phải khai gì.
 
 Cần trang trí mới thì hỏi trước: nó có phải cùng một bầu trời không? Nếu là
 một hình khác hẳn thì đó là thứ tiếng nói thứ hai, và câu trả lời là không.
+
+Nền hero trang chủ là ẢNH CHỤP, không phải vector (2026-08-14) — `<DawnRings>`
+vì thế đang không có chỗ dùng.
 
 ## Ghi đè class cho component `ui/`
 
@@ -180,6 +191,16 @@ pnpm dlx shadcn@latest add <tên> -y
 ```
 Không sửa tay file trong `src/components/ui/` trừ khi bắt buộc — sửa thì ghi chú
 lý do ngay trên chỗ sửa, vì lần `add` sau sẽ ghi đè.
+
+## Đo bằng mắt — có ngân sách
+
+Một vòng chụp ở **hai khổ** (1440 ngang + 500 dọc) là đủ để kết luận một bố
+cục. Quá **ba vòng** chỉnh bằng mắt mà chưa đạt thì dừng, mô tả chỗ lệch và
+hỏi — chỉnh vòng thứ tư gần như luôn là đang đoán ý người khác.
+
+Chụp bằng Chrome headless: `--headless=new --window-size=W,H
+--virtual-time-budget=9000 --screenshot=out.png`. Cửa sổ hẹp nhất Chrome nhận
+là 500px, nên 375px phải xem bằng trình duyệt thật.
 
 ## Kiểm lại trước khi xong
 

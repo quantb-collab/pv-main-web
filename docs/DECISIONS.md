@@ -1001,3 +1001,172 @@ tầng chữ vào chỗ đã chật — nhãn nằm ở `sr-only`, hình hai v�
 dịch).
 **Đổi lại thì phải sửa:** `software-bento.tsx`, `STEPPER.auto` trong
 `src/lib/motion.ts`, khoá `home.software.pauseLabel` / `resumeLabel`.
+
+## 2026-08-14 — Bỏ bento, section phần mềm thành sân khấu một sản phẩm
+**Bối cảnh:** Chủ dự án: "không dùng card nữa, thay vì thế làm dạng slide show
+hiện đại, sản phẩm sẽ đi từ trái qua phải từ Pebble Vina One → CRM → EMS →
+DMS → …". Danh sách sản phẩm cũng đổi: ERP · Context Provider · MES ra, CRM ·
+EMS · DMS vào.
+**Chọn:** `software-stage.tsx` — một sản phẩm chiếm trọn sân khấu, sản phẩm kế
+ló ra ~12% mép phải, tự chạy **5,2 giây một slide**, kéo ngang được, dãy chọn
+liệt kê đủ TÊN cả bốn. **Chỉ ẢNH nằm trong băng trượt**; cụm chữ và dãy chọn
+đứng yên ở cột phải 20rem, chữ neo trên và dãy chọn neo dưới. Quãng trượt tính
+bằng CSS thuần (`cqw` + `clamp`), không đo bằng JS, để lần render đầu trên máy
+chủ đã đúng chỗ.
+**Vì:** Bento bày cả bộ cùng lúc nên phải chia diện tích — ba ô nhỏ chỉ còn
+ảnh 150–180px, tức bày được sự TỒN TẠI của sản phẩm chứ không bày được sản
+phẩm. Sân khấu trả cho mọi sản phẩm cùng một khung ảnh lớn. Cái mất là không
+còn thấy cả bộ trong một cái liếc, và dãy chọn gánh phần đó bằng cách in TÊN
+chứ không phải chấm tròn.
+**Nhịp 5,2s chứ không 1,5s như bento:** bento lướt qua năm MÀN của cùng một sản
+phẩm (mắt chỉ cần nhận ra hình đã đổi); sân khấu đổi hẳn SẢN PHẨM, mỗi lần đổi
+phải đọc lại tên cộng một câu ~18 chữ = 5,4 giây ở 200 chữ/phút.
+**Kèm theo:** poster lên `screen` (16:10) — bỏ ba ô nhỏ nên đủ chỗ, và ảnh
+KHÔNG còn bị `object-cover` xén 10% chân màn như bản bento. PV One chỉ còn
+trưng **một** màn (Trang chủ); bốn màn kia giữ nguyên trong messages và
+`public/software/` — chủ dự án hoãn phần "bấm vào xem chi tiết". Bản phóng to
+của `AppShot` giữ lại vì kit đòi phải có một chỗ đọc được chữ trong ảnh.
+**Không bịa phần chưa biết:** chủ dự án chốt danh sách nhưng chưa nói EMS và
+DMS là viết tắt của gì, nên ba slide đó chỉ có TÊN, còn nhãn vai và lời dẫn để
+`<Gap kind="confirm">` qua hai khoá ICU `pendingLead` / `pendingNeed`. Slide
+cũng KHÔNG phải link: bento cũ trỏ tạm sang trang giải pháp gần nghĩa nhất,
+nhưng ba sản phẩm mới không có trang nào gần nghĩa để trỏ.
+**Đã cân nhắc và bỏ:** băng trôi liên tục kiểu marquee (thấy cả bộ nhưng ảnh
+nhỏ, và chữ đang trôi thì không đọc được); cuộn dọc điều khiển băng ngang
+(scroll-jacking — vừa tắt snap cùng phiên vì lý do gần giống); làm mờ slide
+ngoài sân khấu (kit cấm hạ `opacity` ảnh sản phẩm — chỉnh màu ảnh sản phẩm là
+nói dối về sản phẩm).
+**Sửa ngay sau khi nhìn bản chụp thật (cùng ngày), ba việc:**
+(1) *Chữ ra ngoài băng trượt.* Bản đầu nhét cả ảnh lẫn chữ vào mỗi slide, cột
+chữ căn giữa cạnh ảnh cao 411px trong khi cụm chữ chỉ cao ~140px — rỗng ~180px
+bên dưới, đúng cái lỗ mà bento đã lấp một phiên trước, dựng lại to gấp đôi. Neo
+chữ TRÊN và dãy chọn DƯỚI thì khoảng hở đọc ra là bố cục, không ra lỗ thủng; và
+ảnh ăn trọn cột trái, 767px thay vì 658px.
+(2) *Không tự trôi vào ô chờ.* Vòng tự chạy chỉ đi qua sản phẩm đã có nội dung.
+Không có luật này thì cứ 5,2 giây trang bán hàng lại đẩy khách vào một khung
+cảnh báo cam. Còn một sản phẩm chín thì không có gì tự chạy và nút tạm dừng
+biến mất — một nút dừng thứ không chạy là một nút nói dối.
+(3) *Không phủ gradient mờ lên mép ló* — kit cấm vẽ đè màu và hạ `opacity` lên
+ảnh sản phẩm. Mép ló chỉ thu hẹp lại; việc "còn nữa" do dãy chọn nói.
+**Khổ hẹp:** thứ tự đảo thành chữ → ảnh → dãy chọn (xếp dọc thì một tấm ảnh
+giao diện chưa có tên đứng ngay dưới tiêu đề section là bắt người ta đoán); dãy
+chọn nằm ngang chứ không dọc (dọc ăn 230px của một màn 812px); mọi vùng chạm
+≥44px.
+**Đo được:** 1440×900 — section 900px không tràn, sân khấu 872px, slide 767px,
+ảnh 767×479, mục dãy chọn 320×44, trang 8,75 màn cuộn. 390×844 — section 844px
+không tràn, slide 315px, mục dãy chọn 82×44, không cuộn ngang. Slide cuối được
+`clamp` áp mép phải, slide áp chót ló ra bên trái.
+**Bẫy đã gặp:** Chrome headless CÓ LÚC không chạy `requestAnimationFrame` (đo
+được cả hai trường hợp trong cùng một phiên). Khi đó transition đóng băng ở
+`currentTime: 0`, `getComputedStyle().transform` trả `matrix(1,0,0,1,0,0)` sau
+khi đã bấm sang slide khác, và `Reveal` đứng ở `opacity: 0` — đọc ra y hệt một
+transform bị CSS loại. Ép `getAnimations().forEach((a) => a.finish())` trước
+khi đo.
+**Đổi lại thì phải sửa:** `software-stage.tsx`, `Software` trong `sections.tsx`,
+`STAGE` trong `src/lib/motion.ts` (thay `STEPPER`), khoá `home.software.*`,
+`docs/SOFTWARE-KIT.md` §4.
+
+## 2026-08-14 — Ảnh key visual cho section định vị, và bộ icon thương hiệu
+**Bối cảnh:** Chủ dự án giao hai bản cắt của cùng một vật (`who-wide` 1672×941
+vật bên phải · `who-tall` 941×1672 vật bên dưới) cho section `Identity`, một
+file logo, và bảng content mới cho ma trận ba nấc.
+**Chọn — ảnh:** thêm prop `backdrop` cho `<Section>` (nằm ở `-z-20`, dưới cả
+bốn lớp dựng cảnh nên hạt titan vẫn phủ lên), và dùng `<picture>` + `<source
+media>` thay `next/image`.
+**Vì:** đây là ART DIRECTION, không phải hai cỡ của một ảnh — chữ đặt vào đúng
+khoảng trống của từng bản cắt, nên đổi bố cục thì phải đổi FILE. `next/image`
+đổi cỡ theo `sizes` chứ không đổi file theo `media`; hai `<Image>` chồng nhau
+rồi ẩn bớt thì trình duyệt vẫn tải cả hai. Mất trình tối ưu của Next nên nén
+sẵn WebP q88: 1,5 MB PNG → 74 KB và 90 KB.
+**Ngưỡng `xl` (1280) chứ không `lg` (1024)** — đo, không đoán: ảnh `cover`
+phóng theo CHIỀU CAO section còn cột chữ nằm trong container căn giữa tối đa
+1280px. Mép an toàn của chữ là `VW/2 − 56`, mép phải của chữ là
+`max(544, VW/2 − 96)`; hai vế cùng dạng `VW/2` nên từ 1280px chữ luôn thoát
+40px, nhưng dưới 1280px container thôi căn giữa và chữ đè 88px lên thanh kim
+loại. Thu cột chữ xuống ≤424px thì `DefinitionList` chỉ còn ~208px phần chữ —
+hẹp hơn mọi ngưỡng đọc được. Vậy 1024–1280 xếp dọc như khổ hẹp.
+**Kèm theo:** dải chuyển dọc (`xl:hidden`) làm nền cho chữ ở khổ hẹp — ba khối
+chữ dài hơn nửa màn nên hai khối cuối rơi lên thanh kim loại sáng nhất. Đây
+KHÔNG phạm luật "không vẽ đè màu lên ảnh" của `SOFTWARE-KIT`: luật đó áp cho
+ảnh chụp GIAO DIỆN SẢN PHẨM.
+**Chọn — icon:** logo đổi thành **trắng đơn sắc**, đặt trên nền `#07090E` bo
+góc 20% cho `icon.png`/`favicon.ico`, nền vuông cho `apple-icon.png` (iOS tự bo,
+bo sẵn là bo hai lần). Bản trong suốt không nền dùng ở header/footer.
+**Vì:** chủ dự án chốt trắng cho dễ nhìn. Trắng trên nền TRONG SUỐT thì đọc rất
+tốt trên tab tối nhưng gần như vô hình trên tab sáng — mà tab sáng là mặc định
+của Chrome, tức đúng chỗ cần "dễ nhìn" thì lại mất. Nền tối giữ được cả hai.
+**Đã cân nhắc và bỏ:** giữ logo nguyên màu (xanh navy trên nền tối của site cho
+tương phản quá thấp); `object-left` cho bản nằm ngang (đẩy phần thừa sang phải
+và cắt cụt huy hiệu ngôi sao); dải chuyển NGANG ở khổ rộng (phải phủ tới 58% bề
+ngang mới cứu được 1024px, và ở 1440px nó nuốt mất 260px thân vật).
+**Bẫy đã gặp:** thay file trong `public/` mà GIỮ NGUYÊN TÊN thì trình tối ưu
+ảnh của Next vẫn phục vụ bản cũ từ `.next/cache/images` — logo trắng đã nằm
+trên đĩa nhưng header vẫn vẽ bản màu qua hai lần build. Xoá `.next/cache/images`
+rồi dựng lại.
+**Đổi lại thì phải sửa:** `sections.tsx` (`IdentityBackdrop` + `Identity`),
+`section.tsx` (prop `backdrop`), `public/brand/`, `src/app/icon.png` ·
+`favicon.ico` · `apple-icon.png`, `site-header.tsx`, `site-footer.tsx`,
+`docs/IMAGE-BRIEF.md` §5b.
+
+## 2026-08-14 — Ma trận ba nấc: viết lại toàn bộ ô chữ theo bảng chủ dự án
+**Bối cảnh:** Chủ dự án đưa bảng content mới cho `home.contrast`.
+**Chọn:** thay nguyên 15 chuỗi (3 nhãn nấc + 4 nhãn hàng + 12 ô). Nhãn nấc đổi
+từ "Vận hành cổ điển · Đã số hoá · Số hoá tự hành cùng AI" sang "Vận hành thủ
+công · Vận hành số · Vận hành cùng AI". Tiêu đề section giữ nguyên.
+**Vì:** bộ chữ mới nói bằng DANH TỪ CÔNG VIỆC (nhập liệu, đối chiếu, dashboard,
+workflow) thay vì hình ảnh kể chuyện ("Tờ trình lạc trong email"), nên nó quét
+nhanh hơn và khớp giọng của một bảng so sánh. Cột 3 giữ đúng luật của
+blueprint: mỗi ô đều nêu con người ở đâu ("con người duyệt ngoại lệ", "con
+người giữ quyền quyết định").
+**Một sửa đổi so với bản gửi:** "số hóa" → "số hoá" cho khớp chính tả đang dùng
+trong toàn bộ messages của repo.
+**Đổi lại thì phải sửa:** `home.contrast` trong `messages/vi.json`.
+
+## 2026-08-14 — Hero: tiêu đề mới, và nền là ẢNH CHỤP nhung chứ không phải hình vẽ
+**Bối cảnh:** Chủ dự án đưa hai bản thiết kế hero (khổ ngang + khổ dọc) kèm yêu
+cầu "ra cảm giác màn chất liệu nhung, đang trong studio tối, ánh sáng xanh nhẹ
+công nghệ", sau đó cấp luôn hai file ảnh nhung.
+**Chọn:**
+- Chữ: `home.hero.title` thành "Biến AI thành ⏎ năng lực vận hành thực tế",
+  `lead` thành câu phần cứng · phần mềm · AI. Lấy nguyên văn bản thiết kế.
+- Nền: hai file ảnh `public/brand/hero-wide.webp` (16:9) và `hero-tall.webp`
+  (9:16), đổi bản theo **tỉ lệ khung hình 1:1** qua `<picture>` + `<source
+  media>`. Không lớp phủ tối, không lưới, không vector trang trí.
+- Bỏ khỏi hero: `DawnRings`, `pv-grid-bg`, và ô chờ ảnh nền
+  (`home.hero.mediaGap` / `mediaNeed`).
+**Vì:** vùng chữ đậu trong ảnh có độ chói p95 chỉ 0,020 — chữ trắng đã đạt
+15:1, nên mọi lớp phủ thêm chỉ làm mất chất vải mà không mua được gì. Vẽ vòng
+sóng hay kẻ lưới đè lên một tấm vải thật là hai thứ tiếng nói chồng nhau.
+**Đã cân nhắc và bỏ:** **dựng tấm nhung bằng SVG** — đã làm xong một bản chạy
+được (trường nếp sinh bằng sóng dùng chung, mặt nạ vũng sáng, bốn lượt vẽ
+sáng/tối) và chủ dự án xem rồi chốt dùng ảnh. Lý do bỏ đáng ghi lại: chất nhung
+nằm ở chỗ ánh sáng chìm vào từng sợi vải, mà đó đúng là thứ gradient không tả
+được — bản vẽ đọc ra là khói xanh hoặc bản đồ đường đồng mức, không ra vải.
+Cũng đã bỏ: `text-balance` cho tiêu đề (nó chia hai dòng BẰNG NHAU nên câu gãy
+giữa cụm "…thành năng lực"); ngắt dòng bằng `<br/>` trong JSX (mỗi ngôn ngữ
+ngắt một chỗ khác nhau, chỗ ngắt là NỘI DUNG).
+**Một chỗ KHÔNG theo bản thiết kế:** giữ lại `ExploreCue` ("Khám phá thêm") ở
+đáy hero. Bản thiết kế không vẽ nó, nhưng hero cao trọn một màn hình mà không
+có dấu hiệu còn nội dung phía dưới thì mất một chỉ dẫn thật. Bỏ = xoá một
+component và khoá `cta.explore`.
+**Bẫy đã gặp:** lớp hạt `pv-grain` 0,42 phủ lên ảnh vải làm mặt vải thành giấy
+nhám — nhiễu của ảnh (sd 18/255 ở vùng vải) cộng dồn với nhiễu của lớp hạt.
+Nhưng tắt hẳn cũng sai: nửa trên tấm ảnh phẳng tới sd 0,6/255, dễ lộ vân
+chuyển màu nhất trên cả trang. Cách sửa: `pv-grain` nay đọc `--grain-strength`
+(mặc định 0,42), hero khai 0,16. Kèm theo: `pv-skyglow-hero` hạ từ 0,5 xuống
+0,16 vì ánh sáng đã nằm sẵn trong ảnh.
+**Đổi lại thì phải sửa:** `hero.tsx` (`HeroBackdrop` + khối chữ), `home.hero`
+trong `messages/vi.json`, `public/brand/hero-*.webp`, `pv-grain` và
+`pv-skyglow-hero` trong `globals.css`, `docs/IMAGE-BRIEF.md` §5c và §7.
+
+## 2026-08-14 — Bỏ chế độ `brand` của `<Highlight>`
+**Bối cảnh:** `<Highlight brand>` tô thêm hai cụm CHỈ cho tiêu đề hero:
+`Pebble Vina` phát sáng, `doanh nghiệp số tự vận hành` gạch chân mảnh.
+**Chọn:** xoá chế độ đó — `BRAND_TERMS`, `IS_PROMISE` và component `Horizon`.
+`<Highlight>` giờ chỉ còn một hành vi: tô chữ `AI`.
+**Vì:** tiêu đề hero mới không chứa cụm nào trong hai cụm đó, nên chế độ này
+không còn call site nào. Một cỗ máy không ai gọi mà lại có docstring dài giải
+thích "luật tô từ khoá ở hero" là thứ đánh lừa phiên sau.
+**Hệ quả đúng ý:** tiêu đề hero về đúng MỘT điểm nhấn (`AI`), thay vì hai.
+**Đổi lại thì phải sửa:** `src/components/pv/highlight.tsx` — xem git history
+của file này, bản trước 2026-08-14.

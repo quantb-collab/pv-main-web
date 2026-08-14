@@ -67,7 +67,10 @@ commit không, và ghi kết quả vào HANDOFF (đã commit hay còn dở).
 
 ### Bước 2 — Ghi đè `docs/HANDOFF.md`
 
-Đúng bảy mục, không thêm:
+Đúng bảy mục, không thêm. **Trần cứng: mỗi mục tối đa 5 gạch đầu dòng, cả file
+dưới 60 dòng.** Vượt trần là dấu hiệu đang chép lại thứ `/track`, git hoặc code
+đã nói. Mục "Bẫy đã gặp" chỉ giữ bẫy còn có thể vấp lại; bẫy của việc đã xong
+hẳn thì bỏ.
 
 ```markdown
 # Bàn giao — <ngày>
@@ -98,9 +101,18 @@ commit không, và ghi kết quả vào HANDOFF (đã commit hay còn dở).
 - Việc chưa commit: <có/không>
 ```
 
-### Bước 3 — Thêm vào `docs/DECISIONS.md`
+### Bước 3 — `docs/DECISIONS.md` (thường là KHÔNG cần)
 
-Chỉ ghi khi phiên này có quyết định **không suy ra được từ code**. Mỗi mục:
+Ghi một mục chỉ khi có **một trong hai** thứ sau, còn lại thì bỏ qua bước này:
+
+- một phương án đã thử rồi bỏ (người sau sẽ thử lại nếu không biết), hoặc
+- một con số ĐO ĐƯỢC mà code không nói ra (tỉ lệ tương phản, ngưỡng, ngân sách).
+
+Làm đúng bản thiết kế, đổi chữ, thêm asset, sửa lỗi — **không cần mục nào**.
+Mục viết ra mà không có hai thứ trên chỉ là kể lại việc đã làm, mà việc đã làm
+thì `git log` nói rồi.
+
+Mỗi mục:
 
 ```markdown
 ## <ngày> — <quyết định, một dòng>

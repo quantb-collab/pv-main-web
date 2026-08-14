@@ -277,6 +277,12 @@ Cấu tạo, từ ngoài vào:
    để lộ 100%. Ở kệ trang chủ, `ultra` xén ngang giữa một hàng bảng — đọc ra là
    ảnh lỗi, không ra cửa sổ. Chọn tỷ lệ theo chỗ xén rơi vào đâu, đừng chọn
    theo hình khối đẹp.
+   Tỷ lệ poster vì vậy do NGÂN SÁCH CHIỀU CAO của chỗ đặt quyết định, không có
+   mặc định đúng cho mọi chỗ. Sân khấu sản phẩm ở trang chủ
+   (`software-stage.tsx`) dùng `screen` — nó bỏ ba ô nhỏ của bento cũ và đẩy cả
+   cụm chữ ra khỏi băng trượt, nên khung ảnh được 767×479 ở 1440×900 và chứa
+   trọn 16:10, tức KHÔNG xén một pixel nào. Bento trước đó phải dùng `wide` và
+   chịu mất 10% chân màn vì ngân sách khi ấy vượt đúng 1px.
 5. `heading` — tiêu đề của ảnh, đặt **giữa khung và dòng chú**. Chỗ dùng tự
    chọn thẻ (ở kệ phần mềm là `h4` nằm trong `tabpanel`). Thứ tự này là bắt
    buộc: để dòng chú lên trước thì nhãn engine chen vào giữa ảnh và tên của
@@ -329,7 +335,7 @@ Ba thứ `AppShot` **không** có, và mỗi cái là một luật:
 
 | Cách | Nguồn cắt | Tỷ lệ | Dùng khi |
 |---|---|---|---|
-| `shot` | cả màn; khung trên trang cắt `focus="top"` lúc render | file `screen` 16:10 · poster `ultra` 21:9 | section mà **sản phẩm chính là luận điểm** |
+| `shot` | cả màn; khung trên trang cắt `focus="top"` lúc render | file `screen` 16:10 · poster tuỳ chỗ đặt (xem dưới) | section mà **sản phẩm chính là luận điểm** |
 | `tile` | một organism (panel, bảng, rail) | `auto` — tỷ lệ thật của khối | trong lưới thẻ, cạnh một đoạn chữ |
 | `detail` | một molecule (khối AI, chain, một dòng) | `auto` | dẫn chứng cho **một** câu, cỡ nhỏ |
 | `live` | dựng lại bằng React | — | **chưa dùng.** Xem cảnh báo dưới |

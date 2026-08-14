@@ -80,11 +80,15 @@ Hình nằm ở `src/components/pv/decor.tsx`, khung và độ đậm ở LỚP 
 | Utility | Hình | Ở đâu |
 |---|---|---|
 | `pv-arc` | cung chân trời ở đáy section | `<Section>` tự gắn, mọi trang |
-| `pv-rings` | vòng đồng tâm toả từ nguồn sáng | hero trang chủ, **một lần/site** |
+| `pv-rings` | vòng đồng tâm toả từ nguồn sáng | ⚠️ **hiện không dùng** |
 
 `pv-arc` đọc `--sky-light` nên trang trí cũng sáng dần theo mạch trời. `pv-rings`
-thì không — hero ở nấc `void` (`--sky-light: 0`) nên đọc biến đó là nó tắt hẳn,
-mà đây lại là vector chính của trang.
+thì không — nó cố ý bỏ qua biến đó vì hero ở nấc `void` (`--sky-light: 0`).
+
+⚠️ `pv-rings` (và `DawnRings`) **mất chỗ dùng từ 2026-08-14**: hero trang chủ
+nay lấy nền là ẢNH CHỤP nhung, mà vẽ vòng sóng đè lên một tấm vải thật là hai
+thứ tiếng nói chồng nhau. Code còn nguyên vì chưa chốt phục hồi hay bỏ hẳn —
+xem `docs/DECISIONS.md` mục *Hero: nền là ảnh chụp nhung*.
 
 Cung nhạt hơn hẳn quầng sáng: cung là **đường viền** của ánh sáng. Thấy nó rõ
 hơn chính ánh sáng thì nó thành hình vẽ chứ không thành chân trời.
@@ -121,8 +125,10 @@ không cắt. Tắt bằng `full={false}`, và chỉ tắt cho trang công cụ 
 Đánh đổi đã chấp nhận: trang dài hơn. Vì vậy luật mật độ trong skill `pv-ui`
 càng phải giữ — **một section, một ý**.
 
-**Cuộn có snap** — hai tầng, cơ chế ở `smooth-scroll.tsx`, token ở `SNAP`
-(`src/lib/motion.ts`):
+**Cuộn có snap — ĐANG TẮT TẠM** (`SNAP.enabled = false` trong
+`src/lib/motion.ts`). Cuộn mượt Lenis vẫn chạy, chỉ bỏ cú trượt tự khớp màn
+hình. Code và các mốc `data-snap` giữ nguyên; bật lại chỉ cần đổi cờ. Mô tả
+dưới đây là hành vi khi bật — hai tầng, cơ chế ở `smooth-scroll.tsx`:
 
 1. **Trượt ngay khi cuộn qua nửa section kế bên.** Xuống: mép trên của section
    dưới vượt quá giữa màn hình là trượt cho nó khớp khung, khoá cuộn trong lúc
@@ -256,9 +262,14 @@ Không áp cho eyebrow mono, chip `PillRow`, nhãn nút và chữ nhỏ — ch�
 ở cỡ 11px là nhiễu, không phải điểm nhấn.
 
 **Thêm từ khoá thì đếm trước.** Một từ xuất hiện 15 chỗ trong `messages` thì 15
-chỗ cùng phát sáng. Chỉ thêm từ HIẾM và mang định vị: `tự vận hành` được chọn
-vì nó xuất hiện đúng một lần trên toàn site — chính là tiêu đề hero. Đã loại
-`vận hành` (15 chỗ) và `Pebble Vina` (19 chỗ).
+chỗ cùng phát sáng, và chữ phát sáng ở mọi nơi là nhiễu chứ không phải điểm
+nhấn. Chỉ thêm từ HIẾM và mang định vị. Đã loại `vận hành` (15 chỗ) và
+`Pebble Vina` (19 chỗ) vì lý do đó.
+
+Từng có chế độ `brand` tô thêm hai cụm riêng cho tiêu đề hero (`Pebble Vina`
+phát sáng, `doanh nghiệp số tự vận hành` gạch chân mảnh). **Đã bỏ 2026-08-14**
+cùng lúc với tiêu đề hero mới — tiêu đề nay không chứa cụm nào trong hai cụm
+đó, nên nó chỉ còn ĐÚNG MỘT điểm nhấn: chữ `AI`.
 
 **Và giữ từ khoá ngắn.** `<Led>` là `inline-block` nên cụm bên trong không
 xuống dòng được; cụm dài nằm trong tiêu đề ở khổ mobile sẽ tràn ngang. Ba từ

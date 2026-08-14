@@ -35,7 +35,7 @@ Bảng theo dõi tiến độ nội bộ: `/track`
 
 ---
 
-## Bốn luật của repo này
+## Sáu luật của repo này
 
 **1. Registry trước, route sau.**
 `src/content/registry.ts` là nguồn sự thật về cấu trúc site. Nó điều khiển menu,
@@ -79,6 +79,34 @@ mọi ảnh còn thiếu (cỡ, nền, màu, prompt, cách giữ ổn định): 
 Riêng **giao diện sản phẩm PV One** (ảnh chụp màn hình phần mềm, ở trang chủ và
 mọi trang khác) đi theo `docs/SOFTWARE-KIT.md` — nó là hệ màu khác, có khung
 riêng `AppShot`, ngân sách diện tích riêng và luật "dữ liệu mẫu" riêng.
+
+**6. Hỏi một câu trước khi dựng.**
+Ba thứ này sai một cái là làm lại từ đầu, nên hỏi TRƯỚC dòng code đầu tiên —
+gộp một lượt, đừng hỏi lắt nhắt:
+
+- **Asset** — đã có file ảnh/logo/video chưa, hay tôi dựng bằng code?
+- **Chữ** — dùng nguyên văn bản thiết kế, hay tôi viết?
+- **Phạm vi** — chỉ chỗ này, hay cả những nơi dùng chung nó?
+
+Chất liệu chụp được (vải, kim loại, cảnh thật) thì **xin ảnh, đừng vẽ bằng
+CSS/SVG**: vẽ ra chỉ thành gradient, không thành chất liệu — 2026-08-14 đã mất
+nguyên một lượt dựng nền hero vì bỏ qua câu hỏi này. Vẽ bằng code chỉ dành cho
+hình học thuần: cung, lưới, sơ đồ, chuyển động.
+
+---
+
+## Cách làm nhanh mà không mất chất
+
+- **Chú thích ngắn.** Chỉ viết cái code không tự nói được, ưu tiên chỗ có SỐ
+  ĐO (tỉ lệ tương phản, ngưỡng breakpoint, ngân sách chiều cao). Không viết
+  đoạn dài diễn giải thẩm mỹ — thứ đó thuộc `DECISIONS.md`, nếu đáng giữ.
+- **Đo có ngân sách.** Một vòng chụp ở hai khổ (1440 ngang + 500 dọc) là đủ để
+  kết luận. Quá ba vòng chỉnh bằng mắt mà chưa đạt thì dừng lại và hỏi, đừng
+  chỉnh tiếp.
+- **Tài liệu chỉ khi cần.** `DECISIONS.md` ghi khi có phương án đã thử rồi bỏ,
+  hoặc một con số đo được; làm đúng bản thiết kế thì không cần mục nào.
+  `HANDOFF.md` viết ngắn, cuối phiên. `DESIGN-TOKENS.md` / `IMAGE-BRIEF.md`
+  chỉ đụng khi đổi một LUẬT người khác sẽ vấp, không phải mỗi lần thêm asset.
 
 ---
 

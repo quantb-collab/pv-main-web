@@ -552,6 +552,65 @@ Kèm: người có mặt trong khung phải đồng ý cho dùng ảnh trên tra
 
 ---
 
+## 5b. Nhóm E — ảnh key visual thương hiệu (section định vị)
+
+Đã có bản dùng được, giao 2026-08-14. Hai bản CẮT KHÁC NHAU của cùng một vật,
+không phải một ảnh ở hai cỡ:
+
+| File | Cỡ gốc | Bố cục | Dùng ở |
+|---|---|---|---|
+| `public/brand/who-wide.webp` | 1672×941 | vật bên PHẢI, trống bên TRÁI | từ `xl` (1280px) |
+| `public/brand/who-tall.webp` | 941×1672 | vật bên DƯỚI, trống bên TRÊN | dưới 1280px |
+
+Số đo để đặt chữ (đo trên chính file, đừng ước lượng): ở bản nằm ngang, độ sáng
+theo CỘT vọt lên từ **46,1%** bề ngang và vật kết thúc ở **92%**; theo HÀNG vật
+bắt đầu từ **18%** chiều cao. Cách quy ra bề rộng cột chữ: docstring của
+`Identity` trong `sections.tsx`.
+
+**Còn thiếu — bản master ≥3200px.** Bản đang dùng chỉ rộng 1672px, mà phủ tràn
+viền một màn 1440 ở DPR 2 cần ~2880px. Trên màn retina mép kim loại hơi mềm.
+
+**Còn thiếu — một bản cắt cho dải 1024–1280px.** Hiện dải này dùng bản dựng
+đứng nên vật bị phóng rất to. Có bản cắt riêng (khoảng 4:3, vật bên phải) thì
+mở lại bố cục hai cột ở `lg`.
+
+**File logo `branding_logo_single.png` KHÔNG trong suốt.** Nền ca-rô là pixel
+xám thật (alpha 255 toàn ảnh), và hai ô ca-rô trùng đúng giá trị với vòng trắng
+quanh huy hiệu (~254) nên không tách sạch được bằng ngưỡng màu. Bộ icon hiện
+tại dựng từ bản đã khử nền và **đổi thành trắng đơn sắc**; cần bản gốc trong
+suốt (PNG có alpha thật, hoặc SVG) nếu sau này muốn dùng logo NGUYÊN MÀU.
+
+## 5c. Nhóm F — nền hero trang chủ (nhung trong studio tối)
+
+Đã có bản dùng được, giao 2026-08-14. Cũng như nhóm E: hai bản CẮT KHÁC NHAU
+của cùng một tấm vải, không phải một ảnh ở hai cỡ.
+
+| File | Cỡ gốc | Dung lượng | Bố cục | Dùng ở |
+|---|---|---|---|---|
+| `public/brand/hero-wide.webp` | 1672×941 (16:9) | 144 KB | vải ở NỬA DƯỚI, sáng dồn về mép trái | màn NGANG (tỉ lệ ≥ 1:1) |
+| `public/brand/hero-tall.webp` | 941×1672 (9:16) | 78 KB | vải ở ĐÁY, sáng dồn vào giữa | màn DỌC (tỉ lệ < 1:1) |
+
+Ngưỡng đổi bản là **tỉ lệ khung hình 1:1**, không phải một mốc px:
+`object-cover` xén theo cạnh dư, nên iPad dọc (768px, tỉ lệ 0,75) lấy bản 16:9
+sẽ mất 60% bề ngang ảnh. Cơ chế: `<picture>` + `<source media>` trong
+`HeroBackdrop` (`src/components/home/hero.tsx`).
+
+Ba con số đo trên chính file, dùng để quyết định layout — đo lại nếu thay ảnh:
+
+- **Vùng chữ đậu** (ảnh x 337–1336, y 232–639 khi màn 1440×760): độ chói trung
+  bình **0,006**, p95 **0,020**. Tức chữ trắng đạt 15:1 và chữ mờ `ink-300`
+  đạt 10,5:1 — **không cần lớp phủ tối**, phủ thêm chỉ giết chất vải.
+- **Nhiễu vùng tối** (nửa trên): độ lệch chuẩn **0,6/255** — phẳng, dễ lộ vân
+  chuyển màu, nên lớp hạt `pv-grain` phải còn.
+- **Nhiễu vùng vải** (nửa dưới): độ lệch chuẩn **18/255** — đã dư texture, nên
+  lớp hạt phải HẠ xuống. Hero chạy `--grain-strength: 0.16` thay cho 0,42 mặc
+  định. Đây chính là cái bẫy "ảnh nhiễu sẵn thì cộng dồn thành vỡ hạt" ở §1.
+
+**Còn thiếu — bản master ≥2880px.** Bản đang dùng rộng 1672px, mà phủ tràn
+viền một màn 1440 ở DPR 2 cần ~2880px. Vì chủ thể là vải mờ và chuyển màu mềm
+nên phóng lên không vỡ hình, chỉ mềm sợi — không chặn phát hành, nhưng có bản
+lớn thì nên thay.
+
 ## 6. Nghiệm thu — chạy trước khi giao
 
 - [ ] Đúng tỷ lệ khung? (A, B và D là 16:9 chính xác, C là 4:3)
@@ -585,7 +644,8 @@ Kèm: người có mặt trong khung phải đồng ý cho dùng ảnh trên tra
 use-case còn nhiều ô chờ nội dung — đó là **chữ và số liệu cần Pebble Vina
 cung cấp**, không phải ảnh. Danh sách đầy đủ ở `/track`.
 
-Một khoá đang mồ côi: `home.hero.mediaNeed` trong `messages/vi.json` mô tả một
-ảnh nền hero khổ ≥2560px, nhưng hero hiện **không có khung ảnh nào** đọc khoá
-đó. Hoặc dựng lại khung ảnh hero, hoặc xoá khoá — đừng đi đặt tấm ảnh 2560px đó
-trước khi chốt, vì hiện không có chỗ nào nhận nó.
+~~Một khoá đang mồ côi: `home.hero.mediaNeed`.~~ **Đã xong 2026-08-14:** hero
+có ảnh nền thật (xem §5c), hai khoá `mediaGap` / `mediaNeed` đã xoá khỏi
+`messages/vi.json`. Yêu cầu ảnh nền hero cũ (phòng vận hành, lối đi giữa hàng
+tủ máy, người ngồi làm việc nhìn từ phía sau) **đã huỷ** — chủ dự án chọn hướng
+chất liệu thay cho hướng phóng sự.
