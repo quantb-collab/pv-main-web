@@ -2,6 +2,7 @@
 
 import { Menu } from "lucide-react";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
@@ -60,9 +61,26 @@ export function SiteHeader() {
       <div className="pv-container flex h-16 items-center justify-between gap-6 lg:h-20">
         <Link
           href="/"
-          className="font-display text-ui font-semibold tracking-brand uppercase"
+          /* `whitespace-nowrap`: thêm dấu hiệu vào là hàng header dài thêm
+             ~42px, và ở đúng 1024px — nơi sáu mục nav tiếng Việt cộng chuyển
+             ngữ và CTA vốn đã sát mép — "PEBBLE VINA" gãy làm hai dòng, kéo
+             cao cả thanh header. Thà để cụm này đẩy nav sát hơn còn hơn để
+             tên công ty xuống dòng. */
+          className="flex shrink-0 items-center gap-2.5 font-display text-ui font-semibold tracking-brand whitespace-nowrap uppercase"
         >
-          {/* Chờ file logo chính thức — hiện dùng chữ. */}
+          {/* Dấu hiệu để TRANG TRÍ: tên đọc được nằm ngay bên cạnh, nên ảnh có
+              `alt` nữa là trình đọc màn hình đọc tên công ty hai lần cho một
+              cái link. `priority` vì nó nằm trên nếp gấp ở mọi trang. */}
+          <Image
+            src="/brand/logo-mark.png"
+            alt=""
+            aria-hidden
+            width={512}
+            height={512}
+            priority
+            sizes="32px"
+            className="size-7 shrink-0 lg:size-8"
+          />
           Pebble Vina
         </Link>
 

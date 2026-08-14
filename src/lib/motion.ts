@@ -47,6 +47,11 @@ export const SCROLL = {
  * không chờ ngừng cuộn. Section cao hơn một màn hình vẫn đọc được phần giữa.
  */
 export const SNAP = {
+  /**
+   * TẮT TẠM. Cuộn mượt (Lenis) vẫn chạy, chỉ bỏ cú trượt tự khớp màn hình.
+   * Bật lại: đổi thành `true` — cơ chế và điểm dừng `data-snap` giữ nguyên.
+   */
+  enabled: false,
   /** Ngưỡng kích hoạt — phần màn hình mà section kế bên phải chiếm được. */
   distance: 0.5,
   /** ms sau cử chỉ cuộn cuối cùng mới chạy lưới an toàn (gom về điểm dừng). */
@@ -71,22 +76,23 @@ export const SHELF = {
 } as const;
 
 /**
- * Bước tự chạy của kệ phần mềm (software-bento.tsx). Cùng đơn vị và cùng cơ chế
+ * Sân khấu sản phẩm phần mềm (software-stage.tsx). Cùng đơn vị và cùng cơ chế
  * với `SHELF`.
  *
- * 1,5s là nhịp LƯỚT, không phải nhịp đọc — chủ dự án chốt 2026-08-11. Ở tốc độ
- * đọc 200 chữ/phút, 1,5 giây chỉ đủ cho **5 chữ**. Vì vậy thẻ chỉ còn giữ TÊN
- * màn (2–4 chữ, liếc là bắt được), và toàn bộ phần giải thích chuyển vào bản
- * phóng to — nơi người đọc tự bấm tới lui theo nhịp của mình. Đặt một đoạn văn
- * dưới nhịp này là viết chữ cho không ai đọc.
+ * ĐÂY LÀ NHỊP ĐỌC, KHÔNG PHẢI NHỊP LƯỚT — và đó là chỗ khác hẳn bản bento cũ.
+ * Bento lướt qua năm MÀN của cùng một sản phẩm ở 1,5s: mắt chỉ cần nhận ra hình
+ * đã đổi. Sân khấu này đổi hẳn SẢN PHẨM, và mỗi lần đổi người đọc phải đọc lại
+ * tên cộng một câu dẫn ~18 chữ. Ở tốc độ 200 chữ/phút đó là 5,4 giây, chưa kể
+ * thời gian mắt bắt lại tấm ảnh. Để nhịp cũ ở đây thì slide thứ hai đã trôi
+ * trước khi đọc xong slide thứ nhất.
  *
- * Ba chỗ khoá bắt buộc đi kèm nhịp nhanh, xem `software-bento.tsx`: dừng khi rê
- * chuột hoặc focus, dừng hẳn khi người dùng tự bấm một bước, và dừng khi bản
- * phóng to đang mở — nếu không thì nội dung đổi ngay dưới tay người đang xem.
+ * Bốn chỗ khoá bắt buộc đi kèm, xem `software-stage.tsx`: dừng khi rê chuột
+ * hoặc focus, dừng hẳn khi người dùng tự chọn một sản phẩm, dừng khi bản phóng
+ * to đang mở, và dừng trong lúc đang kéo.
  */
-export const STEPPER = {
-  /** Nhịp lướt qua năm màn. Đủ để nhận ra hình, không đủ để đọc. */
-  auto: 1500,
+export const STAGE = {
+  /** Nhịp đổi sản phẩm. Đủ đọc xong tên cộng một câu dẫn. */
+  auto: 5200,
 } as const;
 
 /** Độ trễ giữa các phần tử trong một nhóm */

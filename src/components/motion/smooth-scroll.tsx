@@ -12,6 +12,11 @@ const easeOutExpo = (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t));
  * Smooth scroll + snap section toàn site.
  * Đặt MỘT lần ở layout gốc. Không lồng nhiều instance.
  *
+ * SNAP ĐANG TẮT TẠM (`SNAP.enabled` trong `src/lib/motion.ts`). Cuộn mượt vẫn
+ * chạy; effect dựng điểm dừng bên dưới thoát ngay. Phần mô tả sau đây giữ
+ * nguyên cho lần bật lại — các mốc `data-snap` trong markup cũng để nguyên,
+ * chúng là thuộc tính trơ, không CSS nào bám vào.
+ *
  * SNAP — hai tầng, cùng một bộ điểm dừng:
  *
  * 1. TRƯỢT NGAY khi cuộn qua nửa section kế bên. Cuộn xuống: mép trên của
@@ -74,6 +79,7 @@ export function SmoothScroll() {
   /* Bộ điểm dừng thay theo trang → dựng lại mỗi lần đổi route. Effect chạy
      sau khi DOM của trang mới đã commit nên querySelectorAll thấy đủ section. */
   useEffect(() => {
+    if (!SNAP.enabled) return;
     const lenis = lenisRef.current;
     if (!lenis) return;
 

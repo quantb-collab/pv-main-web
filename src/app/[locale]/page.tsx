@@ -7,6 +7,7 @@ import {
   Identity,
   Software,
   Stats,
+  Training,
 } from "@/components/home/sections";
 import { CtaBand } from "@/components/pv/cta-band";
 
@@ -26,16 +27,25 @@ export async function generateMetadata({
  * trước vừa làm nảy ra; khối nào bỏ đi mà mạch không hụt câu hỏi nào là khối
  * thừa. Thứ tự là thứ tự thuyết phục, không sắp xếp lại tuỳ ý:
  *   là ai → tôi đang ở nấc nào → lên nấc 3 đáng bao nhiêu → các anh đi được
- *   sâu tới đâu → vậy tôi bắt đầu từ việc nào → bước đầu tiên là gì
+ *   sâu tới đâu → vậy tôi bắt đầu từ việc nào → mua về rồi ai dùng → bước đầu
+ *   tiên là gì
  *
  * PHẦN CỨNG ĐỨNG TRƯỚC PHẦN MỀM (chủ dự án 2026-08-07). Thứ tự này có chủ ý và
  * đọc ra được: chip chứng minh chiều sâu, rồi phần mềm mới là chỗ người đọc
  * đặt chân vào — nên khối ngay trước CTA là bốn việc bắt đầu được, không phải
  * bốn con chip. Cảnh báo blueprint về vị trí này ghi ở đầu `Hardware`.
  *
- * Nấc trời: void → night → night → deep → deep → rise → dawn. Hai section cùng
- * nấc đứng liền nhau là hợp lệ (ranh giới là vạch chân trời + quầng sáng do
- * `<Section>` tự vẽ, không phải màu nền) — xem docs/DESIGN-TOKENS.md.
+ * BA MẢNG KINH DOANH ĐI LIỀN NHAU, đúng thứ tự `home.who.r2Text` khai ở đầu
+ * trang ("phần cứng, phần mềm và đào tạo AI"): Hardware → Software → Training.
+ * Trước 2026-08-11 trang chỉ chứng minh hai mảng đầu, tức câu đó nợ người đọc
+ * một phần ba. Ba section này dùng CHUNG một khuôn tiêu đề (nhãn gộp dòng, cỡ
+ * `subhead`) để lướt qua là nhận ra bộ ba — sửa khuôn ở một chỗ thì sửa cả ba.
+ *
+ * Nấc trời: void → night → night → deep → deep → rise → rise → dawn. Hai section
+ * cùng nấc đứng liền nhau là hợp lệ (ranh giới là vạch chân trời + quầng sáng do
+ * `<Section>` tự vẽ, không phải màu nền) — xem docs/DESIGN-TOKENS.md. Training
+ * KHÔNG lấy `dawn`: nấc đó là của `CtaBand`, và một section `dawn` ngay trên dải
+ * CTA `dawn` thì dải CTA hết là điểm sáng cuối cùng mắt dừng lại.
  *
  * ĐÃ CHUYỂN SANG TRANG RIÊNG (chủ dự án 2026-08-07 — trang chủ chỉ giữ phần
  * cô đọng và móc khách; cả hai section đều đã tự kết bằng nút "xem chi tiết"
@@ -91,6 +101,7 @@ export default async function HomePage({
       <Stats />
       <Hardware />
       <Software />
+      <Training />
       <CtaBand
         cta="assessment"
         items={[1, 2, 3, 4].map((n) => t(`g${n}`))}

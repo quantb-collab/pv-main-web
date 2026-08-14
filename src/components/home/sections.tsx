@@ -3,7 +3,8 @@ import {
   ProductShelf,
   type ShelfPartner,
 } from "@/components/home/product-shelf";
-import { SoftwareBento } from "@/components/home/software-bento";
+import { SoftwareStage } from "@/components/home/software-stage";
+import { TrainingTracks } from "@/components/home/training-tracks";
 import { Reveal } from "@/components/motion/reveal";
 import {
   BentoGrid,
@@ -50,14 +51,122 @@ import { Section, SectionHeader } from "@/components/pv/section";
  * số liệu chưa xác minh. Chi tiết dịch vụ từng mảng thuộc section offer sẽ
  * dựng sau, không liệt kê ở đây.
  */
+/**
+ * ẢNH KEY VISUAL — hai bản cắt, ĐỔI THEO KHỔ MÀN (chủ dự án giao 2026-08-14).
+ *
+ * Đây là chỗ duy nhất trên site dùng `<picture>` thay cho `next/image`, và lý do
+ * là ART DIRECTION chứ không phải tiện: hai file KHÔNG phải một ảnh ở hai cỡ,
+ * chúng là hai bố cục khác nhau của cùng một vật.
+ *   `who-wide` 1672×941 — vật nằm bên PHẢI, khoảng trống bên TRÁI
+ *   `who-tall` 941×1672 — vật nằm bên DƯỚI, khoảng trống bên TRÊN
+ * Chữ đặt vào đúng khoảng trống đó, nên khi bố cục đổi (một cột ↔ hai cột) thì
+ * ẢNH cũng phải đổi bản cắt. `next/image` không làm được việc này: nó đổi CỠ
+ * theo `sizes` chứ không đổi FILE theo `media`, và hai bản `<Image>` chồng nhau
+ * rồi ẩn bớt một bản thì trình duyệt vẫn tải cả hai. `<picture>` tải đúng một.
+ *
+ * Đổi lại là mất trình tối ưu của Next, nên hai file đã nén sẵn sang WebP
+ * (q88, `-sharp_yuv`): 1,5 MB PNG → 74 KB và 90 KB. Không cần bản PNG dự
+ * phòng — WebP đã phổ cập.
+ *
+ * ⚠️ Ngưỡng `80rem` PHẢI khớp `xl:` ở dưới. Lệch một nấc là có một dải khổ màn
+ * lấy bản cắt của bố cục kia: chữ nằm bên trái trong khi vật cũng nằm bên trái.
+ *
+ * VÌ SAO `xl` CHỨ KHÔNG `lg`. Bản đầu đổi ở 64rem và đo ra một dải hỏng
+ * 1024–1280px. Lý do là hai thứ chạy theo hai luật khác nhau: ảnh `cover` phóng
+ * theo CHIỀU CAO section, còn cột chữ nằm trong container căn giữa tối đa
+ * 1280px. Với H≈810 thì mép an toàn của chữ là `VW/2 − 56`, còn mép phải của
+ * chữ là `max(544, VW/2 − 96)` — hai vế cùng dạng `VW/2` nên từ 1280px trở lên
+ * chữ luôn thoát đúng 40px, nhưng dưới 1280px container thôi căn giữa, mép chữ
+ * đứng yên ở 544px trong khi mép an toàn tụt xuống 456px. Muốn cứu dải đó bằng
+ * cách thu cột chữ thì phải xuống ≤424px, mà `DefinitionList` còn cột nhãn
+ * ~176px nên phần chữ chỉ còn ~208px — hẹp hơn mọi ngưỡng đọc được. Vậy dải
+ * 1024–1280 dùng bố cục XẾP DỌC như khổ hẹp.
+ *
+ * ⚠️ Bản gốc chỉ rộng 1672px. Phủ tràn viền một màn 1440 ở DPR 2 cần ~2880px,
+ * nên trên màn retina mép kim loại sẽ hơi mềm. Cần bản master ≥3200px — đã ghi
+ * vào `docs/IMAGE-BRIEF.md`.
+ */
+function IdentityBackdrop() {
+  return (
+    <>
+      {/* `contents`: `<picture>` không được là một ô trong flex column của
+          `<Section>`. Ảnh bên trong đã `absolute` nên nó không chiếm chỗ, nhưng
+          chính thẻ `picture` thì vẫn là một flex item cao 0. */}
+      <picture aria-hidden className="contents">
+        <source media="(min-width: 80rem)" srcSet="/brand/who-wide.webp" />
+        {/* eslint-disable-next-line @next/next/no-img-element -- art direction:
+            xem khối chú thích ngay trên. `next/image` không đổi file theo `media`. */}
+        <img
+          src="/brand/who-tall.webp"
+          alt=""
+          /* Xén CÂN ĐỐI, không neo trái. Neo trái đẩy toàn bộ phần thừa sang
+             mép phải và cắt mất một mảng huy hiệu ngôi sao — cắt cụt chính dấu
+             hiệu thương hiệu thì đọc ra là lỗi ảnh. Xén cân đối giữ trọn huy
+             hiệu ở 1440 và chỉ kéo vật sang trái nửa phần thừa; cột chữ đã thu
+             về `max-w-lg` để nhường đúng chỗ đó. */
+          className="pointer-events-none absolute inset-0 -z-20 size-full object-cover"
+        />
+      </picture>
+
+      {/*
+        LỚP LÀM NỀN CHO CHỮ — CHỈ Ở KHỔ HẸP, và nó không phải trang trí.
+        Bản cắt dựng đứng chừa khoảng trống ở nửa trên, nhưng ba khối chữ của
+        section này dài hơn nửa màn: hai khối cuối rơi đúng lên thanh kim loại
+        sáng nhất của vật, đo bằng mắt trên bản chụp 390×844 là không đọc được.
+        Dải chuyển này kéo nền của chính section xuống hết vùng chữ rồi tan
+        trước khi chạm huy hiệu.
+
+        Vì sao KHÔNG có ở `lg`: bản cắt nằm ngang để vật hẳn sang phải nên chữ
+        đứng trên nền trơn, không cần lớp nào.
+
+        ⚠️ Đây KHÔNG phải ngoại lệ của luật "không vẽ đè màu lên ảnh" trong
+        `docs/SOFTWARE-KIT.md` — luật đó áp cho ảnh chụp GIAO DIỆN SẢN PHẨM,
+        nơi chỉnh màu là nói dối về sản phẩm. Đây là ảnh thương hiệu làm nền.
+      */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 -z-20 h-4/5 bg-linear-to-b from-background from-35% via-background/80 via-65% to-transparent xl:hidden"
+      />
+
+    </>
+  );
+}
+
 export async function Identity() {
   const t = await getTranslations("home.who");
 
   return (
-    <Section id="pebble-vina" sky="night">
-      <SectionHeader title={t("title")} />
+    <Section
+      id="pebble-vina"
+      sky="night"
+      backdrop={<IdentityBackdrop />}
+      /* Khổ hẹp: chữ bám ĐẦU section vì bản cắt dựng đứng chừa chỗ trống ở nửa
+         trên. Từ `lg` trả về căn giữa như mọi section khác — lúc đó chỗ trống
+         nằm bên trái, không nằm bên trên. */
+      className="justify-start xl:justify-center"
+    >
+      {/*
+        HAI BỀ RỘNG KHÁC NHAU, và chênh lệch đó là do ẢNH quyết định — đo trên
+        chính file `who-wide`, không ước lượng:
+
+          · theo CỘT, độ sáng vọt lên từ 46,1% bề ngang ảnh; trước mốc đó nền
+            gần như đen tuyền. Quy ra màn 1440×900 (ảnh `cover` thành 1599px,
+            xén cân đối 79,5px mỗi bên) thì chữ phải dừng trước ~655px. Lề trái
+            của container là 112px ⟹ cột chữ tối đa 543px ⟹ `max-w-lg` (512px,
+            kết thúc ở 624px, chừa 31px).
+          · theo HÀNG, vật chỉ bắt đầu từ 18% chiều cao ảnh. Tiêu đề nằm cao hơn
+            mốc đó nên nó được rộng hơn — `max-w-xl` giữ "Định vị doanh nghiệp"
+            gọn MỘT dòng.
+
+        Một dòng tiêu đề không chỉ đẹp hơn: tiêu đề gãy hai dòng đẩy section cao
+        thêm ~62px, mà `cover` phóng ảnh theo chiều cao section — vượt 964px là
+        huy hiệu ngôi sao (kết thúc ở 92% bề ngang ảnh) bị xén mất ở mép phải.
+        Đây là một vòng lặp: chữ hẹp hơn → section cao hơn → ảnh to hơn → xén
+        nhiều hơn. ĐO LẠI cả ba con số nếu thay ảnh hoặc sửa chữ.
+      */}
+      <SectionHeader title={t("title")} className="max-w-2xl xl:max-w-xl" />
       <DefinitionList
-        className="mt-14 w-full max-w-3xl"
+        className="mt-14 w-full max-w-2xl xl:max-w-lg"
         items={[1, 2, 3].map((n) => ({
           label: t(`r${n}Label`),
           text: t(`r${n}Text`),
@@ -195,107 +304,77 @@ export async function Stats() {
  * là một sơ đồ, mà section này phải trưng được SẢN PHẨM — có ảnh, có tên, có
  * lời dẫn, có các cỡ màn hình. Bản đó nằm trong git nếu cần đọc lại.
  *
- * VÒNG 2 — bản đang chạy — là KỆ PHẦN MỀM (`SoftwareShelf`): một hàng card,
- * mỗi card một sản phẩm, mỗi card bốn ô chữ theo đúng thứ tự mắt cần (nhãn vai
- * → tên → lời dẫn → dải size) trên một ảnh 16:9. Hình thức và ngân sách chiều
- * cao nằm ở `software-shelf.tsx`; chỗ này chỉ nạp dữ liệu.
+ * VÒNG 2 là KỆ PHẦN MỀM (`SoftwareShelf`) rồi BENTO (`SoftwareBento`): cả bộ
+ * sản phẩm hiện cùng lúc, ô lớn nhất là PV One và chính ô đó là stepper năm màn.
+ * Chủ dự án BỎ 2026-08-14 — "không dùng card nữa". Cả hai bản còn trong git.
  *
- * BA SẢN PHẨM, và con số đó KHÔNG cố định: `productIndexes` dò bằng `t.has`
- * nên thêm sản phẩm thứ tư chỉ là thêm một bộ khoá `p4*` trong `vi.json`, y
- * như cách `Hardware` dò danh sách ứng dụng. Lưới tự xuống 2 cột ở `sm` và 3
- * cột từ `lg`, nên số lẻ không làm hỏng bố cục.
+ * VÒNG 3 — bản đang chạy — là SÂN KHẤU (`SoftwareStage`): một sản phẩm mỗi lúc,
+ * sản phẩm kế ló ra mép phải, đi từ trái qua phải theo thứ tự PV One → CRM →
+ * EMS → DMS. Cơ chế, ngân sách chiều cao và lý do từng con số nằm ở
+ * `software-stage.tsx`; chỗ này chỉ nạp dữ liệu.
  *
- * "AI ĐỨNG GIỮA" SỐNG SÓT SAU KHI SƠ ĐỒ BỊ BỎ: card `Context Provider` khai
- * `core`, tức nó là thứ SÁNG NHẤT trên kệ và nó đứng GIỮA. Đó là toàn bộ cách
- * nói còn lại, và nó đủ — không cần vẽ mũi tên. Nếu sau này thêm sản phẩm thứ
- * tư thì phải xem lại: "giữa" chỉ đọc được khi số card lẻ.
+ * BỐN SẢN PHẨM, và con số đó KHÔNG cố định: `productIndexes` dò bằng `t.has`
+ * nên thêm sản phẩm thứ năm chỉ là thêm một khoá `p5Name` trong `vi.json` —
+ * quãng trượt của băng tự tính lại theo số slide.
  *
- * BỐN GIẢI PHÁP CŨ ĐI ĐÂU. Ba card trỏ TẠM sang trang giải pháp gần nghĩa nhất
- * (`workflow-automation` · `industrial-edge-ai` · `enterprise-knowledge`) vì ba
- * sản phẩm này chưa có trang riêng. Nút "Xem tất cả giải pháp" vẫn dẫn về
- * /solutions nên toàn bộ danh mục không bị mất khỏi trang chủ. Ba đường trỏ tạm
- * đã ghi vào `scopeGap` — có trang sản phẩm thật thì sửa `href`, không sửa gì
- * khác.
+ * ⚠️ BA SẢN PHẨM CUỐI CHỈ CÓ TÊN. Chủ dự án chốt danh sách 2026-08-14 nhưng
+ * chưa cho biết EMS và DMS là viết tắt của gì, nên KHÔNG có nhãn vai, KHÔNG có
+ * lời dẫn và KHÔNG viết được yêu cầu chụp ảnh. Ba slide đó dùng `pendingLead` /
+ * `pendingNeed` — hai chuỗi ICU nhận `{name}`, để một chỗ sửa là xong cả ba.
+ * Điền = thêm `pNLabel` + `pNLead` + `pNNeed`, không phải sửa JSX.
+ *
+ * NĂM MÀN PV One CÒN NGUYÊN TRONG MESSAGES (`s1*`…`s5*`) nhưng slide chỉ dùng
+ * MÀN 1 — chủ dự án 2026-08-14: "1 màn thôi, bấm vào xem chi tiết thì tính
+ * sau". Bốn màn còn lại không xoá: chúng đã qua kiểm chứng, và bốn ảnh đã cắt
+ * vẫn nằm ở `public/software/`. Bản phóng to của `AppShot` giữ lại vì
+ * `docs/SOFTWARE-KIT.md` đòi phải có MỘT chỗ đọc được chữ trong ảnh — poster ở
+ * khổ slide chỉ là 0,45× cỡ thiết kế.
+ *
+ * SLIDE KHÔNG PHẢI LINK. Bản bento cho mỗi card trỏ TẠM sang một trang giải
+ * pháp gần nghĩa; ba sản phẩm mới thì không có trang nào gần nghĩa để trỏ, và
+ * trỏ đại là nói dối về phạm vi. Nút "Xem tất cả giải pháp" vẫn dẫn về
+ * /solutions nên danh mục không mất khỏi trang chủ.
  *
  * ⚠️ HAI Ô CHỜ, cả hai vô hình như hai ô của `Hardware` và đều đang đếm trong
  * /track:
- *   `lineupGap` (proof) — danh sách sản phẩm, tên gọi, ba cỡ màn hình và lời
- *      dẫn từng sản phẩm đều CHƯA có tài liệu. Mục "MES" là suy đoán: chủ dự án
- *      viết "ERP" hai lần.
- *   `scopeGap` (restricted) — ô CHẶN PHÁT HÀNH. Section trưng ERP và MES như
- *      SẢN PHẨM của Pebble Vina, trong khi blueprint lớp B mới chỉ ghi "tích
- *      hợp ERP/CRM/MES". Chốt phạm vi rồi sửa blueprint hoặc sửa trang.
+ *   `lineupGap` (proof) — danh sách sản phẩm, nghĩa của EMS/DMS, tên gọi chính
+ *      thức và tư liệu ảnh đều CHƯA có tài liệu.
+ *   `scopeGap` (restricted) — ô CHẶN PHÁT HÀNH. Section trưng CRM, EMS và DMS
+ *      như SẢN PHẨM của Pebble Vina, trong khi blueprint lớp B mới chỉ ghi
+ *      "tích hợp ERP/CRM/MES". Chốt phạm vi rồi sửa blueprint hoặc sửa trang.
  */
 export async function Software() {
   const t = await getTranslations("home.software");
   const tc = await getTranslations("cta");
 
-  /* Ảnh sản phẩm. Khoá là số thứ tự card. Thiếu ảnh thì để `undefined` —
-     `MediaFrame` tự hiện ô chờ kèm `need`, không phải sửa gì thêm.
+  /* Ảnh giao diện của từng sản phẩm. Khoá là số thứ tự slide, giá trị là số thứ
+     tự MÀN trong bộ khoá `s*` — slide mượn nguyên nhãn engine, tiêu đề, câu tóm
+     tắt và đoạn dài của màn đó cho bản phóng to.
 
-     Ảnh phải là 16:9 nền trong suốt, KHÔNG phải ảnh vuông: khung dùng
-     `object-cover` nên ảnh 1:1 bị cắt mất 44% chiều cao. Yêu cầu đầy đủ và
-     cách đệm ảnh vuông về 16:9: `docs/IMAGE-BRIEF.md` nhóm D. */
-  const PRODUCT_SRC: Record<number, string | undefined> = {
-    1: undefined,
-    2: undefined,
-    3: undefined,
-  };
+     Chỉ PV One có ảnh thật: năm màn render lại từ chính năm file `.dc.html` của
+     bộ bàn giao POC ở deviceScaleFactor 2 (bản 1× có sẵn sẽ nhoè ở bản phóng to
+     trên màn retina). Cách chụp và cắt: `docs/SOFTWARE-KIT.md` §8.
+     Sản phẩm không có mặt ở đây thì `MediaFrame` tự hiện ô chờ kèm `need`. */
+  const SHOT = {
+    1: { step: 1, src: "/software/one-home.png" },
+  } as const;
 
   /* Số sản phẩm KHÔNG cố định — dò bằng `t.has` nên thêm một sản phẩm chỉ là
-     thêm một bộ khoá trong vi.json. Trần 8 là lưới an toàn cho vòng lặp, không
+     thêm một khoá trong vi.json. Trần 8 là lưới an toàn cho vòng lặp, không
      phải giới hạn thiết kế. */
   const productIndexes: number[] = [];
   for (let i = 1; i <= 8 && t.has(`p${i}Name`); i++) productIndexes.push(i);
 
-  /* Năm bước của stepper = năm màn của PV One trong bộ bàn giao POC. Dò bằng
-     `t.has` như mọi danh sách khác trên trang này, nên thêm màn thứ sáu chỉ là
-     thêm một bộ khoá `s6*`.
-
-     Ảnh render lại từ chính năm file `.dc.html` của bộ bàn giao ở
-     deviceScaleFactor 2, cắt đúng khung màn 2880×1800 (bản 1× có sẵn trong bộ
-     bàn giao sẽ nhoè ở bản phóng to trên màn retina). Cách chụp và cắt:
-     `docs/SOFTWARE-KIT.md` §8. */
-  const STEP_SRC: Record<number, string | undefined> = {
-    1: "/software/one-home.png",
-    2: "/software/one-approvals.png",
-    3: "/software/one-search.png",
-    4: "/software/one-assistant.png",
-    5: "/software/one-rules.png",
-  };
-  const stepIndexes: number[] = [];
-  for (let i = 1; i <= 8 && t.has(`s${i}Title`); i++) stepIndexes.push(i);
-
-  /* Trang đi sâu, TẠM trỏ sang giải pháp gần nghĩa nhất — xem chú thích đầu
-     hàm. Thứ tự khớp p1/p2/p3. */
-  const HREF = [
-    "/solutions/workflow-automation",
-    "/solutions/enterprise-knowledge",
-    "/solutions/industrial-edge-ai",
-  ];
-
-  /* HÌNH HỘP CỦA Ô = CỠ MÀN HÌNH mà sản phẩm chạy trên đó. Đây là chỗ khai,
-     không phải trong messages: nó là quyết định bố cục, và nó chưa được xác
-     nhận (ghi trong `lineupGap`). ERP và MES đều có bản cầm tay — duyệt trên
-     điện thoại, và máy tính bảng ngoài xưởng; Context Provider là lõi hạ tầng
-     nên đứng ở ô nằm.
-     ⚠️ THỨ TỰ TRONG MẢNG QUYẾT ĐỊNH CHỖ TRONG LƯỚI. Ô lớn chiếm cột 1–2 cả ba
-     hàng, nên ô `web` phải đi NGAY SAU nó để rơi vào cột 3–4 hàng 1; hai ô
-     `phone` mới xuống được hai cột của hai hàng còn lại. Đảo thứ tự là lưới
-     thủng một góc. */
-  const SHAPE = { 1: "phone", 2: "web", 3: "phone" } as const;
-  const TILE_ORDER = [2, 1, 3];
-
   return (
     <Section id="phan-mem" sky="rise">
-      <SoftwareBento
+      <SoftwareStage
         /* Header GIỐNG HỆT công thức của section phần cứng (chủ dự án
            2026-08-10): nhãn hạng mục kèm dấu hai chấm, gộp cùng dòng tiêu đề,
-           cỡ `subhead`, thẻ vẫn `h2`. Hai section sản phẩm đứng liền nhau nên
-           chúng phải đọc ra là MỘT CẶP; năm section còn lại của trang chủ vẫn
-           giữ eyebrow riêng dòng và cỡ `headline`.
-           ⟹ Chú thích "section DUY NHẤT có tiêu đề nhỏ hơn một nấc" ở
-             `Hardware` bên dưới đã sửa lại thành "hai section".
+           cỡ `subhead`, thẻ vẫn `h2`. Ba section mảng kinh doanh đứng liền nhau
+           nên chúng phải đọc ra là MỘT BỘ BA; bốn section còn lại của trang chủ
+           vẫn giữ eyebrow riêng dòng và cỡ `headline`.
+           ⟹ Khuôn này nay dùng ở ba chỗ — thêm `Training` bên dưới. Sửa một
+             chỗ thì sửa cả ba, nếu không bộ ba gãy mất một chân.
 
            KHÔNG truyền `lead` — `docs/SOFTWARE-KIT.md` §3: câu dẫn và ảnh sản
            phẩm nói cùng một việc, giữ cả hai là trả 52px của ngân sách chiều
@@ -314,44 +393,54 @@ export async function Software() {
             {tc("solutions")}
           </CtaButton>
         }
-        stepsLabel={t("stepsLabel")}
         labels={{
           sample: t("sampleLabel"),
           zoom: t("zoomLabel"),
           close: tc("closeDrawer"),
-          prev: t("prevLabel"),
-          next: t("nextLabel"),
           pause: t("pauseLabel"),
           resume: t("resumeLabel"),
+          rail: t("railLabel"),
         }}
-        hero={{
-          label: t("oneLabel"),
-          name: t("oneName"),
-          steps: stepIndexes.map((n) => ({
-            label: t(`s${n}Label`),
-            title: t(`s${n}Title`),
-            body: t(`s${n}Body`),
-            story: t(`s${n}Story`),
-            quote: t(`s${n}Quote`),
-            need: t(`s${n}Need`),
-            src: STEP_SRC[n],
-            /* Công thức `alt` của kit §11: nêu VIỆC đang diễn ra, không mô tả
-               bố cục ("bên trái là sidebar"). Ghép từ tên màn và câu mô tả
-               chứ không viết riêng năm chuỗi — hai thứ đó phải luôn khớp nhau. */
-            alt: t("shotAlt", { screen: t(`s${n}Title`), what: t(`s${n}Body`) }),
-          })),
-        }}
-        products={TILE_ORDER.filter((n) => productIndexes.includes(n)).map(
-          (n) => ({
-            label: t(`p${n}Label`),
-            name: t(`p${n}Name`),
-            lead: t(`p${n}Lead`),
-            need: t(`p${n}Need`),
-            src: PRODUCT_SRC[n],
-            href: HREF[n - 1] ?? "/solutions",
-            shape: SHAPE[n as keyof typeof SHAPE] ?? "web",
-          }),
-        )}
+        products={productIndexes.map((n) => {
+          const name = t(`p${n}Name`);
+          const shot = SHOT[n as keyof typeof SHOT];
+          const s = shot?.step;
+
+          return {
+            name,
+            /* Ba trường này dò bằng `t.has` chứ không gọi thẳng: sản phẩm chưa
+               chốt phạm vi thì KHÔNG có nhãn vai lẫn lời dẫn, mà `t()` trên một
+               khoá thiếu in nguyên đường dẫn khoá lên mặt trang. */
+            label: t.has(`p${n}Label`) ? t(`p${n}Label`) : undefined,
+            lead: t.has(`p${n}Lead`) ? t(`p${n}Lead`) : undefined,
+            pending: t.has(`p${n}Lead`)
+              ? undefined
+              : t("pendingLead", { name }),
+            need: t.has(`p${n}Need`)
+              ? t(`p${n}Need`)
+              : t("pendingNeed", { name }),
+            shot: shot
+              ? {
+                  src: shot.src,
+                  detail: {
+                    label: t(`s${s}Label`),
+                    title: t(`s${s}Title`),
+                    body: t(`s${s}Body`),
+                    story: t(`s${s}Story`),
+                    quote: t(`s${s}Quote`),
+                  },
+                  /* Công thức `alt` của kit §11: nêu VIỆC đang diễn ra, không
+                     mô tả bố cục ("bên trái là sidebar"). Ghép từ tên màn và
+                     câu mô tả chứ không viết riêng một chuỗi — hai thứ đó phải
+                     luôn khớp nhau. */
+                  alt: t("shotAlt", {
+                    screen: t(`s${s}Title`),
+                    what: t(`s${s}Body`),
+                  }),
+                }
+              : undefined,
+          };
+        })}
       />
 
       {/* Ô chờ vô hình — cùng cơ chế và cùng lý do với hai ô của `Hardware`:
@@ -359,9 +448,10 @@ export async function Software() {
           khách xem. Không vẽ ra pixel nào nhưng `/track` và QA vẫn đếm.
           ĐỪNG XOÁ — xem cảnh báo ở đầu hàm.
 
-          Ba ô chờ ẢNH thì KHÔNG nằm ở đây: chúng do `MediaFrame` tự vẽ trên
-          mặt card, có badge vàng "Cần bổ sung ảnh" và một dòng `need`. Đó là
-          ba chỗ thiếu ảnh, không phải ba chỗ thiếu quyết định. */}
+          Ô chờ ẢNH và ô chờ LỜI DẪN của ba sản phẩm cuối thì KHÔNG nằm ở đây:
+          chúng hiện ngay trên mặt slide (`MediaFrame` vẽ ô chờ ảnh, `Gap` vẽ ô
+          chờ chữ). Đó là chỗ thiếu tư liệu của từng sản phẩm, không phải hai
+          quyết định về cả section. */}
       <span hidden data-gap="proof">
         {t("lineupGap")}
       </span>
@@ -581,9 +671,11 @@ export async function Hardware() {
            SectionHeader — tức là xuống hai dòng. Ở `subhead` còn ~600px nên
            gọn một dòng. Thẻ vẫn là `h2`: hạ cỡ chữ chứ không hạ cấp thẻ, dàn
            bài của trang không được khuyết cấp chỉ vì thiếu chỗ.
-           ⚠️ Đây và `Software` là HAI section duy nhất của trang chủ có tiêu đề
-           nhỏ hơn một nấc so với năm section còn lại. Có chủ ý: chúng là cặp
-           section sản phẩm và phải đọc ra là một cặp (chủ dự án 2026-08-10). */
+           ⚠️ Đây, `Software` và `Training` là BA section duy nhất của trang chủ
+           có tiêu đề nhỏ hơn một nấc so với bốn section còn lại. Có chủ ý: đó
+           đúng là ba mảng kinh doanh khai ở `home.who.r2Text`, và chúng phải
+           đọc ra là một bộ ba (chủ dự án 2026-08-10; mảng thứ ba thêm vào
+           2026-08-11). */
         header={
           <SectionHeader
             eyebrow={t("eyebrow")}
@@ -619,6 +711,87 @@ export async function Hardware() {
       </span>
       <span hidden data-gap="proof">
         {t("specGap")}
+      </span>
+    </Section>
+  );
+}
+
+/**
+ * Section 5b — ĐÀO TẠO ỨNG DỤNG AI, mảng kinh doanh THỨ BA.
+ *
+ * `home.who.r2Text` khai ba mảng: "phần cứng, phần mềm và đào tạo AI". Trang chủ
+ * trước phiên này chỉ chứng minh hai mảng đầu, nên câu đó đang nợ người đọc một
+ * phần ba. Section này trả nợ, và vì vậy nó phải đứng NGANG HÀNG với hai section
+ * kia chứ không phải làm phần đuôi: cùng công thức tiêu đề, cùng cỡ, cùng cấp thẻ.
+ *
+ * Nó cũng khép đúng mạch của trang: khối phần mềm vừa trưng một sản phẩm chạy
+ * được, và câu hỏi ngay sau đó là "mua về rồi ai dùng?". Đây là câu trả lời, và
+ * nó là khối cuối trước `CtaBand` — người đọc rời trang chủ với ý "đội của tôi
+ * học được", không phải "họ bán phần mềm".
+ *
+ * NẤC TRỜI `rise`, GIỐNG `Software` ĐỨNG NGAY TRÊN. Hai section cùng nấc liền
+ * nhau là hợp lệ — ranh giới là vạch chân trời + quầng sáng do `<Section>` tự
+ * vẽ, không phải chênh lệch màu nền (docs/DESIGN-TOKENS.md § Thang sky). Không
+ * đẩy lên `dawn` để "cho khác": `dawn` là của `CtaBand`, và một section `dawn`
+ * đứng ngay trên dải CTA `dawn` thì dải CTA hết là điểm sáng cuối cùng.
+ *
+ * Bố cục, ngân sách chiều cao và lý do không dùng `StepRail`: `training-tracks.tsx`.
+ *
+ * ⚠️ MỘT Ô CHỜ, vô hình như các ô của `Hardware` và `Software`, đang đếm trong
+ * /track: `trainingGap` (proof) — TOÀN BỘ nội dung ba lộ trình là bản nháp suy
+ * từ mô hình người mua trong blueprint, chưa có giáo trình nào từ Pebble Vina.
+ * Đây là section duy nhất của trang chủ mà KHÔNG một chữ nào có tài liệu gốc.
+ */
+export async function Training() {
+  const t = await getTranslations("home.training");
+
+  /* Số lộ trình và số module KHÔNG cố định — dò bằng `t.has` như mọi danh sách
+     khác trên trang này, nên thêm lộ trình thứ tư chỉ là thêm một bộ khoá `t4*`
+     trong vi.json. Trần 6 và 8 là lưới an toàn cho vòng lặp, không phải giới
+     hạn thiết kế; nhưng lưới xuống 2 cột ở `md` nên số lẻ đẹp hơn số chẵn, và
+     luật mật độ trong skill `pv-ui` chặn ở 4 module mỗi lộ trình. */
+  const trackIndexes: number[] = [];
+  for (let i = 1; i <= 6 && t.has(`t${i}Name`); i++) trackIndexes.push(i);
+
+  const moduleLabels = (n: number) => {
+    const out: string[] = [];
+    for (let i = 1; i <= 8 && t.has(`t${n}m${i}`); i++) out.push(t(`t${n}m${i}`));
+    return out;
+  };
+
+  return (
+    <Section id="dao-tao" sky="rise">
+      <TrainingTracks
+        /* Công thức header GIỐNG HỆT `Hardware` và `Software` — xem chú thích ở
+           hai chỗ đó. Ba mảng kinh doanh phải đọc ra là một bộ ba, và cách duy
+           nhất người đọc nhận ra điều đó khi lướt là ba tiêu đề cùng khuôn.
+           KHÔNG truyền `lead`: vế "chi tiết theo doanh nghiệp" đã có chỗ riêng
+           ở dải chú chân lưới, nói hai lần là tốn 52px để nói cùng một câu. */
+        header={
+          <SectionHeader
+            eyebrow={t("eyebrow")}
+            eyebrowInline
+            size="subhead"
+            title={t("title")}
+          />
+        }
+        tracks={trackIndexes.map((n) => ({
+          audience: t(`t${n}Audience`),
+          name: t(`t${n}Name`),
+          modules: moduleLabels(n),
+          modulesLabel: t("modulesLabel", { track: t(`t${n}Name`) }),
+          outcomeLabel: t("outcomeLabel"),
+          outcome: t(`t${n}Outcome`),
+        }))}
+        note={{ label: t("noteLabel"), body: t("noteBody") }}
+      />
+
+      {/* Ô chờ vô hình — cùng cơ chế và cùng lý do với các ô của `Hardware` và
+          `Software`: cảnh báo dành cho NGƯỜI LÀM nằm ở `data-gap`, không nằm
+          trên mặt khách xem. Không vẽ ra pixel nào nhưng `/track` và QA vẫn
+          đếm. ĐỪNG XOÁ — xem cảnh báo ở đầu hàm. */}
+      <span hidden data-gap="proof">
+        {t("trainingGap")}
       </span>
     </Section>
   );

@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { footerPages } from "@/content/registry";
 
@@ -48,7 +49,18 @@ export async function SiteFooter() {
             đường đi, và điều kiện pháp lý. */}
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            <span className="font-display text-ui font-semibold tracking-brand uppercase">
+            {/* Cùng cụm dấu hiệu + chữ với header — hai đầu trang phải khai
+                danh tính giống hệt nhau. Ảnh để trang trí, tên đứng cạnh. */}
+            <span className="flex items-center gap-2.5 font-display text-ui font-semibold tracking-brand uppercase">
+              <Image
+                src="/brand/logo-mark.png"
+                alt=""
+                aria-hidden
+                width={512}
+                height={512}
+                sizes="32px"
+                className="size-7 shrink-0"
+              />
               Pebble Vina
             </span>
 

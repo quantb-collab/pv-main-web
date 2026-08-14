@@ -63,6 +63,19 @@ interface SectionProps {
   flush?: boolean;
   /** Bỏ container (khi cần tràn viền màn hình). */
   bleed?: boolean;
+  /**
+   * Lớp nền TRÀN VIỀN của riêng section này — ảnh key visual, không phải màu.
+   * Nằm ở `-z-20`, tức DƯỚI cả bốn lớp dựng cảnh của site, nên hạt titan, quầng
+   * bình minh và cung chân trời vẫn phủ lên trên nó và section không rơi ra
+   * ngoài hệ.
+   *
+   * Chỉ dùng cho ảnh THƯƠNG HIỆU. Không dùng để "làm section này khác đi" —
+   * muốn sáng hơn thì đổi nấc `sky`, đó là cách duy nhất. Nội dung truyền vào
+   * phải tự định vị (`absolute inset-0`) và tự khai `aria-hidden`: nó là trang
+   * trí, không phải nội dung, và một tấm ảnh nền có `alt` là một dòng chữ thừa
+   * cho trình đọc màn hình.
+   */
+  backdrop?: ReactNode;
   className?: string;
   containerClassName?: string;
 }
@@ -74,6 +87,7 @@ export function Section({
   full = true,
   flush = false,
   bleed = false,
+  backdrop,
   className,
   containerClassName,
 }: SectionProps) {
@@ -97,6 +111,11 @@ export function Section({
           định vị luôn vẽ đè lên phần tử tĩnh, dù đứng trước trong DOM.
           Thứ tự dựng cảnh: hạt titan (vật liệu) → quầng bình minh (ánh sáng)
           → cung chân trời (đường mà ánh sáng chạm vào) → vạch ranh giới. */}
+      {/* -z-20: dưới cả bốn lớp dựng cảnh. Ảnh key visual là VẬT LIỆU của
+          section, không phải một lớp cảnh thứ năm — hạt titan phải phủ lên nó
+          y như phủ lên nền màu, nếu không chỗ có ảnh sẽ mịn hơn phần còn lại
+          của trang và đọc ra là một mảng dán vào. */}
+      {backdrop}
       <span aria-hidden className="pv-grain -z-10" />
       <BoundaryGlow className="-z-10" />
       <HorizonArc className="-z-10" />
