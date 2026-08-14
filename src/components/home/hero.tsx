@@ -1,38 +1,17 @@
 "use client";
 
-import { ChevronDown, FileText } from "lucide-react";
+import { CalendarDays, ChevronDown, FileText } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
-import { Parallax, ScrollStage } from "@/components/motion/parallax";
+import { ScrollStage } from "@/components/motion/parallax";
 import { CtaButton } from "@/components/pv/cta-button";
-import { DawnRings } from "@/components/pv/decor";
 import { Highlight } from "@/components/pv/highlight";
 import { DUR, EASE, LIFT, STAGGER } from "@/lib/motion";
 
 /**
- * Hero — §9 Section 1.
- * The HOOK, and only the hook: promise in the H1, tool slogan as the lead.
- * No technology list, no category talk — deliberately non-technical. The
- * question "Pebble Vina là ai / làm gì" is answered by the section right
- * below (Identity, §9 Section 2 — chèn theo quyết định chủ dự án
- * 2026-08-06): it unpacks "mạnh và ổn định" and carries the positioning
- * line + stack rail that briefly lived here earlier the same day.
- *
- * Locked to exactly one viewport (min-h-dvh) with the pitch centred in it, so
- * no slack can accumulate at either edge.
- *
- * Sits at `sky-void` — the darkest hour of the page, before any light. The only
- * light in it is the first cold edge of dawn low on the horizon, which the rest
- * of the page then walks up through. Nothing here may be brighter than that.
- *
- * The headline carries exactly two marks, one treatment each (via `brand` on
- * `<Highlight>` — hero-only, see highlight.tsx): the brand name GLOWS at the
- * head, the promise "doanh nghiệp số tự vận hành" gets a hairline UNDERLINE at
- * the tail. One light source, one horizon line — two glows in one sentence
- * would compete. Decision log: HANDOFF "tô từ nào ở hero" — chốt 2026-08-06.
- *
- * This is the only block on the page allowed to use ScrollStage.
+ * Hero — §9 Section 1. Cao trọn một viewport, nấc `sky-void`, và là chỗ DUY
+ * NHẤT trên site được dùng ScrollStage. Nền là ảnh chụp nhung chủ dự án cấp
+ * 2026-08-14 (xem `HeroBackdrop`), nên hero không còn ô chờ ảnh nền.
  */
 export function Hero() {
   const t = useTranslations("home.hero");
@@ -78,46 +57,28 @@ export function Hero() {
             initial="hidden"
             animate="visible"
             /* Nhịp dọc theo tỉ lệ chứ không đều nhau. `gap-5` là khoảng cách
-               cơ sở giữa tiêu đề và slogan — chúng là MỘT ý, phải dính nhau.
+               cơ sở giữa tiêu đề và câu dẫn — chúng là MỘT ý, phải dính nhau.
                Hàng nút cách ra `mt-8` (≈1.6×) vì nó là việc phải làm, không
                phải câu phải đọc. Ba khoảng bằng nhau thì ba khối đọc ra là
                một danh sách, không phải một lời chào rồi một lời mời.
 
-               `max-w-5xl` (1024px) chứ không `4xl`: ở 4xl tiêu đề 60 ký tự
-               rơi xuống ba dòng và slogan 95 ký tự thành hai. Nới thêm 128px
-               là đủ để tiêu đề nằm hai dòng và slogan nằm trọn một dòng từ
-               khổ laptop trở lên — đó mới là hình dạng đúng của một lời chào:
-               một câu, một dòng. */
-            className="mx-auto flex max-w-5xl flex-col items-center gap-5 text-center"
+               Khổ hẹp căn TRÁI: tiêu đề ba dòng căn giữa ở 375px cho ba mép
+               lởm chởm. Từ `sm` còn hai dòng cân nhau nên căn giữa. */
+            className="mx-auto flex max-w-5xl flex-col items-start gap-5 text-left sm:items-center sm:text-center"
           >
-            {/* `text-headline` chứ không `text-display`, dù đây là h1.
-                Vai trò `display` (40→72px) được cân cho tiêu đề dưới ~60 ký
-                tự; tiêu đề này 60 ký tự — đúng mép trên, và ở 72px vẫn thành
-                ba dòng cao hơn 230px, ép slogan cùng hai nút xuống sát mép.
-                Ở 32→52px nó còn khoảng 180px — vẫn là thứ to nhất first view
-                vì không có gì cạnh tranh, mà vẫn chừa chỗ cho phần dưới thở.
-                Luật chung: tiêu đề trang dài quá ~60 ký tự thì dùng
-                `text-headline`. Xem docs/DESIGN-TOKENS.md § Thang chữ. */}
+            {/* Chỗ ngắt dòng nằm trong chuỗi messages (`\n` + `pre-line`), không
+                trong JSX: `text-balance` chia hai dòng BẰNG NHAU nên câu gãy
+                giữa cụm "…thành năng lực". */}
             <motion.h1
               variants={item}
-              className="font-display text-headline font-semibold text-balance"
+              className="font-display text-display font-semibold whitespace-pre-line"
             >
-              <Highlight brand>{t("title")}</Highlight>
+              <Highlight>{t("title")}</Highlight>
             </motion.h1>
 
-            {/* Slogan, hạ một nấc xuống `text-body`. Ở `text-lead` (21px) nó
-                chỉ nhỏ hơn tiêu đề 2,5 lần và hai khối tranh nhau; ở 17,5px
-                khoảng cách thành 3 lần, mắt đọc ra thứ tự ngay.
-
-                KHÔNG đặt `max-w-[58ch]` như câu dẫn thường: 95 ký tự trên một
-                dòng vượt đo đọc chuẩn, nhưng slogan không phải văn bản chạy —
-                nó là một câu đọc trong một hơi, và cắt đôi thì mất phép đối
-                "công cụ ↔ con người". Ngoại lệ này chỉ dành cho hero.
-                `text-balance` lo phần khổ hẹp: dưới laptop nó tự chia hai
-                dòng cân nhau thay vì để lại một dòng cụt. */}
             <motion.p
               variants={item}
-              className="text-body text-muted-foreground text-balance"
+              className="max-w-[58ch] text-lead text-muted-foreground"
             >
               <Highlight>{t("lead")}</Highlight>
             </motion.p>
@@ -129,6 +90,7 @@ export function Hero() {
               className="mt-8 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4"
             >
               <CtaButton href="/ai-assessment" size="lg">
+                <CalendarDays data-icon="inline-start" />
                 {tc("assessment")}
               </CtaButton>
               {/* Viền sáng trên nền trong suốt.
@@ -198,47 +160,38 @@ function ExploreCue({ label, reduced }: { label: string; reduced: boolean }) {
 }
 
 /**
- * Layer order matters: the scrim sits directly on the photo so it can guarantee
- * contrast, while the grid and the dawn glow stay above it and keep their edge.
- * Without `src` the empty state is the grid and glow alone — a deliberate
- * technical surface, not a hole waiting for stock art.
+ * Nền hero: ảnh chụp nhung, hai bản cắt đổi theo TỈ LỆ KHUNG 1:1 — không phải
+ * mốc px, vì `object-cover` xén theo cạnh dư nên iPad dọc lấy bản 16:9 sẽ mất
+ * 60% bề ngang ảnh. Art direction hai FILE nên bắt buộc `<picture>`;
+ * `next/image` không đổi file theo media query.
  *
- * The glow is anchored to the BOTTOM edge, not floated in the middle of the
- * frame. A light source overhead reads as a spotlight; the same light along the
- * bottom edge reads as a horizon about to break — which is the whole premise of
- * the page. `pv-skyglow` puts the identical light at the foot of every section
- * below, so the hero is the first frame of one continuous sunrise rather than a
- * separate picture with its own lighting.
+ * Không phủ scrim: đo trên file, vùng chữ đậu có p95 chói 0,020 → chữ trắng
+ * 15:1. Không parallax: dịch 6% là hở một dải trống ở mép dưới, đúng chỗ vải
+ * sáng nhất.
  */
-function HeroBackdrop({ src, alt }: { src?: string; alt?: string }) {
+function HeroBackdrop() {
   return (
     <div aria-hidden className="absolute inset-0 -z-10">
-      {src ? (
-        <Image
-          src={src}
-          alt={alt ?? ""}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
+      <picture>
+        <source media="(min-aspect-ratio: 1/1)" srcSet="/brand/hero-wide.webp" />
+        <img
+          src="/brand/hero-tall.webp"
+          alt=""
+          /* Ảnh quyết định LCP của trang chủ. */
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 size-full object-cover object-bottom"
         />
-      ) : null}
+      </picture>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/80 to-background" />
+      {/* Không thêm `inset-0`: pv-skyglow tự neo vào mép dưới, còn inset-0 đặt
+          cả top lẫn bottom nên khung bị ràng buộc thừa và quầng nhảy lên đỉnh. */}
+      <div className="pv-skyglow pv-skyglow-hero" />
 
-      <div className="pv-grain" />
-      <div className="pv-grid-bg absolute inset-0 opacity-60" />
-
-      {/* Dawn, still under the horizon. Parallax gives it a slower rate than the
-          copy above, so the light reads as far away rather than pasted on.
-          The rings ride the same layer so glow and geometry drift together —
-          split them and the light detaches from the thing emitting it. */}
-      <Parallax amount="subtle" className="absolute inset-0">
-        {/* Không thêm `inset-0`: pv-skyglow tự neo vào mép dưới, còn inset-0 đặt
-            cả top lẫn bottom nên khung bị ràng buộc thừa và quầng nhảy lên đỉnh. */}
-        <div className="pv-skyglow pv-skyglow-hero" />
-        <DawnRings />
-      </Parallax>
+      {/* 0,16 thay cho 0,42: vải trong ảnh đã có nhiễu riêng (sd 18/255), cộng
+          dồn thành giấy nhám. Không tắt hẳn — nửa trên ảnh sd 0,6/255, phẳng
+          tới mức dễ lộ vân chuyển màu. */}
+      <div className="pv-grain [--grain-strength:0.16]" />
 
       {/* A cold rim right on the edge — the sharp line the diffuse glow can't
           give on its own, and the seam that hands off to the next section. */}

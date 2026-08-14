@@ -767,7 +767,7 @@
    trời trống để ánh sáng loang ra — cùng cường độ với một section thường thì
    ở đó nó biến mất. Kèm với `pv-skyglow` trên cùng phần tử. */
 @utility pv-skyglow-hero {
-  --sky-light: 0.5;
+  --sky-light: 0.16;
 }
 
 /* --------------------------------------------------------------------------
@@ -847,9 +847,16 @@
    một lớp hạt chạy đúng ở cả nấc `void` lẫn nấc `dawn` — phủ đè thì ở nấc tối
    nó làm bạc nền, ở nấc sáng nó biến mất.
 
-   Núm chỉnh duy nhất là `opacity` bên dưới. Hạt quá rõ thì hạ, đừng đổi
+   Núm chỉnh duy nhất là `--grain-strength`. Hạt quá rõ thì hạ, đừng đổi
    `baseFrequency` — tần số đó quyết định cỡ hạt, và cỡ hạt là thứ phân biệt
    "kim loại nhám" với "ảnh nhiễu vì kém chất lượng".
+
+   Vì sao là biến chứ không phải một số cố định: nơi nào có CHẤT LIỆU THẬT nằm
+   dưới (hero trang chủ đặt ảnh chụp nhung) thì lớp hạt phải hạ xuống, nếu
+   không hai lớp nhiễu cộng dồn thành mặt giấy nhám — đúng cái bẫy đã ghi ở
+   docs/IMAGE-BRIEF.md §1. Hạ chứ không tắt: nửa trên tấm ảnh đó là bóng tối
+   studio, độ lệch chuẩn nhiễu chỉ 0,6/255, phẳng tới mức dễ lộ vân chuyển màu
+   nhất trên cả trang.
    -------------------------------------------------------------------------- */
 @utility pv-grain {
   pointer-events: none;
@@ -859,7 +866,7 @@
   background-size: 180px 180px;
   background-repeat: repeat;
   mix-blend-mode: overlay;
-  opacity: 0.42;
+  opacity: var(--grain-strength, 0.42);
 }
 
 /* Nền lưới kỹ thuật, dùng cho vùng "phòng lab". Chỉ dùng ở hero/anchor.

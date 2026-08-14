@@ -10,7 +10,10 @@ import { cn } from "@/lib/utils";
  *   `DawnRings`   cùng chân trời đó nhìn từ gần: các gợn sóng DẸT cùng độ cong
  *                 với cung chân trời, lan ra từ nguồn sáng theo cấp số φ, ba
  *                 kinh tuyến mảnh và một chòm node ở giao điểm.
- *                 Chỉ dùng MỘT LẦN trên site, ở hero trang chủ.
+ *
+ * ⚠️ `DawnRings` hiện KHÔNG có chỗ dùng (2026-08-14): hero nay lấy nền là ảnh
+ * chụp nhung. Bỏ hẳn thì xoá kèm `pv-rings`, ba animation `dawn-*` và khối
+ * `.pv-rings .pv-node` trong globals.css.
  *
  * Vì sao không mỗi section một hoạ tiết khác: mười hoạ tiết là mười thứ tiếng
  * nói. Một hình được biến tấu theo nấc trời thì trang có nhịp mà vẫn là một hệ
