@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# worktree phụ của Claude Code — cây làm việc rời, không phải nguồn
+/.claude/worktrees/
+
 # production
 /build
 
