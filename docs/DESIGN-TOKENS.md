@@ -27,7 +27,7 @@ Ba hệ quả, áp cho mọi trang:
 |---|---|---|
 | 1 | Brand ramp `--pv-brand-*`, `--pv-ink-*`, thang trời `--pv-night-*`, `--pv-signal-*` | Khi chốt brand kit. Sửa **chỉ ở đây**. |
 | 2 | Semantic token + thang sky `.sky-*`: `--background`, `--foreground`, `--surface`, `--brand`, `--sky-light`… | Khi đổi cách dùng màu, không phải khi đổi màu |
-| 3 | Motion, layout & chữ: `--ease-*`, `--dur-*`, `--section-y`, `--container-max`, `--pv-text-*` | Khi đổi nhịp hoặc thang chữ toàn site |
+| 3 | Motion, layout & chữ: `--ease-*`, `--dur-*`, `--pv-space-*`, `--gutter`, `--container-max`, `--pv-text-*` | Khi đổi nhịp hoặc thang chữ toàn site |
 | 4 | Đăng ký với Tailwind (`@theme inline`) | Khi thêm token mới cần utility |
 | 5 | Utility dùng chung: `pv-container`, `pv-section`, `pv-horizon`, `pv-skyglow`… | Khi thêm mẫu bố cục dùng lại nhiều nơi |
 
@@ -107,13 +107,26 @@ bán kính của chính phần tử nên dải còn lại dày đều tuyệt đ
 
 ## Chiều cao section
 
-Mặc định mỗi section cao trọn một viewport, nội dung căn giữa —
-`min-h-dvh` chứ không phải `h-dvh`, nội dung dài hơn thì section cao lên chứ
-không cắt. Tắt bằng `full={false}`, và chỉ tắt cho trang công cụ nội bộ như
-`/track`.
+Hai nấc, khai qua prop `height`. **Mặc định là `auto`** (đổi 2026-08-17).
 
-Đánh đổi đã chấp nhận: trang dài hơn. Vì vậy luật mật độ trong skill `pv-ui`
-càng phải giữ — **một section, một ý**.
+| `height` | Làm gì | Dùng ở |
+|---|---|---|
+| `auto` | cao theo nội dung; nhịp do `pv-section` tạo | **mặc định**, gần như mọi section |
+| `screen` | `min-h-dvh`, nội dung căn giữa | khối CẦN trọn màn để đọc đúng — hero, một cảnh dựng bằng ảnh |
+
+`screen` vẫn là `min-h-dvh` chứ không `h-dvh`: nội dung dài hơn thì cao lên,
+không cắt.
+
+**Không chọn `screen` để section "trông rộng rãi".** Chỗ trống là việc của
+`--pv-space-section`; ép trọn màn chỉ dồn khoảng trống ra hai đầu chứ không tạo
+nhịp — và dồn đúng một lượng như nhau ở mọi section thì không section nào đọc
+ra là quan trọng hơn section nào.
+
+> ⚠️ Vì sao đổi mặc định: `screen` từng là mặc định cho **mọi** section, và đo
+> ở 1440×900 thì trang chủ có **2 488px — 32% chiều dài trang** là dải trống
+> trên/dưới nội dung, lấp đầy chỉ 36–73% mỗi section (`CtaBand` 36%,
+> `Identity` 51%). Ở khổ hẹp thì ngược lại: `phan-cung` cao 1 866px, `min-h-dvh`
+> không còn nghĩa gì. Prop cũ `full` đã gỡ.
 
 **Cuộn có snap — ĐANG TẮT TẠM** (`SNAP.enabled = false` trong
 `src/lib/motion.ts`). Cuộn mượt Lenis vẫn chạy, chỉ bỏ cú trượt tự khớp màn
@@ -128,7 +141,7 @@ dưới đây là hành vi khi bật — hai tầng, cơ chế ở `smooth-scrol
    hình thì gom về đó. Đứng giữa một section cao (mobile) thì không điểm dừng
    nào trong ngưỡng → để yên cho người ta đọc.
 
-Điểm dừng là mọi phần tử mang `data-snap`: `<Section full>` và hero tự gắn
+Điểm dừng là mọi phần tử mang `data-snap`: mọi `<Section>` và hero tự gắn
 (mép trên), footer gắn `data-snap="end"` để cuối trang là một điểm dừng hợp lệ.
 Tắt cùng Lenis khi người dùng bật giảm chuyển động; trên cảm ứng giữ nguyên
 cuộn native.
@@ -147,6 +160,65 @@ khác nhau — đúng như mong muốn, component không phải biết mình đa
 Thang chữ cũng dịch theo nấc trời: ở `sky-dawn` nền đã đủ sáng để kéo tụt chữ
 phụ, nên `--muted-foreground` và `--subtle-foreground` tự nhích lên một nấc để
 giữ 4.5:1. Đây là lý do **không** được viết `text-white/60` thay cho nấc chữ.
+
+## Thang màn hình
+
+Bốn mốc, khai thẳng trong `@theme` để đọc được hệ có mấy mốc và mốc nào làm
+việc gì. Giá trị giữ đúng mặc định Tailwind.
+
+| Mốc | Từ | Mốc này được phép đổi cái gì |
+|---|---|---|
+| — | 0 | một cột, mọi thứ xếp dọc |
+| `sm` | 640 | **chỉ** căn lề và hướng của một khối chữ hoặc hàng nút. Không đổi số cột. |
+| `md` | 768 | một cột → hai cột |
+| `lg` | 1024 | bố cục đủ: cột phụ, sidebar, kệ ngang xuất hiện |
+| `xl` | 1280 | **chỉ** chạm trần `--container-max`. Cấm đổi bố cục ở đây. |
+
+`2xl` đã **gỡ khỏi từ vựng** (`--breakpoint-2xl: initial`). Nó có 0 chỗ dùng, và
+một mốc không ai thiết kế cho nó chỉ là chỗ để code trôi vào. `check:tokens`
+chặn nếu ai viết lại.
+
+**Breakpoint chỉ được đổi SỐ CỘT và HƯỚNG XẾP.** Cỡ chữ, khoảng cách và lề đều
+đã clamp mượt nên không còn bậc nào để khai — viết `lg:text-headline` hay
+`lg:mt-16` là đang chữa một thứ đã tự chữa. `check:tokens` bắt cả hai.
+
+> ⚠️ Bài học phải trả giá: trước 2026-08-17 hệ chỉ có **một** mốc thật sự làm
+> việc (`lg`, 163 chỗ dùng, so với `md` 26 chỗ), còn `--gutter` bước ở 768 và
+> `--section-y` bước ở 1280. Ba thang bước ở ba chỗ khác nhau, và dải 768–1023
+> thì không ai thiết kế — kết quả là trang chủ cuộn ngang được ở **mọi** bề
+> ngang dưới 1024px mà không ai biết. Nay có `pnpm check:layout` canh.
+
+## Thang nhịp — khoảng cách theo vai trò
+
+Cùng mô hình với thang chữ: chọn theo **việc khoảng cách đang làm**, không theo
+nó rộng bao nhiêu. Cả sáu clamp mượt 375 → 1280, không nhảy bậc.
+
+| Vai trò | Utility | 375 → 1280 | Dùng ở |
+|---|---|---|---|
+| `--pv-space-section` | `py-section` | 80 → 136 | nhịp dọc section (`pv-section` đọc) |
+| `--pv-space-stack` | `mt-stack` | 40 → 56 | tiêu đề section → thân section |
+| `--pv-space-column` | `gap-column` | 32 → 80 | giữa hai **cột lớn** của một bố cục |
+| `--pv-space-group` | `gap-group` | 24 → 32 | giữa hai nhóm trong cùng một khối |
+| `--pv-space-item` | `gap-item` | 12 → 16 | giữa các item cùng loại |
+| `--pv-space-tight` | `gap-tight` | 8 | nhãn ↔ giá trị. Không co giãn. |
+
+Thang số của Tailwind (`mt-14`, `gap-3`) **vẫn chạy** nhưng chỉ còn hợp lệ trong
+`src/components/ui/`. Ngoài đó nó nằm dưới **bánh cóc** trong
+`scripts/check-tokens.mjs`: số chỗ vi phạm chỉ được đi xuống. Đụng vào file nào
+thì chuyển chỗ đó sang tên vai trò rồi hạ `max`.
+
+## Thang bề ngang
+
+| Vai trò | Utility | Giá trị | Dùng ở |
+|---|---|---|---|
+| `--container-lead` | `max-w-lead` | 58ch | câu dẫn dưới tiêu đề |
+| `--container-body` | `max-w-body` | 68ch | thân bài |
+| `--container-header` | `max-w-header` | 48rem | khoang tiêu đề section |
+| `--container-rail` | `max-w-rail` | 15rem | cột phụ, hồ sơ, dãy điều hướng dọc |
+
+Hai vai trò chữ để bằng `ch` **có chủ ý**: 58ch của `text-lead` và 58ch của
+`text-body` ra hai bề ngang khác nhau, và đó đúng là điều mình muốn — giới hạn
+là **số ký tự một dòng**, không phải số pixel. Đừng để `max-w-3xl` tự quyết.
 
 ## Thang chữ
 
@@ -224,8 +296,26 @@ Trên nền đêm bóng đen vô hình, nên `--shadow-control` không phải l�
 là **vạch sáng inset ở cạnh trên** cộng một lớp tối sâu bên dưới — nút đọc ra
 là một bề mặt đang hứng ánh sáng từ trên xuống. Component không phải đụng.
 
-Thang cao: `sm` 36px · `default` 40px · `lg` 44px. `lg` cho hero và dải CTA,
-`sm` cho header, `default` cho mọi chỗ còn lại.
+### Chiều cao — hai bộ, chọn theo THIẾT BỊ TRỎ
+
+| Token | Chuột | Ngón tay | Dùng ở |
+|---|---|---|---|
+| `--h-control-xs` | 28 | 36 | mũi tên điều hướng băng card |
+| `--h-control-sm` | 36 | 44 | nút trong header, nút phụ trong khối |
+| `--h-control-md` | 40 | 48 | mặc định |
+| `--h-control-lg` | 48 | 52 | nút chính của hero và dải CTA |
+
+Bộ thứ hai bật bằng `@media (pointer: coarse)` — **không phải breakpoint**. Bề
+ngang màn hình không nói được người ta bấm bằng gì: máy tính bảng 1024px vẫn là
+ngón tay, còn cửa sổ kéo hẹp còn 380px trên máy bàn vẫn là con trỏ chuột. Lấy
+bề ngang làm dấu hiệu là đoán sai cả hai đầu. Đây là `@media` **duy nhất** trong
+hệ được phép đổi kích thước.
+
+Số của bộ chạm lấy theo 44px (Apple HIG) và 48dp (Material). `xs` cố ý dừng ở
+36 và vẫn dưới ngưỡng: nó là control phụ, thao tác chính là vuốt ngang.
+
+`button.tsx` đọc thẳng bốn token này thay cho các bậc `h-*` cố định. Đặt lại
+`h-10`/`h-11` là âm thầm kéo vùng chạm trên điện thoại xuống dưới ngưỡng.
 
 ## Highlight — làm nổi từ khoá trong câu
 

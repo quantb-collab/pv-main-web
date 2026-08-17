@@ -61,7 +61,7 @@ section bị bỏ qua.
 
 | Cần gì | Dùng |
 |---|---|
-| Khung một section | `<Section sky id full flush bleed>` |
+| Khung một section | `<Section sky id height flush bleed>` |
 | Tiêu đề + eyebrow + lead | `<SectionHeader as eyebrow title lead align>` |
 | Lưới thẻ | `<CardGrid cols>` + `<Card index title>` |
 | Danh sách khẳng định | `<StatementList items>` |
@@ -108,11 +108,68 @@ Bốn điều đi kèm:
 - **Ba nấc weight, không hơn:** 600 tiêu đề · 500 nhãn giao diện · 400 thân bài.
   Cần nhấn mà không đổi cấp thì đổi màu (`text-muted-foreground`), không đổi weight.
 - **Giới hạn độ dài dòng** khi khối chữ nằm trong cột rộng: câu dẫn
-  `max-w-[58ch]`, thân bài `max-w-[68ch]`. `<SectionHeader>` và `<StatementList>`
+  `max-w-lead`, thân bài `max-w-body`. `<SectionHeader>` và `<StatementList>`
   đã có sẵn, tự viết `<p>` thì phải tự đặt.
 
 Bảng đầy đủ kèm cỡ px và lý do từng con số: `docs/DESIGN-TOKENS.md` mục *Thang chữ*.
 Đổi thang thì sửa LỚP 3 trong `globals.css`, không sửa component.
+
+## Khoảng cách và bề ngang
+
+Cùng luật với chữ: gọi theo **vai trò**, không theo con số.
+
+| Khoảng cách đang làm gì | Dùng |
+|---|---|
+| Nhịp dọc của section | `py-section` (`<Section>` tự có) |
+| Tiêu đề section → thân section | `mt-stack` |
+| Giữa hai **cột lớn** của một bố cục | `gap-column` |
+| Giữa hai nhóm trong một khối | `gap-group` |
+| Giữa các item cùng loại | `gap-item` |
+| Nhãn ↔ giá trị | `gap-tight` |
+
+| Bề ngang của khối chữ | Dùng |
+|---|---|
+| Câu dẫn | `max-w-lead` (58ch) |
+| Thân bài | `max-w-body` (68ch) |
+| Khoang tiêu đề section | `max-w-header` |
+| Cột phụ, hồ sơ, dãy điều hướng dọc | `max-w-rail` |
+
+`mt-14`, `gap-3`, `max-w-3xl`, `w-[15rem]` là **code cũ**. Chúng còn chạy nhưng
+nằm dưới bánh cóc trong `scripts/check-tokens.mjs`: số chỗ chỉ được đi xuống.
+Đụng vào file nào thì đổi chỗ đó sang tên vai trò rồi hạ `max` xuống số mới.
+
+## Màn hình — bốn mốc, mỗi mốc một việc
+
+| Mốc | Từ | Được phép đổi |
+|---|---|---|
+| — | 0 | một cột |
+| `sm` | 640 | **chỉ** căn lề / hướng của một khối chữ hay hàng nút |
+| `md` | 768 | một cột → hai cột |
+| `lg` | 1024 | bố cục đủ: cột phụ, sidebar, kệ ngang |
+| `xl` | 1280 | **chỉ** chạm trần container |
+
+`2xl` đã gỡ khỏi từ vựng. `check:tokens` chặn nếu viết lại.
+
+**Breakpoint chỉ đổi SỐ CỘT và HƯỚNG XẾP.** Cỡ chữ, khoảng cách, lề đều đã
+clamp mượt — `lg:text-headline` hay `lg:mt-16` là chữa thứ đã tự chữa.
+
+**Đừng nhảy từ một cột thẳng lên bố cục đủ.** Đó là lỗi cũ của repo này: 163
+chỗ dùng `lg:` so với 26 chỗ `md:`, nên dải 768–1023 không ai thiết kế và trang
+chủ cuộn ngang được ở mọi khổ dưới 1024 suốt nhiều phiên. Có `lg:` thì hỏi luôn
+"ở 768 nó ra sao".
+
+### Băng cuộn ngang — chỗ vỡ quen thuộc nhất
+
+Một băng card cuộn ngang (`overflow-x-auto`) **không được** làm cả trang cuộn
+ngang. `overflow-x-auto` chỉ ăn khi phần tử được phép hẹp lại, mà mặc định
+`min-width: auto` của flex/grid item thì không.
+
+Phải mở **cả chuỗi** từ khung xuống tới băng, thiếu một mắt là đứt:
+- `grid` một cột: khai `grid-cols-[minmax(0,1fr)]`. Không khai thì cột ngầm là
+  `auto`, rộng bằng min-content của con.
+- Mọi flex/grid item trên đường: `min-w-0`.
+
+Mẫu đã sửa đúng: `product-shelf.tsx` — ba mắt xích, có chú thích tại chỗ.
 
 ## Chuyển động
 
@@ -151,11 +208,17 @@ Bảng nấc và lớp hạt: `docs/DESIGN-TOKENS.md` mục *Thang sky*.
 
 ## Chiều cao section
 
-Mặc định cao trọn một viewport, nội dung căn giữa. Không tự đặt `min-h-*`.
-`full={false}` chỉ dành cho trang công cụ nội bộ (`/track`).
+Hai nấc qua prop `height`, **mặc định `auto`**:
 
-Hệ quả: mỗi section chỉ còn chỗ cho **một ý**. Nhồi hai ý vào một màn hình thì
-khối chữ tụt xuống nhỏ và chật đúng thứ mà chiều cao này sinh ra để tránh.
+- `auto` — cao theo nội dung, nhịp do `pv-section` tạo. Dùng cho gần như mọi thứ.
+- `screen` — `min-h-dvh`, nội dung căn giữa. Chỉ khi khối **cần** trọn màn để
+  đọc đúng (hero, một cảnh dựng bằng ảnh).
+
+Không tự đặt `min-h-*`. Và **đừng chọn `screen` để cho section trông rộng rãi**
+— chỗ trống là việc của `--pv-space-section`; ép trọn màn chỉ dồn khoảng trống
+ra hai đầu, mà dồn đều ở mọi section thì không section nào nổi hơn section nào.
+
+Luật mật độ vẫn giữ nguyên: **một section, một ý**.
 
 ## Trang trí — KHÔNG CÒN GÌ
 
@@ -199,27 +262,43 @@ pnpm dlx shadcn@latest add <tên> -y
 Không sửa tay file trong `src/components/ui/` trừ khi bắt buộc — sửa thì ghi chú
 lý do ngay trên chỗ sửa, vì lần `add` sau sẽ ghi đè.
 
-## Đo bằng mắt — có ngân sách
+## Đo — máy trước, mắt sau
 
-Một vòng chụp ở **hai khổ** (1440 ngang + 500 dọc) là đủ để kết luận một bố
-cục. Quá **ba vòng** chỉnh bằng mắt mà chưa đạt thì dừng, mô tả chỗ lệch và
-hỏi — chỉnh vòng thứ tư gần như luôn là đang đoán ý người khác.
+**Đo bằng máy trước khi nhìn.** Mắt không đọc được `scrollWidth`, không đọc
+được một section lấp đầy bao nhiêu phần trăm, và không phân biệt được std 0,4
+với std 2,0 trên nền đen. Chụp ảnh rồi ngắm là cách chắc chắn nhất để bỏ sót
+đúng thứ đang hỏng.
 
-Chụp bằng Chrome headless: `--headless=new --window-size=W,H
---virtual-time-budget=9000 --screenshot=out.png`. Cửa sổ hẹp nhất Chrome nhận
-là 500px, nên 375px phải xem bằng trình duyệt thật.
+```bash
+pnpm check:layout      # tràn ngang, 33 trang × 4 khổ — đã nằm trong pnpm verify
+pnpm check:tokens      # hardcode + bánh cóc khoảng cách/bề ngang
+```
+
+Lái trình duyệt bằng **MCP `chrome-devtools`** (`navigate_page` · `resize_page`
+· `take_screenshot` · `evaluate_script` · `list_console_messages`). Dùng
+`evaluate_script` để lấy SỐ ĐO, không chỉ chụp hình: chiều cao section, chiều
+cao nội dung, `scrollWidth`, độ sáng nền.
+
+Rồi mới đến mắt, và **có ngân sách**: một vòng chụp ở hai khổ (1440 ngang +
+500 dọc) là đủ để kết luận một bố cục. Quá **ba vòng** chỉnh bằng mắt mà chưa
+đạt thì dừng, mô tả chỗ lệch và hỏi — vòng thứ tư gần như luôn là đang đoán ý
+người khác.
+
+Cửa sổ Chrome hẹp nhất là 500px, nhưng `resize_page` / `Emulation` hạ được
+xuống 360px, nên không còn phải "xem bằng trình duyệt thật" để kiểm 375.
 
 ## Kiểm lại trước khi xong
 
 - [ ] Không còn màu/easing/thời lượng hardcode?
-- [ ] Chữ dùng vai trò, không còn `text-sm`/`text-lg`/`text-[11px]` ngoài `ui/`?
+- [ ] Chữ, khoảng cách, bề ngang đều gọi bằng **vai trò**, không bằng số?
 - [ ] Không tự viết `leading-*`, `tracking-*` hay bậc breakpoint cho cỡ chữ?
 - [ ] Không có chuỗi tiếng Việt nằm trong JSX?
-- [ ] Section dùng `<Section>`, không tự đặt padding dọc?
+- [ ] Section dùng `<Section>`, không tự đặt padding dọc hay `min-h-*`?
+- [ ] `height="screen"` chỉ dùng khi khối THẬT SỰ cần trọn màn?
 - [ ] Nấc `sky` chỉ đi lên, hero `void`, section trước CTA `rise`?
-- [ ] Section cao trọn một màn hình và nội dung không bị chật?
+- [ ] Có `lg:` thì đã trả lời "ở 768 nó ra sao" chưa?
+- [ ] Băng cuộn ngang đã mở đủ chuỗi `min-w-0` / `grid-cols-[minmax(0,1fr)]`?
 - [ ] Ảnh đi qua `MediaFrame` và có `need` hoặc `alt`?
 - [ ] Chỉ một `<h1>` mỗi trang?
-- [ ] Đã thử ở 375px, 768px, 1440px?
-- [ ] `prefers-reduced-motion` bật lên trang vẫn đọc được?
-- [ ] `pnpm build` sạch?
+- [ ] `prefers-reduced-motion` bật lên trang vẫn đọc được **và console sạch**?
+- [ ] `pnpm verify` sạch (đã gồm `check:layout`)?

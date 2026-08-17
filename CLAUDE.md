@@ -19,14 +19,17 @@ Mọi quyết định nội dung và cấu trúc trang phải truy được về
 pnpm dev            # http://localhost:3000
 pnpm verify         # chạy trước khi báo xong việc và trước mọi commit
 pnpm check:i18n     # soát khoá messages bị thiếu
-pnpm check:tokens   # soát màu/easing/thời lượng hardcode
+pnpm check:tokens   # soát màu/easing/cỡ chữ hardcode + bánh cóc khoảng cách
+pnpm check:layout   # soát tràn ngang, 33 trang × 4 khổ (cần build trước)
 ```
 
-`pnpm verify` = `build` + `check:i18n` + `check:tokens` + `lint`.
+`pnpm verify` = `build` + `check:i18n` + `check:tokens` + `check:layout` + `lint`.
 
-Hai check kia tồn tại vì `next build` không bắt được chúng: next-intl chỉ log
-khoá thiếu ra console rồi in nguyên đường dẫn khoá lên mặt trang, còn giá trị
-hardcode thì hoàn toàn hợp lệ với TypeScript.
+Ba check kia tồn tại vì `next build` không bắt được chúng: next-intl chỉ log
+khoá thiếu ra console rồi in nguyên đường dẫn khoá lên mặt trang, giá trị
+hardcode thì hoàn toàn hợp lệ với TypeScript, còn một trang cuộn ngang được thì
+vừa hợp lệ TypeScript vừa hợp lệ CSS — trang chủ đã sống với lỗi đó ở mọi bề
+ngang dưới 1024px suốt nhiều phiên vì chưa ai đo.
 
 Sau khi sửa `messages/*.json`, **khởi động lại dev server** — file watcher không
 bắt được thay đổi nếu file bị thay bằng thao tác đổi tên.
@@ -52,8 +55,15 @@ thấp và luôn phủ lớp hạt `pv-grain` — bỏ lớp hạt là mất ch�
 
 Site chỉ có một chế độ — không còn nền sáng, không còn `.tone-dark`.
 Mỗi section khai một nấc trời qua prop `sky` (`void` → `night` → `deep` →
-`rise` → `dawn`) và nấc chỉ được đi lên trong một trang. Section cao trọn một
-màn hình theo mặc định. Bảng nấc: `docs/DESIGN-TOKENS.md` mục *Thang sky*.
+`rise` → `dawn`) và nấc chỉ được đi lên trong một trang. Section cao **theo nội
+dung** theo mặc định (`height="auto"`); `height="screen"` chỉ cho khối thật sự
+cần trọn màn. Bảng nấc: `docs/DESIGN-TOKENS.md` mục *Thang sky*.
+
+Khoảng cách, bề ngang và màn hình cũng gọi theo VAI TRÒ như chữ: `mt-stack`,
+`gap-column`, `max-w-lead` — không phải `mt-14`, `gap-12`, `max-w-3xl`. Bốn mốc
+màn hình (`sm` 640 · `md` 768 · `lg` 1024 · `xl` 1280) chỉ được đổi SỐ CỘT và
+HƯỚNG XẾP; cỡ chữ và khoảng cách đã clamp mượt nên không còn bậc nào để khai.
+Bảng: `docs/DESIGN-TOKENS.md` mục *Thang màn hình* / *Thang nhịp*.
 
 Toàn bộ đồ hoạ trang trí đã xoá 2026-08-14 (cung chân trời, quầng sáng, vạch
 ranh giới, vòng bình minh). Nền đang chờ kế hoạch mới — **đừng dựng lại lớp nào

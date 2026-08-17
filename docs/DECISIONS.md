@@ -1170,3 +1170,47 @@ thích "luật tô từ khoá ở hero" là thứ đánh lừa phiên sau.
 **Hệ quả đúng ý:** tiêu đề hero về đúng MỘT điểm nhấn (`AI`), thay vì hai.
 **Đổi lại thì phải sửa:** `src/components/pv/highlight.tsx` — xem git history
 của file này, bản trước 2026-08-14.
+
+## 2026-08-17 — Thang nhịp theo vai trò, và section thôi cao trọn màn
+**Bối cảnh:** thang chữ đã atomic (11 vai trò, clamp, không bậc breakpoint)
+nhưng nhịp thì không: chỉ có `--section-y` và `--gutter`, còn mọi khoảng cách
+trong section là số gõ tay (hơn 30 giá trị rời). Ba thang lại bước ở ba chỗ
+khác nhau — gutter 768, section-y 1280, bố cục 1024.
+**Chọn:** nhân mô hình của thang chữ ra ba trục còn lại — `--pv-space-*` (6 vai
+trò), `--container-*` (4 vai trò), breakpoint khai thẳng với vai trò từng mốc.
+Chiều cao section đổi mặc định từ `screen` sang `auto`.
+**Vì:** đo ở 1440×900, trang chủ có **2 488px — 32% chiều dài trang** là dải
+trống trên/dưới nội dung, và trống gần BẰNG NHAU ở mọi section nên không
+section nào đọc ra là quan trọng hơn. Sau khi đổi: 1 904px / 26%, `docH` giảm
+585px, `CtaBand` lấp đầy 36% → 54%, `Identity` 51% → 63%.
+**Đã cân nhắc và bỏ:** đổi giá trị số của breakpoint cho khớp nhau. Bỏ vì mọi
+trang sẽ reflow một lượt mà không ai đo được cái gì đã đổi; giữ nguyên số của
+Tailwind rồi chuyển `--gutter`/`--section-y` sang clamp thì không trang nào
+nhảy.
+**Bẫy đã gặp — đắt nhất phiên này:** đặt khoá spacing tên `block` làm Tailwind
+sinh `.inline-block{inline-size:var(--pv-space-block)}`, **đè lên chính class
+lõi** `.inline-block{display:inline-block}`. Mọi phần tử `inline-block` trên
+site bị ép rộng đúng 56px; triệu chứng duy nhất nhìn thấy được là từ khoá phát
+sáng trong tiêu đề hero mất dấu cách phía sau ("Biến AIthành"). `build`, `lint`
+và `check:tokens` đều sạch. Nay có bảng `RESERVED` trong `check-tokens.mjs`.
+**Đổi lại thì phải sửa:** LỚP 3 và `@theme inline` trong `globals.css`,
+`section.tsx`, `scripts/check-tokens.mjs`, `scripts/check-layout.mjs`,
+`docs/DESIGN-TOKENS.md`, skill `pv-ui`.
+
+## 2026-08-17 — Vùng chạm đo bằng thiết bị trỏ, không bằng bề ngang màn
+**Bối cảnh:** nút trên điện thoại khó bấm — select ở header 36px, nút trong
+section 40px, cả hai dưới ngưỡng 44px của Apple HIG.
+**Chọn:** bốn token `--h-control-*`, và cả bốn nhảy lên trong
+`@media (pointer: coarse)`. `button.tsx`, `select.tsx`, `input.tsx` đọc token
+thay cho bậc `h-*` cố định.
+**Vì:** bề ngang màn hình không nói được người ta bấm bằng gì — máy tính bảng
+1024px vẫn là ngón tay, cửa sổ kéo hẹp 380px trên máy bàn vẫn là chuột. Lấy bề
+ngang làm dấu hiệu là đoán sai ở cả hai đầu thang.
+**Đã cân nhắc và bỏ:** nâng thẳng thang cho mọi thiết bị. Bỏ vì nút 48–52px
+trên máy bàn đọc ra là giao diện cảm ứng bị phóng to.
+**Đo được sau khi đổi (390×844, touch):** hero 52 · nút section 48 · header 44 ·
+ô nhập trong drawer 48 · không còn control nào dưới 44. Máy bàn chỉ đổi `lg`
+44 → 48.
+**Đổi lại thì phải sửa:** khối `--h-control-*` và `@media (pointer: coarse)`
+trong `globals.css`; `button.tsx`, `select.tsx`, `input.tsx` phải trả về bậc
+`h-*` cố định.
