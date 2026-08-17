@@ -61,7 +61,14 @@ export async function Identity() {
        nền mới thì ĐO LẠI trên ảnh mới, đừng chép ba con số cũ — chúng lấy từ
        chỗ vật sáng lên trong đúng file đó. Bản cũ nằm trong git; hai file ảnh
        vẫn ở `public/brand/`. */
-    <Section id="pebble-vina" sky="night">
+    /* `height="screen"` ở MỌI khổ (chủ dự án chốt 2026-08-17). Đây là ngoại lệ
+       có chủ ý so với luật "chỉ hero mới trọn màn": section này đứng ngay sau
+       hero và là câu trả lời "Pebble Vina là ai", nên nó phải được đọc như một
+       màn riêng chứ không phải một khối trôi qua. Ba dòng định nghĩa mà nằm
+       lửng giữa hai section khác thì đọc ra là chú thích.
+       Không nhân ngoại lệ này ra section khác — xem docs/DESIGN-TOKENS.md
+       § Chiều cao section. */
+    <Section id="pebble-vina" sky="night" height="screen">
       <SectionHeader title={t("title")} />
       <DefinitionList
         className="mt-14 w-full max-w-3xl"
