@@ -242,6 +242,25 @@
      --radius so card/image rounding can change without reshaping controls. */
   --radius-control: 0.375rem;
 
+  /* ---- CHIỀU CAO CONTROL ------------------------------------------------
+     Bốn nấc, và cả bốn NHẢY LÊN khi thiết bị trỏ bằng ngón tay.
+
+     Điều kiện là `pointer: coarse`, KHÔNG phải một breakpoint. Bề ngang màn
+     hình không nói được người ta đang bấm bằng gì: máy tính bảng 1024px vẫn
+     là ngón tay, còn cửa sổ trình duyệt kéo hẹp còn 380px trên máy bàn vẫn là
+     con trỏ chuột. Lấy bề ngang làm dấu hiệu là đoán sai cả hai đầu.
+
+     Nấc chạm lấy theo ngưỡng 44px của Apple HIG và 48dp của Material — `sm`
+     là nấc thấp nhất còn được phép chạm tới ngưỡng đó, nên nút trong header
+     ở điện thoại cao 44px chứ không phải 36px. `xs` (mũi tên điều hướng băng
+     card) lên 36px: nó vẫn dưới ngưỡng, nhưng đó là control phụ có thao tác
+     thay thế bằng vuốt ngang.
+     --------------------------------------------------------------------- */
+  --h-control-xs: 1.75rem; /* 28 */
+  --h-control-sm: 2.25rem; /* 36 */
+  --h-control-md: 2.5rem; /* 40 */
+  --h-control-lg: 3rem; /* 48 — nút chính của hero và dải CTA */
+
   /* Bóng đen vô hình trên nền tối — tách control bằng vạch sáng inset ở cạnh
      trên, và làm sâu lớp đổ bóng phía dưới. */
   --shadow-control:
@@ -349,10 +368,44 @@
   --lift-md: 20px;
   --lift-lg: 40px;
 
-  /* Nhịp bố cục */
+  /* ---- NHỊP BỐ CỤC ----------------------------------------------------
+     SÁU VAI TRÒ, không phải sáu con số. Cùng mô hình với thang chữ ngay
+     dưới: chọn theo việc khoảng cách đang làm (`mt-block`, `gap-item`),
+     không theo nó rộng bao nhiêu (`mt-14`, `gap-3`) — nhờ vậy chỉnh nhịp
+     của cả site chỉ sửa ở đây.
+
+     Cả sáu co giãn mượt bằng clamp giữa 375px và 1280px, KHÔNG nhảy bậc ở
+     breakpoint. Đây là lý do bảng này thay hai khối @media cũ: trước đó
+     `--gutter` bước ở 768 còn `--section-y` bước ở 1280, mà bố cục thì đổi
+     ở 1024 — ba thang bước ở ba nơi khác nhau thì không đọc ra một hệ.
+
+     Neo của mỗi vai trò là giá trị đang dùng nhiều nhất trong code trước
+     khi có bảng này, nên đổi sang tên vai trò không làm trang nhảy.
+     --------------------------------------------------------------------- */
+
+  /* Nhịp dọc của section — padding trên/dưới. 80 → 136 */
+  --pv-space-section: clamp(5rem, 3.55rem + 6.19vw, 8.5rem);
+
+  /* Tiêu đề section → thân section. 40 → 56 */
+  --pv-space-stack: clamp(2.5rem, 2.09rem + 1.77vw, 3.5rem);
+
+  /* Giữa hai CỘT lớn của một bố cục. 32 → 80 */
+  --pv-space-column: clamp(2rem, 0.76rem + 5.3vw, 5rem);
+
+  /* Giữa hai nhóm trong cùng một khối. 24 → 32 */
+  --pv-space-group: clamp(1.5rem, 1.29rem + 0.88vw, 2rem);
+
+  /* Giữa các item cùng loại trong một danh sách. 12 → 16 */
+  --pv-space-item: clamp(0.75rem, 0.65rem + 0.44vw, 1rem);
+
+  /* Nhãn ↔ giá trị. Không co giãn: hai thứ dính nhau thì ở khổ nào cũng
+     phải dính bằng nhau, y như `text-ui` không co giãn. */
+  --pv-space-tight: 0.5rem;
+
+  /* Lề ngoài của container. 20 → 32 */
+  --gutter: clamp(1.25rem, 0.5rem + 3.2vw, 2rem);
+
   --container-max: 1280px;
-  --gutter: 1.25rem;
-  --section-y: 5rem;
 
   /* ---- THANG CHỮ ------------------------------------------------------
      Mười một VAI TRÒ, không phải mười một cỡ. Chọn theo việc chữ đang làm
@@ -425,16 +478,18 @@
   --pv-tracking-brand: 0.16em;
 }
 
-@media (min-width: 768px) {
-  :root {
-    --gutter: 2rem;
-    --section-y: 7rem;
-  }
-}
+/* Hai khối @media cũ (`--gutter` ở 768, `--section-y` ở 1280) đã gỡ — cả hai
+   nay là clamp trong LỚP 3. Không thêm @media nào cho khoảng cách hay cỡ chữ
+   ở đây nữa: bậc breakpoint chỉ còn dành cho SỐ CỘT và HƯỚNG xếp. */
 
-@media (min-width: 1280px) {
+/* Ngón tay, không phải chuột. Đây là @media DUY NHẤT được phép đổi kích thước
+   trong hệ, và nó hợp lệ vì hỏi về THIẾT BỊ TRỎ chứ không hỏi bề ngang màn. */
+@media (pointer: coarse) {
   :root {
-    --section-y: 8.5rem;
+    --h-control-xs: 2.25rem; /* 36 */
+    --h-control-sm: 2.75rem; /* 44 — ngưỡng Apple HIG */
+    --h-control-md: 3rem; /* 48 — ngưỡng Material */
+    --h-control-lg: 3.25rem; /* 52 */
   }
 }
 
@@ -549,6 +604,39 @@
 
   --tracking-brand: var(--pv-tracking-brand);
 
+  /* Thang nhịp theo vai trò → `mt-block`, `gap-item`, `py-section`… Thang số
+     của Tailwind (`mt-14`, `gap-3`) vẫn chạy nhưng chỉ còn dành cho
+     `src/components/ui/`; `pnpm check:tokens` chặn nó ở chỗ khác. */
+  --spacing-section: var(--pv-space-section);
+  --spacing-stack: var(--pv-space-stack);
+  --spacing-column: var(--pv-space-column);
+  --spacing-group: var(--pv-space-group);
+  --spacing-item: var(--pv-space-item);
+  --spacing-tight: var(--pv-space-tight);
+
+  /* Bề ngang theo vai trò → `max-w-lead`, `max-w-body`, `max-w-header`,
+     `max-w-rail`. Thay bốn hệ đơn vị từng trộn lẫn trong code
+     (`max-w-3xl` · `max-w-5xl` · `[56rem]` · `[58ch]`).
+
+     Hai vai trò chữ để bằng `ch` CÓ CHỦ Ý: 58ch của `text-lead` và 58ch của
+     `text-body` ra hai bề ngang khác nhau, và đó đúng là điều mình muốn —
+     giới hạn là SỐ KÝ TỰ một dòng, không phải số pixel. */
+  --container-lead: 58ch;
+  --container-body: 68ch;
+  --container-header: 48rem;
+  --container-rail: 15rem;
+
+  /* Breakpoint khai thẳng để đọc được là hệ này có mấy mốc và mốc nào làm
+     việc gì. Giá trị giữ đúng mặc định Tailwind nên không trang nào reflow.
+     Vai trò từng mốc: `docs/DESIGN-TOKENS.md` mục *Thang màn hình*.
+     `2xl` gỡ khỏi từ vựng — 0 chỗ dùng, và một mốc thứ năm không ai thiết kế
+     cho nó thì chỉ là chỗ để code trôi vào. */
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: initial;
+
   /* Indirection keeps the per-sky remap live at use sites */
   --radius-control: var(--radius-control);
   --shadow-control: var(--shadow-control);
@@ -638,9 +726,11 @@
   padding-inline: var(--gutter);
 }
 
-/* Nhịp dọc chuẩn của section. */
+/* Nhịp dọc chuẩn của section. Với `height="auto"` (mặc định) padding này CHÍNH
+   LÀ thứ tạo nhịp giữa hai section — trước đây nó gần như vô hình vì section
+   nào cũng cao trọn một màn và nội dung căn giữa. */
 @utility pv-section {
-  padding-block: var(--section-y);
+  padding-block: var(--pv-space-section);
 }
 
 /* Viền tóc — hệ này dùng viền thay đổ bóng. */
