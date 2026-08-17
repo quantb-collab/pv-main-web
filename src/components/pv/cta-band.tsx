@@ -13,19 +13,25 @@ import type { Cta } from "@/content/registry";
  */
 
 /*
-  Đích phải khớp nhãn. `cta.assessment` hiện là "Đặt lịch khảo sát" nên nó trỏ
-  về `/ai-assessment` — đúng trang có form khảo sát. Đổi nhãn thì đổi luôn ba
-  href ở hero + header cho khớp, đừng để nút hứa một đằng mở ra một nẻo.
+  MỌI CTA CHÀO MỜI ĐỀU MỞ FORM (chủ dự án 2026-08-14). Năm nhãn dưới đây là năm
+  cách nói của cùng một lời mời — ba offer §"Ba offer" blueprint — nên tất cả
+  phải rơi vào cùng một chỗ nhận lead. Trước đó chỉ `assessment` mở form, còn
+  bốn nhãn kia trỏ về `/contact` — trang KHÔNG có form, tức 23/33 trang của site
+  kết thúc bằng một ngõ cụt.
+
+  `contact` và `none` KHÔNG nằm trong danh sách: đó là "liên hệ" trần của trang
+  pháp lý, không phải một lời mời khảo sát — nút hứa liên hệ mà mở ra form khảo
+  sát là hứa một đằng mở một nẻo.
+
+  `/ai-assessment` vẫn sống và vẫn là đích của link chia sẻ; drawer là lối tắt.
 */
-const HREF: Record<Cta, string> = {
-  assessment: "/ai-assessment",
-  process: "/contact",
-  architecture: "/contact",
-  usecase: "/contact",
-  poc: "/contact",
-  contact: "/contact",
-  none: "/contact",
-};
+const OFFER_CTA: ReadonlySet<Cta> = new Set([
+  "assessment",
+  "process",
+  "architecture",
+  "usecase",
+  "poc",
+]);
 
 export async function CtaBand({
   cta = "assessment",
@@ -51,23 +57,18 @@ export async function CtaBand({
           lead={lead ?? tf("lead")}
         >
           {/*
-            `assessment` mở DRAWER thay vì điều hướng (chủ dự án 2026-08-07):
-            người đọc vừa bị thuyết phục xong thì đừng bắt họ rời trang để điền
-            form — rời trang là chỗ rơi rụng lớn nhất của phễu. Các cta còn lại
-            (`architecture`, `poc`, `contact`…) vẫn là link như cũ, vì chúng dẫn
-            tới một cuộc trao đổi cần đọc thêm chứ không phải một form.
-
-            `/ai-assessment` VẪN sống và vẫn là đích của mọi link chia sẻ —
-            drawer chỉ là lối tắt, không thay thế trang.
+            Drawer thay vì điều hướng (chủ dự án 2026-08-07): người đọc vừa bị
+            thuyết phục xong thì đừng bắt họ rời trang để điền form — rời trang
+            là chỗ rơi rụng lớn nhất của phễu. Nhãn GIỮ NGUYÊN theo từng trang
+            ("Trao đổi kiến trúc" ở trang kỹ thuật, "Khoanh phạm vi PoC" ở trang
+            PoC): nhãn là lời mời hợp ngữ cảnh, form phía sau là một.
           */}
           <Reveal className="mt-4">
-            {cta === "assessment" ? (
-              <AssessmentDrawerButton size="lg">
-                {t("assessment")}
-              </AssessmentDrawerButton>
+            {OFFER_CTA.has(cta) ? (
+              <AssessmentDrawerButton size="lg">{t(cta)}</AssessmentDrawerButton>
             ) : (
-              <CtaButton href={HREF[cta]} size="lg">
-                {t(cta === "none" ? "contact" : cta)}
+              <CtaButton href="/contact" size="lg">
+                {t("contact")}
               </CtaButton>
             )}
           </Reveal>
