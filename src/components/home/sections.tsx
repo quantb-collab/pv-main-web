@@ -101,6 +101,105 @@ export async function Contrast() {
           items: [1, 2, 3, 4].map((n) => t(`r${n}s${s}`)),
         }))}
       />
+
+      {/* CẦU NỐI, thêm 2026-08-14. Bảng tả ba nấc rất rõ nhưng không nói ĐI
+          THẾ NÀO, và đây là chỗ người đọc vừa tự nhận ra mình ở nấc 02 — tức
+          điểm gật đầu mạnh nhất trang. Để họ trôi qua mà không đưa bước kế
+          tiếp là phí đúng khoảnh khắc đó.
+
+          Câu này gánh một việc thứ hai: gỡ nỗi sợ "mua của các anh thì phải bỏ
+          cái đang có". Nó nói thẳng là không phải thay hệ thống.
+
+          Căn giữa theo tiêu đề section, và `max-w-2xl` để dòng không dài quá đo
+          đọc — nó là một câu kết, không phải một đoạn văn. */}
+      <Reveal>
+        <p className="mx-auto mt-10 max-w-2xl text-center text-body text-muted-foreground text-balance">
+          {t("bridge")}
+        </p>
+      </Reveal>
+    </Section>
+  );
+}
+
+/**
+ * Section 3b — BA NGUYÊN TẮC, thêm 2026-08-14.
+ *
+ * VỊ TRÍ. Ngay sau ba nấc và ngay trước bốn việc. Người đọc vừa thừa nhận mình
+ * ở nấc 02 và vừa đọc "gắn thêm lớp AI vào chỗ đang tắc"; câu tiếp theo nảy ra
+ * trong đầu họ không phải "làm thế nào" mà là "đưa AI vào thì có mất kiểm soát
+ * không". Section này trả lời TRƯỚC KHI họ kịp hỏi. Đặt nó sau phần sản phẩm
+ * thì nó trả lời một câu đã kịp thành nghi ngờ.
+ *
+ * NỘI DUNG KHÔNG MỚI, CHỖ ĐỨNG MỚI. Nguyên tắc 01 trước đây là vế thứ hai của
+ * `who.r3Text` — một mệnh đề phụ nằm trong hàng "Cách làm" của section định vị,
+ * tức thứ khác biệt nhất của Pebble Vina bị chôn ở dòng thứ ba của khối ít ai
+ * đọc kỹ nhất. Nay nó là nguyên tắc số một và có riêng một khối.
+ *
+ * BA, KHÔNG PHẢI BỐN. Cả ba đều KIỂM CHỨNG ĐƯỢC — khách hỏi lại được và bắt
+ * chứng minh được. Đó là lý do chúng đáng tin hơn mọi khẩu hiệu, và cũng là bộ
+ * lọc để thêm nguyên tắc thứ tư: không kiểm chứng được thì không được vào.
+ *
+ * KHÔNG có ô chờ: không khẳng định nào ở đây cần bằng chứng ngoài chính cách
+ * sản phẩm vận hành.
+ */
+export async function Principles() {
+  const t = await getTranslations("home.principles");
+
+  return (
+    <Section id="nguyen-tac" sky="night">
+      <SectionHeader eyebrow={t("eyebrow")} title={t("title")} />
+      {/* `labelCol="wide"`: nhãn ở đây là câu tuyên bố ba–bốn chữ, không phải
+          một từ khoá như `Identity`. Ở cột 9rem mặc định cả ba đều gãy hai
+          dòng (đo trên Chrome thật ở 1440). */}
+      <DefinitionList
+        labelCol="wide"
+        className="mt-14 w-full max-w-4xl"
+        items={[1, 2, 3].map((n) => ({
+          label: t(`p${n}Title`),
+          text: t(`p${n}Text`),
+        }))}
+      />
+    </Section>
+  );
+}
+
+/**
+ * Section 3c — BỐN VIỆC, MÁY LÀM PHẦN NÀO, thêm 2026-08-14.
+ *
+ * KHOẢNG TRỐNG NÓ LẤP. Trang cũ nhảy thẳng từ nỗi đau (ba nấc) sang sản phẩm.
+ * Thiếu đúng một bước ở giữa: cụ thể thì AI làm gì trong việc của tôi. Khối này
+ * lấp bước đó và cố ý KHÔNG nhắc tên sản phẩm nào — nó nói bằng ngôn ngữ việc,
+ * nên người đọc hình dung được thay đổi trên bàn làm việc của mình trước khi
+ * phải nhớ một cái tên.
+ *
+ * ⚠️ VÌ SAO KHÔNG PHẢI LÀ CỘT 3 CỦA BẢNG BA NẤC. Bảng đã có `r{n}s3` tả trạng
+ * thái ĐÍCH của cùng bốn việc ("Hỏi tiếng Việt, trả lời kèm nguồn"). Nếu khối
+ * này cũng tả trạng thái đích thì nó là lần liệt kê thứ hai của đúng một bộ
+ * chữ — thừa, và đó là cái bẫy dễ rơi nhất khi dựng section này. Nên nó nói
+ * một trục KHÁC: PHÂN VAI. Mỗi mục đọc ra là "máy làm đến đâu, người giữ chỗ
+ * nào" — thông tin mới, và nó chứng minh lại nguyên tắc 01 vừa nêu ở trên bằng
+ * bốn ví dụ cụ thể thay vì bằng một lời hứa.
+ *
+ * TAG LẤY THẲNG TỪ `home.contrast`, y như `Stats` làm. Cùng một bộ bốn việc thì
+ * phải cùng một bộ chữ — lệch một từ là mắt không nối được ba khối với nhau.
+ * Thêm việc thứ năm thì sửa `home.contrast` trước, ba khối tự đi theo.
+ */
+export async function Jobs() {
+  const t = await getTranslations("home.jobs");
+  const tc = await getTranslations("home.contrast");
+
+  return (
+    <Section id="bon-viec" sky="deep">
+      <SectionHeader eyebrow={t("eyebrow")} title={t("title")} />
+      <div className="mt-14 overflow-hidden rounded-xl border">
+        <CardGrid cols={4}>
+          {[1, 2, 3, 4].map((n) => (
+            <Card key={n} index={n} title={tc(`r${n}Tag`)}>
+              {t(`j${n}Text`)}
+            </Card>
+          ))}
+        </CardGrid>
+      </div>
     </Section>
   );
 }
@@ -589,15 +688,13 @@ export async function Hardware() {
           title: t("p1TechTitle"),
           body: t("p1TechBody"),
         },
-        leadLabel: t("p1LeadLabel"),
-        lead: {
-          name: t("p1CeoName"),
-          role: t("p1CeoRole"),
-          creds: [1, 2, 3].map((c) => t(`p1CeoCred${c}`)),
-        },
-        stats: [1, 2].map((s) => ({
-          value: t(`p1Stat${s}Value`),
-          label: t(`p1Stat${s}Label`),
+        /* Ba lợi điểm TRIỂN KHAI, thay chỗ hồ sơ người sáng lập và bảng
+           200+/800+ (rút 2026-08-14 — xem chú thích đầu hàm). Chúng là hệ quả
+           kiến trúc của xử lý tại biên, không phải phép đo: `specGap` ghi rõ
+           đừng nâng lên thành con số. */
+        benefits: [1, 2, 3].map((b) => ({
+          title: t(`b${b}Title`),
+          text: t(`b${b}Text`),
         })),
       },
       lines: [1, 2, 3].map((n) => ({
@@ -606,22 +703,18 @@ export async function Hardware() {
            tại thiết bị") mà chủ dự án gỡ 2026-08-07 vì nó nói lại đúng thứ
            dòng này đã nói. */
         fit: t(`c${n}Fit`),
-        /* Thông số lấy NGUYÊN từ trang Pebble Square tự công bố —
-           pebble-square.com/en/page/21, "Pebble Square's AI Chip Family",
-           kiểm 2026-08-07. Nhãn dịch từ chính nhãn của họ:
-             Power Efficiency · Neural Network · Chip Size
-             Advanced Process · Peak Performance · Typical Power
-           Hai điều KHÔNG được tự ý sửa:
-           · "4 triệu" giữ đúng "Neural Network: 4 million" — bản gốc không nêu
-             đơn vị, nên đoán thành "tham số" hay "khớp thần kinh" là bịa.
-           · "~160 TOPS" phải đi kèm nhãn "Hiệu năng đỉnh": bản gốc ghi rõ
-             "Peak Performance", và blueprint cấm benchmark thiếu điều kiện đo.
-           Số nằm ở `Value`, nhãn ở `Label` — tách đôi để cột số canh thẳng
-           hàng được, xem `ShelfTier`. */
-        specs: [1, 2, 3].map((s) => ({
-          value: t(`c${n}s${s}Value`),
-          label: t(`c${n}s${s}Label`),
-        })),
+        /* KHÔNG TRUYỀN `specs` — thông số đã rút khỏi trang chủ 2026-08-14.
+           `registry.ts` entry `home` khai thẳng trong `forbidden`: "Danh sách
+           chip hoặc thông số phần cứng ở phần đầu trang". Section này lại đứng
+           ở vị trí I, tức đúng phần đầu trang. Chín cặp giá trị/nhãn (TOPS/W ·
+           mạng nơ-ron · kích thước · TSMC N6 · ~160 TOPS · ~10W) nay chỉ còn
+           trong `specGap` và trong git.
+           Chúng thuộc /technology/edge-hardware — trang đó hiện là stub, và
+           `ShelfLine.specs` vẫn còn (tuỳ chọn) để dựng lại không phải viết lại
+           `ChipSpecs` với `ShelfTier`. Lấy lại thì kèm nguyên nguồn
+           pebble-square.com/en/page/21 và hai điều không được tự ý sửa: "4
+           triệu" giữ đúng "Neural Network: 4 million" (bản gốc không nêu đơn
+           vị), và "~160 TOPS" phải đi kèm nhãn "Hiệu năng đỉnh". */
         /* Màu lấy từ chính tên chip. Thứ tự khớp c1/c2/c3 — đổi thứ tự dòng
            chip thì phải đổi cả mảng này, nếu không PAPAYA ra màu bạc hà. */
         accent: (["mint", "papaya", "espresso"] as const)[n - 1],

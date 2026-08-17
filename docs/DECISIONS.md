@@ -1289,3 +1289,96 @@ trang và mọi section y hệt trước, tràn ngang 0.
 **Đổi lại thì phải sửa:** `src/components/pv/app-shot.tsx`, `ShotLabels` trong
 `src/components/home/software-bento.tsx`, ba khoá `viewLabel`/`fitLabel`/
 `readLabel` trong `messages/vi.json`.
+
+## 2026-08-14 — Trang chủ dựng lại quanh khung "bốn việc"
+**Bối cảnh:** Bản đánh giá content ngày 13/08 chấm trang chủ 5/10 và chẩn đoán
+gốc là: trang đang trả lời "Pebble Vina là ai và có công nghệ gì", còn người
+đọc đang hỏi "việc đang tắc của tôi có giải được không". Chủ dự án chọn phạm vi
+"6 khối viết được ngay" — những khối KHÔNG cần thêm dữ kiện nào từ Pebble Vina.
+
+**Đối chiếu trước khi làm.** Ba trong năm điểm của bản đánh giá đúng nguyên
+văn; hai điểm đã cũ, và một lập luận mạnh hơn cả năm điểm thì bản đánh giá bỏ
+sót:
+- ĐÚNG: hero rỗng · bốn số minh hoạ · phần cứng nặng nhất trang · không trả lời
+  bốn câu hỏi người mua · khung "bốn việc" đã có sẵn ở `contrast.r{n}Tag`.
+- ĐÃ CŨ: brief ảnh KHÔNG hiện trên mặt trang — ba ô sản phẩm truyền `compact`
+  nên chỉ vẽ dấu `+`, chữ brief đi vào `title` (tooltip) và `sr-only`. Và câu
+  "không nhằm chốt hợp đồng" không còn ở trang chủ từ 2026-08-13, nó nằm ở
+  `assessment.lead`; "bốn bước" mà bản đánh giá bảo giữ đã bị xoá cùng prop
+  `items` của `CtaBand`.
+- BỎ SÓT: `registry.ts` entry `home` khai `forbidden` gồm "Danh sách chip hoặc
+  thông số phần cứng ở phần đầu trang" và "Số liệu ROI chưa được assessment xác
+  nhận". Hai đề xuất lớn nhất không phải chuyện khẩu vị — trang đang vi phạm
+  luật của chính repo.
+
+**Chọn:** Bốn việc (tra cứu · chứng từ · báo cáo · phê duyệt) làm xương sống,
+và thêm hai section vào đúng chỗ mạch lập luận đang hụt.
+- Hero nêu tên bốn việc thay câu "đồng hành xây dựng doanh nghiệp số tự vận
+  hành".
+- `Principles` (MỚI, `night`) — ba nguyên tắc, chặn câu "đưa AI vào thì có mất
+  kiểm soát không" ngay khi nó vừa nảy. Nguyên tắc 01 NÂNG LÊN từ vế thứ hai
+  của `who.r3Text`, nơi thứ khác biệt nhất của Pebble Vina đang bị chôn trong
+  một mệnh đề phụ.
+- `Jobs` (MỚI, `deep`) — phân vai máy/người trên đúng bốn việc, lấp bước còn
+  thiếu giữa nỗi đau và sản phẩm.
+- `Contrast` thêm câu cầu nối và đổi nhãn nấc 03 "Số hoá tự hành cùng AI" →
+  "AI đã vào quy trình".
+- `Hardware` rút gọn: bỏ 9 thông số chip, hồ sơ người sáng lập đối tác, 200+
+  bài SCI và 800+ bằng sáng chế; thay bằng ba lợi điểm TRIỂN KHAI.
+
+**Vì sao `Jobs` nói phân vai chứ không nói trạng thái đích:** bảng ba nấc đã có
+`r{n}s3` tả trạng thái đích của cùng bốn việc ("Hỏi tiếng Việt, trả lời kèm
+nguồn"). Nếu `Jobs` cũng tả trạng thái đích thì nó là lần liệt kê thứ hai của
+đúng một bộ chữ. Trục "máy làm đến đâu, người giữ chỗ nào" là thông tin mới, và
+nó chứng minh lại nguyên tắc 01 bằng bốn ví dụ thay vì bằng một lời hứa.
+
+**Vì sao cắt hồ sơ người sáng lập đối tác — hai lý do, không lý do nào là thẩm
+mỹ:** (1) đó là CEO của ĐỐI TÁC, không phải người sẽ ngồi làm việc với khách,
+nên nó trả lời một câu chưa ai hỏi; (2) họ tên thật trên trang công khai cần sự
+đồng ý của chính người đó, nên rút nó đi là GỠ LUÔN một ô chặn phát hành khỏi
+`partnerGap`.
+
+**Bốn số minh hoạ GIỮ NGUYÊN (chủ dự án chốt 2026-08-14),** thay cho đề xuất
+thay chúng bằng section "Cách chúng tôi đo". Hệ quả đã xử: giữ số thì KHÔNG
+dựng được section đó — trang sẽ vừa treo bốn con số vừa nói "chúng tôi chưa có
+số nào". Phần "cách đo" gộp vào chính ô `mBody` đang có. Tiêu đề section sửa
+"Mức cải thiện ĐO ĐƯỢC sau triển khai" → "Mức cải thiện NHẮM TỚI cho từng
+việc": ô chú thích ngay dưới đã nói số là minh hoạ, nên tiêu đề cũ nói "đo
+được" là tự mâu thuẫn trong cùng một khối. Mục 2026-08-06 (bento bốn nấc) vẫn
+còn hiệu lực; trang vẫn lệch với `forbidden` của registry và đó là quyết định
+đã cân nhắc của chủ dự án.
+
+**Đã cân nhắc và bỏ:**
+- Dựng `Principles` và `Jobs` bằng `CardGrid`: đúng thiết kế bản đánh giá đề
+  xuất (01 · 02 · 03), nhưng hai lưới thẻ cách nhau một màn hình đi thẳng vào
+  phản hồi "lạm dụng cards" đang chờ chủ dự án quyết. `Jobs` giữ `CardGrid`
+  (bốn ô đánh số đọc rất rõ), `Principles` dùng `DefinitionList`.
+- Giữ nhãn `DefinitionList` ở cột 9rem mặc định: đo trên Chrome thật ở 1440 thì
+  CẢ BA nhãn của `Principles` gãy hai dòng, vì chúng là câu tuyên bố ba–bốn chữ
+  chứ không phải từ khoá như "Khởi phát". Thêm prop `labelCol="wide"` (14rem)
+  theo luật 3 thay vì dựng lưới riêng.
+- Chuyển thông số chip sang trang riêng NGAY: `/technology/edge-hardware` còn
+  là stub (phase V2). Thông số chỉ rút khỏi trang chủ, đường lấy lại ghi trong
+  `specGap` và trong git.
+
+**Số đo (Chrome thật, 1440×900, chạy trên bản `pnpm start`):** không tràn ngang
+(`scrollWidth` 1440 = khung nhìn). Section mới cao đúng một màn — `nguyen-tac`
+900px (nội dung 486), `bon-viec` 900px (nội dung 417). `phan-cung` 1007px, vẫn
+là section DUY NHẤT vượt một màn.
+
+**Ngân sách chữ — CHƯA ĐẠT, và đây là nợ:** trang chủ 1022 chữ trên bản mặc
+định, trần CLAUDE.md là 900. Trước lượt này đã là 949, tức trang vốn đã vượt.
+Hai section mới cộng 138 chữ, phần cứng trả lại 56. Tám trong mười section nay
+dưới trần 120 chữ/section; hai section phá trần là `training` (213) và
+`hardware` (203) — `training` nằm ngoài phạm vi đợt này. Muốn về 900 thì phải
+cắt `training`, không cắt được ở chỗ khác.
+⚠️ Script đếm chữ trong skill `pv-content` KHÔNG dùng để soi trần này được: nó
+đếm cả ô chờ và brief ảnh nên trả về 3236. Script đếm đúng phần hiển thị nằm ở
+`$CLAUDE_JOB_DIR/tmp/onpage.js` của phiên này.
+
+**Đổi lại thì phải sửa:** `messages/vi.json` khối `home` (hero · who · contrast
+· principles · jobs · stats · hardware); `Principles` + `Jobs` + `Contrast` +
+`Hardware` trong `src/components/home/sections.tsx`; `src/app/[locale]/page.tsx`;
+`ShelfLine.specs` + `ShelfPartnerIntro.lead/stats/benefits` trong
+`product-shelf.tsx`; prop `labelCol` của `DefinitionList` trong `blocks.tsx`;
+và `PROMISE` trong `src/components/pv/highlight.tsx`.

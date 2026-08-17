@@ -29,15 +29,22 @@ const IS_TERM = /^AI$/;
 
 /* Chế độ `brand` — CHỈ dành cho h1 hero, nơi thương hiệu tự giới thiệu.
    Tiêu đề hero có đúng hai điểm nhấn, mỗi cái một trị khác nhau:
-     `Pebble Vina`                    → <Led>      chủ thể PHÁT SÁNG
-     `doanh nghiệp số tự vận hành`    → <Horizon>  lời hứa GẠCH CHÂN mảnh
+     `Pebble Vina`                                  → <Led>      chủ thể PHÁT SÁNG
+     `bốn việc doanh nghiệp nào cũng làm hằng ngày`  → <Horizon>  lời hứa GẠCH CHÂN
    Một nguồn sáng, một đường chân trời — hai thứ cùng câu chuyện nhưng không
    tranh nhau; hai quầng sáng trong một câu là tranh nhau. Cả hai cụm đều bị
    loại khỏi TERMS toàn cục (`Pebble Vina` 19 chỗ; cụm kia là lời hứa chỉ nói
-   một lần). Thêm call site mới bật `brand` là phải đếm lại như luật 1. */
-const BRAND_TERMS = /(\bAI\b|Pebble Vina|doanh nghiệp số tự vận hành)/g;
+   một lần). Thêm call site mới bật `brand` là phải đếm lại như luật 1.
+
+   ⚠️ CỤM LỜI HỨA PHẢI KHỚP TỪNG CHỮ VỚI `home.hero.title`. Nó là một nhánh
+   của BRAND_TERMS chứ không phải hậu tố cắt ra từ chuỗi, nên viết lại tiêu đề
+   hero mà quên chỗ này thì gạch chân biến mất LẶNG LẼ — không lỗi build, không
+   cảnh báo, chỉ là hero mất một trong hai dấu nhấn. Đổi 2026-08-14 cùng lượt
+   viết lại hero theo khung "bốn việc" (cụm cũ: `doanh nghiệp số tự vận hành`). */
+const PROMISE = "bốn việc doanh nghiệp nào cũng làm hằng ngày";
+const BRAND_TERMS = new RegExp(`(\\bAI\\b|Pebble Vina|${PROMISE})`, "g");
 const IS_BRAND_TERM = /^(?:AI|Pebble Vina)$/;
-const IS_PROMISE = /^doanh nghiệp số tự vận hành$/;
+const IS_PROMISE = new RegExp(`^${PROMISE}$`);
 
 /**
  * Descends through arrays and elements alike. Callers wrap a whole heading or

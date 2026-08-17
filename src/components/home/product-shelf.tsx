@@ -118,8 +118,14 @@ export interface ShelfLine {
   fit: string;
   /** Ba thông số, số tách rời nhãn để cột số canh thẳng hàng được.
    *  Đúng ba dòng cho cả ba chip — bốn dòng thì tầng kệ cao hơn card ảnh và
-   *  cả section đội lên. Nguồn và những chỗ không được sửa: `sections.tsx`. */
-  specs: { value: string; label: string }[];
+   *  cả section đội lên. Nguồn và những chỗ không được sửa: `sections.tsx`.
+   *
+   *  TUỲ CHỌN từ 2026-08-14, và TRANG CHỦ KHÔNG TRUYỀN NỮA: `registry.ts`
+   *  cấm "danh sách chip hoặc thông số phần cứng ở phần đầu trang" ngay trong
+   *  entry `home`. Thông số thuộc /technology/edge-hardware. Trường vẫn còn vì
+   *  trang đó sẽ dùng lại đúng component này — bỏ hẳn thì lúc dựng phải viết
+   *  lại `ChipSpecs` và `ShelfTier` từ đầu. */
+  specs?: { value: string; label: string }[];
   /** Màu lấy từ tên chip. Xem quyết định 4. */
   accent: ChipAccent;
   products: ShelfProduct[];
@@ -150,13 +156,28 @@ export interface ShelfPartnerIntro {
   /** Lợi thế kiến trúc, phủ CẢ BA dòng chip bên phải nên nó đứng ở cột trái.
    *  `title` là lợi ích, `body` mới là cơ chế — không đảo ngược thứ tự đó. */
   tech: { label: string; title: string; body: string };
-  leadLabel: string;
+  /** Ba lợi điểm TRIỂN KHAI, thay chỗ hồ sơ người sáng lập từ 2026-08-14.
+   *  Chúng trả lời câu người mua thật sự mang tới section này — "vì sao không
+   *  đẩy hết lên đám mây" — chứ không phải "đối tác này oai cỡ nào". Đây là hệ
+   *  quả kiến trúc của xử lý tại biên, KHÔNG phải phép đo: đừng nâng lên thành
+   *  con số (ghi trong `specGap`). */
+  benefits?: { title: string; text: string }[];
+  leadLabel?: string;
   /** `creds` là các mốc nghề nghiệp, MỖI MỐC MỘT DÒNG. Không nối lại thành
    *  một chuỗi ngăn bằng dấu chấm giữa: hồ sơ một con người không đọc như một
-   *  dòng thông số. */
-  lead: { name: string; role: string; creds: string[] };
-  /** Hai con số của bảng thành tích. */
-  stats: { value: string; label: string }[];
+   *  dòng thông số.
+   *
+   *  TUỲ CHỌN từ 2026-08-14, và TRANG CHỦ KHÔNG TRUYỀN NỮA. Hai lý do, cả hai
+   *  đều không phải chuyện thẩm mỹ: (1) đây là CEO của ĐỐI TÁC, không phải
+   *  người sẽ ngồi làm việc với khách, nên nó trả lời một câu chưa ai hỏi;
+   *  (2) họ tên thật trên trang công khai cần sự đồng ý của chính người đó —
+   *  rút nó đi là gỡ luôn một ô CHẶN PHÁT HÀNH khỏi `partnerGap`. */
+  lead?: { name: string; role: string; creds: string[] };
+  /** Hai con số của bảng thành tích. Tuỳ chọn, và trang chủ không truyền —
+   *  cùng lý do với `lead`: 200+ bài SCI và 800+ bằng sáng chế là thành tích
+   *  của đối tác, cần họ xác nhận, và phục vụ người đọc kỹ thuật ở giai đoạn
+   *  sau chứ không phải người quét trang chủ. */
+  stats?: { value: string; label: string }[];
 }
 
 export interface ShelfPartner {
@@ -330,54 +351,84 @@ function PartnerIntro({ intro }: { intro: ShelfPartnerIntro }) {
         <p className="mt-1 text-meta text-muted-foreground">{intro.tech.body}</p>
       </div>
 
-      <div>
-        <p className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
-          {intro.leadLabel}
-        </p>
-        {/* Tên người lên `text-body` + `font-display` (bản cũ `text-body-sm`):
-            trong cột này nó đang là dòng duy nhất chỉ một con người, mà nó lại
-            nhỏ bằng chú thích. Vẫn dưới `text-title` của `origin` nên thứ bậc
-            trong cột không đổi. */}
-        <p className="mt-3 font-display text-body font-medium">
-          {intro.lead.name}
-        </p>
-        {/* Chức danh tô màu thương hiệu: đó là thứ mắt cần bám để biết mình
-            đang đọc hồ sơ của ai, không phải cái tên. */}
-        {/* `brand-ink` chứ không `brand/80`: bản cũ chỉ 3.2:1 — mờ nhất section,
-            mà đây lại là dòng cố ý tô màu để mắt bám vào. */}
-        <p className="text-ui font-medium text-brand-ink">{intro.lead.role}</p>
+      {/* BA LỢI ĐIỂM TRIỂN KHAI — khối cuối của cột trái từ 2026-08-14, đứng
+          đúng chỗ hồ sơ người sáng lập và bảng 200+/800+ vừa rút đi.
 
-        {/* Ba mốc nghề nghiệp, mỗi mốc một dòng, có chấm đầu dòng.
-            `list-outside` + `pl-4` chứ không `list-inside`: mốc dài xuống dòng
-            thì dòng hai thụt vào thẳng hàng với CHỮ, không chui xuống dưới cái
-            chấm. Đó là khác biệt giữa một hồ sơ và một đoạn văn bị bẻ.
-            Chấm ăn màu `subtle-foreground` — mờ hơn chữ một nấc, đủ để dẫn mắt
-            xuống mà không đếm ngang với nội dung. */}
-        <ul className="mt-2.5 list-disc space-y-1 pl-4 marker:text-subtle-foreground">
-          {intro.lead.creds.map((cred) => (
-            <li key={cred} className="text-meta text-muted-foreground">
-              {cred}
+          Vì sao đổi chứ không chỉ xoá: cột này là chỗ trả lời "vì sao phải là
+          phần cứng", và ba câu hỏi thật của người mua là dữ liệu có ra ngoài
+          không, mất mạng thì sao, tốn tiền kiểu gì. Hồ sơ một CEO Hàn Quốc trả
+          lời được câu nào trong ba câu đó thì không.
+
+          `border-t` giữ nguyên từ bảng số cũ: nó tách khối "đối tác là ai" ở
+          trên khỏi khối "được gì khi chạy tại chỗ" ở dưới. Xếp DỌC chứ không
+          ngang như hai con số cũ — mỗi mục có hai dòng chữ, xếp ngang ba mục ở
+          cột hẹp là ba cột chữ 12 ký tự. */}
+      {intro.benefits?.length ? (
+        <ul className="flex flex-col gap-4 border-t pt-5">
+          {intro.benefits.map((b) => (
+            <li key={b.title}>
+              <p className="text-body-sm font-medium">{b.title}</p>
+              <p className="mt-0.5 text-meta text-muted-foreground">{b.text}</p>
             </li>
           ))}
         </ul>
-      </div>
+      ) : null}
+
+      {/* Hồ sơ người sáng lập — trang chủ KHÔNG truyền nữa (xem `lead` trong
+          `ShelfPartnerIntro`). Giữ nhánh render cho /technology/edge-hardware. */}
+      {intro.lead && intro.leadLabel ? (
+        <div>
+          <p className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
+            {intro.leadLabel}
+          </p>
+          {/* Tên người lên `text-body` + `font-display` (bản cũ `text-body-sm`):
+              trong cột này nó đang là dòng duy nhất chỉ một con người, mà nó lại
+              nhỏ bằng chú thích. Vẫn dưới `text-title` của `origin` nên thứ bậc
+              trong cột không đổi. */}
+          <p className="mt-3 font-display text-body font-medium">
+            {intro.lead.name}
+          </p>
+          {/* Chức danh tô màu thương hiệu: đó là thứ mắt cần bám để biết mình
+              đang đọc hồ sơ của ai, không phải cái tên. */}
+          {/* `brand-ink` chứ không `brand/80`: bản cũ chỉ 3.2:1 — mờ nhất section,
+              mà đây lại là dòng cố ý tô màu để mắt bám vào. */}
+          <p className="text-ui font-medium text-brand-ink">{intro.lead.role}</p>
+
+          {/* Ba mốc nghề nghiệp, mỗi mốc một dòng, có chấm đầu dòng.
+              `list-outside` + `pl-4` chứ không `list-inside`: mốc dài xuống dòng
+              thì dòng hai thụt vào thẳng hàng với CHỮ, không chui xuống dưới cái
+              chấm. Đó là khác biệt giữa một hồ sơ và một đoạn văn bị bẻ.
+              Chấm ăn màu `subtle-foreground` — mờ hơn chữ một nấc, đủ để dẫn mắt
+              xuống mà không đếm ngang với nội dung. */}
+          <ul className="mt-2.5 list-disc space-y-1 pl-4 marker:text-subtle-foreground">
+            {intro.lead.creds.map((cred) => (
+              <li key={cred} className="text-meta text-muted-foreground">
+                {cred}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
       {/* Hai con số nằm ngang nhau, nhãn xuống dòng dưới. Chữ số cỡ `subhead`
           chứ không `display`: đây là chứng chỉ năng lực của một đối tác, không
-          được to hơn bốn chỉ số kết quả kinh doanh ở section Stats phía trên. */}
-      <dl className="flex gap-8 border-t pt-5">
-        {intro.stats.map((stat) => (
-          <div key={stat.label}>
-            <dt className="sr-only">{stat.label}</dt>
-            <dd className="font-display text-subhead font-semibold tabular-nums">
-              {stat.value}
-            </dd>
-            <p aria-hidden className="mt-0.5 text-meta text-muted-foreground">
-              {stat.label}
-            </p>
-          </div>
-        ))}
-      </dl>
+          được to hơn bốn chỉ số kết quả kinh doanh ở section Stats phía trên.
+          Trang chủ KHÔNG truyền nữa — xem `stats` trong `ShelfPartnerIntro`. */}
+      {intro.stats?.length ? (
+        <dl className="flex gap-8 border-t pt-5">
+          {intro.stats.map((stat) => (
+            <div key={stat.label}>
+              <dt className="sr-only">{stat.label}</dt>
+              <dd className="font-display text-subhead font-semibold tabular-nums">
+                {stat.value}
+              </dd>
+              <p aria-hidden className="mt-0.5 text-meta text-muted-foreground">
+                {stat.label}
+              </p>
+            </div>
+          ))}
+        </dl>
+      ) : null}
     </Reveal>
   );
 }
@@ -499,8 +550,13 @@ function ChipSpecs({
               nhất của CHÍNH thẻ đó, không phải của cả ba — ba chip khai ba bộ
               đơn vị khác nhau nên ép chung một bề ngang là để lại một khoảng
               trống lớn ở thẻ có số ngắn. */}
-          <dl className="flex flex-col gap-1.5 border-t pt-4">
-            {line.specs.map((spec) => (
+          <dl
+            className={cn(
+              "flex flex-col gap-1.5 border-t pt-4",
+              !line.specs?.length && "hidden",
+            )}
+          >
+            {(line.specs ?? []).map((spec) => (
               <div key={spec.label} className="flex items-baseline gap-3">
                 {/* `whitespace-nowrap`: giá trị là MỘT đơn vị đo, gãy dòng
                     giữa số và đơn vị thì "17 TOPS/W" đọc thành "17" rồi
@@ -601,18 +657,20 @@ function ShelfTier({
           màn hình nghe ra "Hiệu suất điện — 17 TOPS/W" mới thuận tai); chỉ
           `order` đảo lại phần NHÌN. Đừng đổi thành `dd` đứng trước trong DOM.
         */}
-        <dl className="mt-3 space-y-1">
-          {line.specs.map((spec) => (
-            <div key={spec.label} className="flex items-baseline gap-3">
-              <dt className="order-2 min-w-0 text-meta text-muted-foreground">
-                {spec.label}
-              </dt>
-              <dd className="order-1 w-20 shrink-0 font-mono text-meta font-medium whitespace-nowrap tabular-nums">
-                {spec.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
+        {line.specs?.length ? (
+          <dl className="mt-3 space-y-1">
+            {line.specs.map((spec) => (
+              <div key={spec.label} className="flex items-baseline gap-3">
+                <dt className="order-2 min-w-0 text-meta text-muted-foreground">
+                  {spec.label}
+                </dt>
+                <dd className="order-1 w-20 shrink-0 font-mono text-meta font-medium whitespace-nowrap tabular-nums">
+                  {spec.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        ) : null}
       </div>
 
       <ProductCarousel line={line} index={index} autoplay={autoplay} />

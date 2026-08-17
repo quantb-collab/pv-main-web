@@ -151,9 +151,22 @@ export function StatementList({
  */
 export function DefinitionList({
   items,
+  labelCol = "default",
   className,
 }: {
   items: { label: ReactNode; text: ReactNode }[];
+  /**
+   * Bề ngang cột nhãn. `default` (9rem) cân cho nhãn MỘT–HAI chữ kiểu
+   * "Khởi phát" · "Trọng tâm" · "Cách làm".
+   *
+   * `wide` (14rem) cho nhãn ba–bốn chữ. Thêm 2026-08-14 cho section Nguyên
+   * tắc: nhãn ở đó là câu tuyên bố ("Người giữ quyền quyết"), không phải một
+   * từ khoá, và ở 9rem cả ba đều gãy làm hai dòng — đo trên Chrome thật ở
+   * 1440. Chỉ nới cột, KHÔNG đổi cỡ hay vai trò chữ: nhãn vẫn là nhãn.
+   *
+   * Dưới `sm` cả hai nấc đều xuống một cột nên prop này vô hiệu ở khổ hẹp.
+   */
+  labelCol?: "default" | "wide";
   className?: string;
 }) {
   return (
@@ -161,7 +174,12 @@ export function DefinitionList({
       {items.map((item, i) => (
         <RevealItem
           key={i}
-          className="grid grid-cols-1 items-baseline gap-2 sm:grid-cols-[9rem_1fr] sm:gap-8"
+          className={cn(
+            "grid grid-cols-1 items-baseline gap-2 sm:gap-8",
+            labelCol === "wide"
+              ? "sm:grid-cols-[14rem_1fr]"
+              : "sm:grid-cols-[9rem_1fr]",
+          )}
         >
           <span className="font-mono text-eyebrow font-medium text-subtle-foreground uppercase">
             {item.label}

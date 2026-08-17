@@ -28,9 +28,12 @@ import { DUR, EASE, LIFT, STAGGER } from "@/lib/motion";
  *
  * The headline carries exactly two marks, one treatment each (via `brand` on
  * `<Highlight>` — hero-only, see highlight.tsx): the brand name GLOWS at the
- * head, the promise "doanh nghiệp số tự vận hành" gets a hairline UNDERLINE at
- * the tail. One light source, one horizon line — two glows in one sentence
- * would compete. Decision log: HANDOFF "tô từ nào ở hero" — chốt 2026-08-06.
+ * head, the promise "bốn việc doanh nghiệp nào cũng làm hằng ngày" gets a
+ * hairline UNDERLINE at the tail. One light source, one horizon line — two
+ * glows in one sentence would compete. Decision log: HANDOFF "tô từ nào ở
+ * hero" — chốt 2026-08-06; cụm lời hứa đổi 2026-08-14 cùng lượt viết lại hero
+ * theo khung "bốn việc". Cụm này HARDCODE trong highlight.tsx — sửa tiêu đề ở
+ * `messages/vi.json` mà quên chỗ đó thì gạch chân mất lặng lẽ.
  *
  * This is the only block on the page allowed to use ScrollStage.
  */
