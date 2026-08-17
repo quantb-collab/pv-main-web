@@ -78,16 +78,26 @@ export function AssessmentDrawerProvider({
 
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         {/*
-          Ghi đè bề ngang: bản gốc của shadcn là `sm:max-w-sm` (384px) — đủ cho
-          một menu, chật cho form hai bước có textarea. `sm:max-w-lg` cho cặp
-          nhãn + ô nhập thở được mà vẫn chừa thấy nền phía sau, để drawer đọc ra
-          là một lớp phủ chứ không phải một trang mới.
+          BỀ NGANG — hai chế độ.
+
+          ⚠️ Phải ghi đè bằng ĐÚNG biến thể `data-[side=right]:`. shadcn đặt
+          `data-[side=right]:w-3/4`, và một `w-full` trần KHÔNG đẩy nó ra được:
+          tailwind-merge chỉ gộp các class cùng biến thể, nên hai class cùng
+          sống và class có biến thể thắng ở tầng CSS. Đây đúng là cái bẫy đã
+          ghi trong `pv-ui` cho cặp `dark:` — trước lần sửa này drawer chỉ rộng
+          75% ở khổ điện thoại, tức mất 1/4 bề ngang cho một dải nền không bấm
+          được gì.
+
+          Dưới `sm` chiếm trọn bề ngang: form hai bước có textarea, và ở 375px
+          thì 75% để lại cột nhập chật hơn cả ô nhập của bàn phím ảo. Từ `sm`
+          trở lên quay về `max-w-lg` — lúc đó màn đủ rộng để vẫn thấy nền phía
+          sau, và drawer mới đọc ra là một lớp phủ chứ không phải một trang mới.
 
           `overflow-y-auto`: form bước 2 cao hơn màn hình ở khổ 375px.
         */}
         <SheetContent
           side="right"
-          className="w-full gap-0 overflow-y-auto sm:max-w-lg"
+          className="gap-0 overflow-y-auto data-[side=right]:w-full data-[side=right]:sm:max-w-lg"
         >
           <SheetHeader className="gap-3 border-b p-6 lg:p-8">
             <SheetTitle className="font-display text-subhead font-semibold">
