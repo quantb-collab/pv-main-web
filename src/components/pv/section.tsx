@@ -13,16 +13,23 @@ import { cn } from "@/lib/utils";
  *   - bề ngang và lề (pv-container)
  *   - nấc trời (sky) và ranh giới giữa hai section
  *
- * CHIỀU CAO. Mặc định mỗi section chiếm trọn một viewport và nội dung nằm
- * giữa. `min-h-dvh` chứ không phải `h-dvh`: nội dung dài hơn thì section cao
- * lên, không cắt. Cái được là không còn section nào lửng lơ giữa màn hình,
- * và mắt luôn có đủ chỗ trống quanh khối chữ. Cái mất là trang dài hơn — nên
- * luật mật độ trong skill `pv-ui` càng phải giữ: một section, một ý.
+ * CHIỀU CAO — hai nấc, mặc định là `auto` (đổi 2026-08-17).
  *
- * SNAP. Section `full` mang `data-snap`: cuộn qua nửa section kế bên là trang
- * trượt ngay cho section đó khớp khung nhìn (cơ chế ở smooth-scroll.tsx,
- * token ở SNAP trong lib/motion.ts). Vì vậy trạng thái NGHỈ của một section
- * là trọn màn hình — thiết kế section cứ nhắm vào khung đó.
+ *   auto    cao theo nội dung, nhịp do `pv-section` tạo. MẶC ĐỊNH.
+ *   screen  trọn một viewport, nội dung căn giữa. Chỉ cho khối cần trọn màn.
+ *
+ * Trước đó `screen` là mặc định cho MỌI section và đó là một lỗi đo được: ở
+ * 1440×900 trang chủ có 2 488px — 32% chiều dài trang — là dải trống trên/dưới
+ * nội dung, và trống một lượng GẦN BẰNG NHAU ở mọi section nên không section
+ * nào đọc ra là quan trọng hơn section nào. Ở khổ hẹp thì ngược lại: nội dung
+ * cao 1 866px, `min-h-dvh` không còn nghĩa gì.
+ *
+ * `screen` vẫn giữ `min-h-dvh` chứ không `h-dvh` — nội dung dài hơn thì cao
+ * lên, không cắt.
+ *
+ * SNAP. Mọi section mang `data-snap` (mốc là MÉP TRÊN, không phải chiều cao):
+ * cuộn qua nửa section kế bên là trang trượt cho nó khớp khung nhìn — cơ chế ở
+ * smooth-scroll.tsx, token ở SNAP trong lib/motion.ts, hiện đang TẮT.
  *
  * NẤC TRỜI. `sky` chọn một nấc trong thang đêm → bình minh (globals.css LỚP 2).
  * Nấc chỉ đi lên trong một trang.
@@ -39,6 +46,9 @@ import { cn } from "@/lib/utils";
 /** Năm khoảnh khắc của một đêm. Bảng đầy đủ: docs/DESIGN-TOKENS.md § Thang sky. */
 export type Sky = "void" | "night" | "deep" | "rise" | "dawn";
 
+/** Hai nấc chiều cao. Bảng: docs/DESIGN-TOKENS.md § Chiều cao section. */
+export type SectionHeight = "auto" | "screen";
+
 const SKY: Record<Sky, string> = {
   void: "sky-void",
   night: "sky-night",
@@ -53,10 +63,13 @@ interface SectionProps {
   id?: string;
   sky?: Sky;
   /**
-   * Bỏ ràng buộc cao một màn hình. Chỉ dùng cho trang công cụ nội bộ và các
-   * khối phụ — trang bán hàng thì để nguyên mặc định.
+   * `auto` (mặc định) cao theo nội dung · `screen` trọn một viewport.
+   * Chọn `screen` khi khối CẦN trọn màn để đọc đúng — hero, một cảnh dựng
+   * bằng ảnh. Không chọn nó để "cho section trông rộng rãi": chỗ trống là
+   * việc của `--pv-space-section`, và ép trọn màn chỉ dồn khoảng trống ra
+   * hai đầu chứ không tạo nhịp.
    */
-  full?: boolean;
+  height?: SectionHeight;
   /** Bỏ padding dọc mặc định (hero tự quản chiều cao). */
   flush?: boolean;
   /** Bỏ container (khi cần tràn viền màn hình). */
@@ -82,7 +95,7 @@ export function Section({
   children,
   id,
   sky = "night",
-  full = true,
+  height = "auto",
   flush = false,
   bleed = false,
   backdrop,
@@ -92,7 +105,7 @@ export function Section({
   return (
     <section
       id={id}
-      data-snap={full ? "" : undefined}
+      data-snap=""
       className={cn(
         /* Không đặt overflow-hidden ở đây: hai lớp nền bên dưới đều nằm gọn
            trong khung section, còn `overflow` lại biến section thành scroll
@@ -100,7 +113,7 @@ export function Section({
         "relative isolate",
         SKY[sky],
         !flush && "pv-section",
-        full && "flex min-h-dvh flex-col justify-center",
+        height === "screen" && "flex min-h-dvh flex-col justify-center",
         className,
       )}
     >

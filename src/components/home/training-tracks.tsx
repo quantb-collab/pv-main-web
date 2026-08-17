@@ -40,7 +40,9 @@ import { cn } from "@/lib/utils";
  * `CtaBand` đúng một màn hình và trùng luôn nhãn, tức là hai CTA giống hệt nhau
  * nằm liền nhau. Có trang đào tạo thì trả nút lại (xem `trainingGap`).
  *
- * NGÂN SÁCH CHIỀU CAO — 1440×900, `--section-y` 8,5rem mỗi đầu nên còn 628px:
+ * NGÂN SÁCH CHIỀU CAO — nay là mục tiêu mật độ, không còn trần cứng
+ * (`<Section>` mặc định `height="auto"` từ 2026-08-17). Đo ở 1440×900, trừ
+ * `--pv-space-section` hai đầu thì còn 628px:
  *   tiêu đề (nhãn gộp dòng, không lead)      41px
  *   khe `mt-8`                               32px
  *   panel cao nhất                          ~352px

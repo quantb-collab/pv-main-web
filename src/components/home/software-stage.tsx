@@ -62,8 +62,9 @@ import type { ReactNode } from "react";
  * slide kế — đọc ra là bố cục hỏng. Kẹp lại thì slide cuối áp mép phải và slide
  * áp chót ló ra bên TRÁI; cùng một cơ chế "còn nữa", chỉ đổi phía.
  *
- * NGÂN SÁCH CHIỀU CAO — section cao trọn một màn, đo ở 1440×900. `--section-y`
- * 8,5rem mỗi đầu nên còn 628px:
+ * NGÂN SÁCH CHIỀU CAO — nay là mục tiêu mật độ, không còn trần cứng
+ * (`<Section>` mặc định `height="auto"` từ 2026-08-17). Đo ở 1440×900, trừ
+ * `--pv-space-section` hai đầu thì còn 628px:
  *   hàng tiêu đề (eyebrow gộp dòng, KHÔNG lead)          41px
  *   khe `mt-8`                                           32px
  *   hàng sân khấu                                       504px
@@ -467,6 +468,7 @@ export function SoftwareStage({
                         thích chứ không ra chỗ bấm được. */}
                     <span
                       className={cn(
+                        // pv-allow: đổi VAI TRÒ theo khổ (nhãn vạch → điều hướng chính), không đổi cỡ — lý do ngay trên
                         "truncate font-mono text-micro font-medium transition-colors duration-(--dur-base) lg:text-ui",
                         on
                           ? "text-brand-ink"

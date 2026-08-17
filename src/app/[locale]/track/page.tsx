@@ -57,7 +57,7 @@ export default async function TrackPage({
 
   return (
     <>
-      <Section sky="void" full={false} className="pt-32 lg:pt-40">
+      <Section sky="void" className="pt-32 lg:pt-40">
         <SectionHeader as="h1" title={t("title")} lead={t("lead")} />
 
         <div className="mt-10 flex flex-wrap gap-3">
@@ -83,14 +83,14 @@ export default async function TrackPage({
         </div>
       </Section>
 
-      <Section sky="night" full={false} flush className="pb-16">
+      <Section sky="night" flush className="pb-16">
         <PhaseTable title="V1 — bắt buộc trước khi phát hành" pages={v1} t={t} />
         <div className="mt-14">
           <PhaseTable title="V2 — làm sau" pages={v2} t={t} />
         </div>
       </Section>
 
-      <Section sky="deep" full={false}>
+      <Section sky="deep">
         <SectionHeader title={t("gapsTitle")} lead={t("gapsLead")} />
         <ul className="mt-10 flex flex-col gap-px overflow-hidden rounded-xl border bg-border">
           {gaps.map(({ page, gap }, i) => (
