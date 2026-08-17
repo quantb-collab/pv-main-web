@@ -16,16 +16,19 @@ import { cn } from "@/lib/utils";
  * khác thân bài — nhưng vẫn bằng đúng vật liệu của site: viền tóc, vòng viền
  * gradient `pv-edge`, không đổ bóng, không màu ngoài token.
  *
- * NGÂN SÁCH CHIỀU CAO là ràng buộc đầu tiên, không phải thứ tính sau. Section
- * cao trọn một màn hình, mà `--section-y` ở desktop là 8.5rem mỗi đầu — nên
- * trong màn 900px chỉ còn ~628px cho toàn bộ section. Phép tính hiện tại:
+ * NGÂN SÁCH CHIỀU CAO — nay là MỤC TIÊU MẬT ĐỘ, không còn là trần cứng.
+ * `<Section>` mặc định `height="auto"` từ 2026-08-17 nên section không bị cắt
+ * ở một màn nữa; giữ phép tính vì nó vẫn là thước đo "section này đã quá dày
+ * chưa". Ngân sách cũ: màn 900px trừ `--pv-space-section` hai đầu, còn ~628px.
+ * Phép tính hiện tại:
  *   hàng tiêu đề + tab   ~125px   (một hàng, tab nằm bên phải chứ không xuống dòng)
  *   khe                   ~24px
  *   ba tầng kệ           ~573px   (mỗi tầng 159px card + 2×12px đệm, khe 12px)
- * Cộng lại ~722px: ở ĐÚNG 1440×900 section tràn ~94px, tức khoảng 1,1 màn
- * hình; từ 1000px chiều cao trở lên thì vừa. Phần tràn đó là giá của card ảnh
- * đọc được cộng khoảng thở quanh vật thể — cả hai đều do chủ dự án chốt.
- * Nới bất kỳ con số nào cũng phải trừ vào con số khác, không được cộng thêm.
+ * Cộng lại ~722px, tức vượt ngân sách cũ ~94px. Trước 2026-08-17 đó là lỗi
+ * (section tràn khỏi một màn); nay chỉ là section dày hơn trung bình, và phần
+ * dày đó là giá của card ảnh đọc được cộng khoảng thở quanh vật thể — cả hai
+ * đều do chủ dự án chốt. Nới bất kỳ con số nào vẫn phải trừ vào con số khác:
+ * trần thật của section này là luật mật độ, không phải chiều cao viewport.
  *
  * BỐN quyết định hình:
  *
@@ -240,10 +243,21 @@ export function ProductShelf({
             xuống ~90px để section còn vừa một màn hình.
             Dưới lg thì xuống dòng như bình thường.
           */}
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] lg:gap-12">
+          {/* ⚠️ `grid-cols-[minmax(0,1fr)]` KHÔNG thừa. Một `grid` không khai
+              template thì cột ngầm là `auto`, tức `minmax(min-content, …)` —
+              và min-content của cột phải là bề ngang băng card CHƯA cuộn.
+              Thiếu dòng này, ở 360–1023px cột được cấp 1 088px trong khung
+              460px và cả TRANG cuộn ngang được (đo 2026-08-17: docScrollWidth
+              1 108 ở mọi khổ dưới 1024). `overflow-x-auto` của băng card
+              không cứu được, vì chuỗi `min-width: auto` bị đứt ở hai tổ tiên
+              phía trên nó — xem hai `min-w-0` ngay dưới. */}
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] lg:gap-12">
             <PartnerIntro intro={partner.intro} />
 
-            <RevealGroup className="flex flex-col gap-3">
+            {/* `min-w-0`: mắt xích thứ hai của chuỗi thu hẹp. Mặc định
+                `min-width: auto` của flex/grid item cho phép con đẩy nó rộng
+                ra theo min-content. */}
+            <RevealGroup className="flex min-w-0 flex-col gap-3">
               {partner.lines.map((line, i) => (
                 <ShelfTier
                   key={line.name}
@@ -390,7 +404,10 @@ function ShelfTier({
   const accent = ACCENT[line.accent];
 
   return (
-    <RevealItem className="group relative flex flex-col gap-4 rounded-xl bg-background px-5 py-2 transition-colors duration-(--dur-base) hover:bg-surface lg:flex-row lg:items-center lg:gap-6 lg:px-7">
+    /* `min-w-0` là mắt xích cuối của chuỗi thu hẹp (hai mắt kia ở khối lưới
+       của `ProductShelf`). Thiếu nó thì băng card bên trong đẩy cả tầng kệ
+       rộng ra bằng min-content và `overflow-x-auto` không bao giờ được kích. */
+    <RevealItem className="group relative flex min-w-0 flex-col gap-4 rounded-xl bg-background px-5 py-2 transition-colors duration-(--dur-base) hover:bg-surface lg:flex-row lg:items-center lg:gap-6 lg:px-7">
       {/* Vòng viền 1px. Gradient đi từ dưới lên nên mép sáng nằm ở chân tầng
           kệ — hướng sáng chung của site, chỉ đổi màu theo dòng chip. */}
       <span
@@ -464,7 +481,7 @@ function MotionToggle({
       onClick={onToggle}
       aria-label={playing ? labels.pause : labels.play}
       title={playing ? labels.pause : labels.play}
-      className="grid size-8 shrink-0 place-items-center rounded-full border text-muted-foreground transition-colors duration-(--dur-fast) hover:border-brand hover:text-brand"
+      className="grid size-(--h-control-sm) shrink-0 place-items-center rounded-full border text-muted-foreground transition-colors duration-(--dur-fast) hover:border-brand hover:text-brand"
     >
       <svg
         aria-hidden
@@ -647,7 +664,7 @@ function CarouselButton({
       onClick={onClick}
       aria-label={label}
       className={cn(
-        "absolute top-1/2 z-10 grid size-7 -translate-y-1/2 place-items-center rounded-full border bg-background/80 text-muted-foreground opacity-0 backdrop-blur-sm transition-all duration-(--dur-fast) hover:border-brand hover:text-brand focus-visible:opacity-100 group-hover:opacity-100",
+        "absolute top-1/2 z-10 grid size-(--h-control-xs) -translate-y-1/2 place-items-center rounded-full border bg-background/80 text-muted-foreground opacity-0 backdrop-blur-sm transition-all duration-(--dur-fast) hover:border-brand hover:text-brand focus-visible:opacity-100 group-hover:opacity-100",
         side === "left" ? "left-1" : "right-1",
       )}
     >
