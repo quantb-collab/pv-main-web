@@ -10,6 +10,10 @@ import { cn } from "@/lib/utils"
 //   2. shadow-control on surface-bearing variants only; the token flips under
 //      every sky level. ghost/link stay flat because they are not surfaces.
 //   3. h-10/h-11 scale instead of the h-8/h-9 app-UI default.
+//   4. Heights come from --h-control-* rather than fixed h-* steps, so every
+//      size grows on touch devices (@media (pointer: coarse) in globals.css).
+//      Do not put the h-* steps back — that silently drops the tap targets
+//      below the 44px HIG threshold on phones.
 // See docs/DESIGN-TOKENS.md § Control.
 
 const buttonVariants = cva(
@@ -31,14 +35,14 @@ const buttonVariants = cva(
       },
       size: {
         default:
-          "h-10 gap-2 px-4 text-sm has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
-        xs: "h-7 gap-1 px-2.5 text-xs has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-9 gap-1.5 px-3.5 text-[0.8125rem] has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-11 gap-2 px-5 text-[0.9375rem] has-data-[icon=inline-end]:pr-4 has-data-[icon=inline-start]:pl-4",
-        icon: "size-10",
-        "icon-xs": "size-7 [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm": "size-9 [&_svg:not([class*='size-'])]:size-3.5",
-        "icon-lg": "size-11",
+          "h-(--h-control-md) gap-2 px-4 text-sm has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
+        xs: "h-(--h-control-xs) gap-1 px-2.5 text-xs has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-(--h-control-sm) gap-1.5 px-3.5 text-[0.8125rem] has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 [&_svg:not([class*='size-'])]:size-3.5",
+        lg: "h-(--h-control-lg) gap-2 px-5 text-[0.9375rem] has-data-[icon=inline-end]:pr-4 has-data-[icon=inline-start]:pl-4",
+        icon: "size-(--h-control-md)",
+        "icon-xs": "size-(--h-control-xs) [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-(--h-control-sm) [&_svg:not([class*='size-'])]:size-3.5",
+        "icon-lg": "size-(--h-control-lg)",
       },
     },
     defaultVariants: {

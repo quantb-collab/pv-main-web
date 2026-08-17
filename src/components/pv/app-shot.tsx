@@ -339,7 +339,7 @@ function NavButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex size-8 cursor-pointer items-center justify-center rounded-control text-muted-foreground transition-colors duration-(--dur-fast) hover:bg-surface-2 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      className="flex size-(--h-control-sm) cursor-pointer items-center justify-center rounded-control text-muted-foreground transition-colors duration-(--dur-fast) hover:bg-surface-2 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
     >
       <svg
         aria-hidden
